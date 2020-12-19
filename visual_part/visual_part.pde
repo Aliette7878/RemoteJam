@@ -28,6 +28,8 @@ void setup()
   /* start oscHook. go to IP/port setup. Look at the port value in oscHook*/
   /* change the port numner in the line below to what you just saw on oscHook */
   /* for the example below, the port number is 7400 */
+  /* If it doesn't work, try also to change 127.0.0.1 into your pc IPV4 adress.
+  /* You can also try to change the sending rate on your OSC app.
   oscP5 = new OscP5(this, 7400);
   
   img = loadImage("flying-birds-clip-art_666444.png");

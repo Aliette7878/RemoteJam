@@ -1,11 +1,9 @@
+float theta;   
 
-class WhiteLines {
+class ProcessingTree {
   PVector pos;
-
-  // Create a "bloop" creature
-  WhiteLines(PVector position) {
+  ProcessingTree(PVector position) {
     pos = position.get();
- 
   }
   
   void display(){
@@ -24,7 +22,6 @@ class WhiteLines {
   branch(120);
 }
 
-// TREE 
 void branch(float h) {
   // Each branch will be 2/3rds the size of the previous one
   h *= 0.66;

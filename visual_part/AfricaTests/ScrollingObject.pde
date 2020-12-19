@@ -5,7 +5,6 @@ class ScrollingObject {
   int inx;
   int iny;
 
-  // Create a "bloop" creature
   ScrollingObject(PImage image, int direction, int initialx, int initialy) {
     img = image.get();
     dir = direction;

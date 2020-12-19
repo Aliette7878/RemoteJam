@@ -5,8 +5,12 @@ PImage scrolling_img;
 
 AfricanMask AfricanMask0, AfricanMask1, AfricanMask2; // 3 masks
 ScrollingObject ScrollingAfrican0, ScrollingAfrican1; // 2 scrolling bars
-GrowingTree GrowingTree0,GrowingTree1,GrowingTree2;   // 3 growingTrees
+GrowingTree GrowingTree0;   // 3 growingTrees
 ProcessingTree Tree0;                                 // 1 ProcessingTree
+GrowingArray GrowingArray_right;
+Spirals Spirals0;
+
+
 
 void setup() {
   frameRate(200); // default frameRate = 60/sec = 3600/min --> How to synchronize with supercollider ? 
@@ -29,25 +33,31 @@ void setup() {
   
   Tree0 = new ProcessingTree(new PVector(int(width/2),height)); // Inspired by a Processing tutorial
   
-  GrowingTree0 = new GrowingTree(new PVector(0,int(height/2)),PI/3);
-  GrowingTree1 = new GrowingTree(new PVector(0,int(height/2)+50),PI/3);
-  GrowingTree2 = new GrowingTree(new PVector(0,int(height/2)-50),PI/3);
-
+  GrowingTree0 = new GrowingTree(new PVector(width-10,int(height/2)),4*PI/3);
+  GrowingArray_right = new GrowingArray(0, 100, 15, 50, PI/3); // (inx, iny, 15 trees, 50 pxls of distance) 
+  
+  Spirals0 = new Spirals();
+  Spirals0.rescale();
 }
 
 
 void draw(){
   background(bg);
-  ScrollingAfrican1.scroll();
-  ScrollingAfrican0.scroll();
   AfricanMask0.display();
   AfricanMask1.display();
   AfricanMask2.display();
+
+
  
   GrowingTree0.display();  // We can create an array of GrowingTree
-  GrowingTree1.display();
-  GrowingTree2.display();
-  Tree0.display(); 
+  //GrowingTree1.display();
+  //GrowingTree2.display();
+  //Tree0.display(); 
+  GrowingArray_right.display();
+  
+  ScrollingAfrican1.scroll();
+  ScrollingAfrican0.scroll();
+  Spirals0.display();
 
 }
  

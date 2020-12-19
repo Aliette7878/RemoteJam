@@ -9,7 +9,8 @@ class ProcessingTree {
   void display(){
   stroke(255);
   // Let's pick an angle 0 to 90 degrees based on the mouse position
-  float a = (mouseX / (float) width) * 90f;
+  //float a = (mouseX / (float) width) * 90f;
+  float a = cos(2*PI*0.2*millis()/1000)*90f;
   // Convert it to radians
   theta = radians(a);
   // Start the tree from the bottom of the screen

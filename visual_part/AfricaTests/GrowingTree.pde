@@ -1,7 +1,10 @@
 // A GrowingTree is made of segments from the class Segment. 
 // It grows or decreases randomly, parametered by a probability p.
 
-int h = 10; // Length of branches
+int h = 15; // Length of branches
+int lifespan = 20; // Lifespan in frames
+int min_size = 80; // We don't destroy semgents below min_size
+
 
 class GrowingTree {
   
@@ -14,7 +17,7 @@ class GrowingTree {
     pos = position.get();
     Segment segment1 = new Segment(pos.x,pos.y,pos.x+h,pos.y+h);
     list_segment.add(segment1); // Root of the tree
-    p = 0.90; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
+    p = 0.60; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
     theta = theta_direction;
   }
   
@@ -40,17 +43,21 @@ class GrowingTree {
         c++; // Stop the loop
       }
       k--;
-    }
+    }   
+   }
+   
+  void update_tree(Segment destroyed_child){ //Remove the destroyed child and the old segments
     // Update the lists of children of the other segments
     for(int l=list_segment.size()-1; l>=0; l--){
-      Segment segment_to_check=list_segment.get(l);
-      segment_to_check.children.remove(segment);
-      }    
-   }
+      Segment segment=list_segment.get(l);
+      segment.children.remove(destroyed_child);
+      if(segment.age>lifespan){list_segment.remove(segment);}
+      } 
+  }
 
   void evolve(){   // Build or destroy a segment
     float i = random(1);
-    if ((i>p)&&(list_segment.size()>20)){
+    if ((i>p)&&(list_segment.size()>min_size)){ //  if the tree is not too small + random
       destroy_random_segment();
     }
     else{
@@ -66,4 +73,29 @@ class GrowingTree {
     }
   }
   
+}
+
+
+class GrowingArray{
+  
+  ArrayList<GrowingTree> list_growingtree = new ArrayList<GrowingTree>();
+  float angle,x, y; // Direction of expansion
+  int  n, d;
+
+  GrowingArray(int inx, int iny,int nb_tree, int distance,float angle) {
+    d = distance;
+    theta = angle;
+    n = nb_tree;
+    x = inx; // Root of the tree
+    y = iny; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
+    for(int i=0; i<n; i++){
+      list_growingtree.add(new GrowingTree(new PVector(x,y+i*d),angle));
+    }
+  }
+  
+  void display(){
+    for(int i=0; i<n; i++){
+      GrowingTree tree = list_growingtree.get(i);
+      tree.display();  }
+}
 }

@@ -29,7 +29,7 @@ void setup()
   /* change the port numner in the line below to what you just saw on oscHook */
   /* for the example below, the port number is 7400 */
   /* If it doesn't work, try also to change 127.0.0.1 into your pc IPV4 adress.
-  /* You can also try to change the sending rate on your OSC app.
+  /* You can also try to change the sending rate on your OSC app.*/
   oscP5 = new OscP5(this, 7400);
   
   img = loadImage("flying-birds-clip-art_666444.png");
@@ -65,7 +65,7 @@ void draw()
 void oscEvent(OscMessage theOscMessage) {
   /* check if theOscMessage has the address pattern we are looking for. */
   
-  //println(theOscMessage);
+  println(theOscMessage);
 
 
   if (theOscMessage.checkAddrPattern("/accelerometer/raw/x")==true) {

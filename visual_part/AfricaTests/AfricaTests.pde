@@ -7,7 +7,7 @@ AfricanMask AfricanMask0, AfricanMask1, AfricanMask2; // 3 masks
 ScrollingObject ScrollingAfrican0, ScrollingAfrican1; // 2 scrolling bars
 GrowingTree GrowingTree0;   // 3 growingTrees
 ProcessingTree Tree0;                                 // 1 ProcessingTree
-GrowingArray GrowingArray_right;
+GrowingArray GrowingArray_right0,GrowingArray_right1,GrowingArray_right2 ;
 Spirals Spirals0;
 
 
@@ -33,9 +33,11 @@ void setup() {
   
   Tree0 = new ProcessingTree(new PVector(int(width/2),height)); // Inspired by a Processing tutorial
   
-  GrowingTree0 = new GrowingTree(new PVector(width-10,int(height/2)),4*PI/3);
-  GrowingArray_right = new GrowingArray(0, 100, 15, 50, PI/3); // (inx, iny, 15 trees, 50 pxls of distance) 
-  
+  GrowingTree0 = new GrowingTree(new PVector(width-10,int(height/2)),4*PI/3, color(255,0,0));
+  GrowingArray_right0 = new GrowingArray(0, 100, 15, 50, PI/3, color(0,255,0)); // (inx, iny, 15 trees, 50 pxls of distance) 
+  GrowingArray_right1 = new GrowingArray(100, 100, 15, 50, PI/3, color(255)); // (inx, iny, 15 trees, 50 pxls of distance) 
+  GrowingArray_right2 = new GrowingArray(200, 100, 15, 50, PI/3, color(255,255,0)); // (inx, iny, 15 trees, 50 pxls of distance) 
+
   Spirals0 = new Spirals();
   Spirals0.rescale();
 }
@@ -53,7 +55,10 @@ void draw(){
   //GrowingTree1.display();
   //GrowingTree2.display();
   //Tree0.display(); 
-  GrowingArray_right.display();
+  GrowingArray_right0.display();
+  GrowingArray_right1.display();
+  GrowingArray_right2.display();
+
   
   ScrollingAfrican1.scroll();
   ScrollingAfrican0.scroll();

@@ -12,13 +12,15 @@ class GrowingTree {
   float p; // Probability to build a segment, 1-p = probability to destroy a segment
   ArrayList<Segment> list_segment = new ArrayList<Segment>();
   float theta; // Must be PI/3 to go to the right, 2PI/3 to go to the left
+  color col;
 
-  GrowingTree(PVector position, float theta_direction) {
+  GrowingTree(PVector position, float theta_direction, color color_tree) {
     pos = position.get();
-    Segment segment1 = new Segment(pos.x,pos.y,pos.x+h,pos.y+h);
-    list_segment.add(segment1); // Root of the tree
     p = 0.60; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
     theta = theta_direction;
+    col = color_tree;
+    Segment segment1 = new Segment(pos.x,pos.y,pos.x+h,pos.y+h, col);
+    list_segment.add(segment1); // Root of the tree
   }
   
   
@@ -27,7 +29,7 @@ class GrowingTree {
   void build_segment(){
     theta = theta*(2*int(random(1.99))-1); // Either +theta or -theta
     Segment parent_seg = list_segment.get(int(random(list_segment.size()-1))); // Pick a random parent
-    Segment new_segment = new Segment(parent_seg.x1,parent_seg.y1,parent_seg.x1+h*cos(theta),parent_seg.y1+h*sin(theta));
+    Segment new_segment = new Segment(parent_seg.x1,parent_seg.y1,parent_seg.x1+h*cos(theta),parent_seg.y1+h*sin(theta), col);
     parent_seg.children.add(new_segment); // Label the segment as a parent segment
     list_segment.add(new_segment);
   }
@@ -81,15 +83,17 @@ class GrowingArray{
   ArrayList<GrowingTree> list_growingtree = new ArrayList<GrowingTree>();
   float angle,x, y; // Direction of expansion
   int  n, d;
+  color col;
 
-  GrowingArray(int inx, int iny,int nb_tree, int distance,float angle) {
+  GrowingArray(int inx, int iny,int nb_tree, int distance,float angle, color col_array) {
     d = distance;
     theta = angle;
     n = nb_tree;
+    col = col_array;
     x = inx; // Root of the tree
     y = iny; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
     for(int i=0; i<n; i++){
-      list_growingtree.add(new GrowingTree(new PVector(x,y+i*d),angle));
+      list_growingtree.add(new GrowingTree(new PVector(x,y+i*d),angle, col_array));
     }
   }
   

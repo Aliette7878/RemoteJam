@@ -6,17 +6,19 @@ class Segment {
   float y1;
   ArrayList<Segment> children = new ArrayList<Segment>();
   int age;
+  color col;
   
-  Segment(float x_start, float y_start, float x_dest, float y_dest) {
+  Segment(float x_start, float y_start, float x_dest, float y_dest, color color_seg) {
     x0 = x_start;
     y0 = y_start;
     x1 = x_dest;
     y1 = y_dest;
     age = 0;
+    col = color_seg;
   }
   
   void display(){
-  stroke(255,200-age);
+  stroke(col,120-age);
   strokeWeight(2); 
   line(x0,y0,x1,y1);
   age++;

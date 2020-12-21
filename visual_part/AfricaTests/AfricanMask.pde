@@ -6,11 +6,11 @@ class AfricanMask {
   PVector shape; 
 
   AfricanMask(int identifier) {
-    svg = loadShape("AfrikanMask.svg");
+    svg = loadShape("Drums2.svg");
     svg.scale(0.6); 
     id = identifier;
     position = new PVector(id*300+200,200);
-    shape = new PVector(svg.width, svg.height,1);
+    shape = new PVector(svg.width, svg.height);
   }
   
   void update_shape(){
@@ -28,4 +28,5 @@ class AfricanMask {
     shape(svg, position.x, position.y, shape.x, shape.y);
   }
   
+
 }

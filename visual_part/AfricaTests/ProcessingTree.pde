@@ -1,26 +1,29 @@
-float theta;   
 
 class ProcessingTree {
   PVector pos;
+  float theta, angle=45;  
+  color col=color(255);
+  float size = 50;
+  
   ProcessingTree(PVector position) {
     pos = position.get();
   }
   
   void display(){
-  stroke(255);
+  stroke(col);
   // Let's pick an angle 0 to 90 degrees based on the mouse position
   //float a = (mouseX / (float) width) * 90f;
-  float a = cos(2*PI*0.2*millis()/1000)*90f;
+  //float a = cos(2*PI*0.2*millis()/1000)*90f; 
   // Convert it to radians
-  theta = radians(a);
+  theta = radians(angle);
   // Start the tree from the bottom of the screen
   translate(pos.x,pos.y);
   // Draw a line 120 pixels
-  line(0,0,0,-120);
+  line(0,0,0,-size);
   // Move to the end of that line
-  translate(0,-120);
+  translate(0,-size);
   // Start the recursive branching!
-  branch(120);
+  branch(size);
 }
 
 void branch(float h) {

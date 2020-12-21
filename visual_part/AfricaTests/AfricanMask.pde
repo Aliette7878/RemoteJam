@@ -6,7 +6,7 @@ class AfricanMask {
   PVector shape; 
 
   AfricanMask(int identifier) {
-    svg = loadShape("Drums2.svg");
+    svg = loadShape("AfricanMask.svg");
     svg.scale(0.6); 
     id = identifier;
     position = new PVector(id*300+200,200);

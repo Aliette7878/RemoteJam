@@ -1,10 +1,5 @@
-// A GrowingTree is made of segments from the class Segment. 
-// It grows or decreases randomly, parametered by a probability p.
-
-int h = 15; // Length of branches
-int lifespan = 20; // Lifespan in frames
-int min_size = 80; // We don't destroy semgents below min_size
-
+// Class GrowingTree 
+// Class GrowingArray = arrays of GrowingTree
 
 class GrowingTree {
   
@@ -13,13 +8,18 @@ class GrowingTree {
   ArrayList<Segment> list_segment = new ArrayList<Segment>();
   float theta; // Must be PI/3 to go to the right, 2PI/3 to go to the left
   color col;
+  int opac; // Opacity 
+  int h = 15; // Length of branches
+  int lifespan = 20; // Lifespan in frames
+  int min_size = 80; // We don't destroy semgents below min_size
 
-  GrowingTree(PVector position, float theta_direction, color color_tree) {
+  GrowingTree(PVector position, float theta_direction, color color_tree, int opacity) {
     pos = position.get();
     p = 0.60; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
     theta = theta_direction;
     col = color_tree;
-    Segment segment1 = new Segment(pos.x,pos.y,pos.x+h,pos.y+h, col);
+    opac = opacity;
+    Segment segment1 = new Segment(pos.x,pos.y,pos.x+h,pos.y+h, col, opac);
     list_segment.add(segment1); // Root of the tree
   }
   
@@ -29,7 +29,7 @@ class GrowingTree {
   void build_segment(){
     theta = theta*(2*int(random(1.99))-1); // Either +theta or -theta
     Segment parent_seg = list_segment.get(int(random(list_segment.size()-1))); // Pick a random parent
-    Segment new_segment = new Segment(parent_seg.x1,parent_seg.y1,parent_seg.x1+h*cos(theta),parent_seg.y1+h*sin(theta), col);
+    Segment new_segment = new Segment(parent_seg.x1,parent_seg.y1,parent_seg.x1+h*cos(theta),parent_seg.y1+h*sin(theta), col, opac);
     parent_seg.children.add(new_segment); // Label the segment as a parent segment
     list_segment.add(new_segment);
   }
@@ -81,19 +81,20 @@ class GrowingTree {
 class GrowingArray{
   
   ArrayList<GrowingTree> list_growingtree = new ArrayList<GrowingTree>();
-  float angle,x, y; // Direction of expansion
-  int  n, d;
+  float theta,x, y; // Direction of expansion
+  int  n, d, opac;
   color col;
 
-  GrowingArray(int inx, int iny,int nb_tree, int distance,float angle, color col_array) {
+  GrowingArray(int inx, int iny,int nb_tree, int distance,float angle, color col_array, int opacity) {
     d = distance;
     theta = angle;
     n = nb_tree;
+    opac = opacity;
     col = col_array;
     x = inx; // Root of the tree
     y = iny; // Initially, we want the tree to expand. p can decrease later if we want the tree to destroy many of it segments.
     for(int i=0; i<n; i++){
-      list_growingtree.add(new GrowingTree(new PVector(x,y+i*d),angle, col_array));
+      list_growingtree.add(new GrowingTree(new PVector(x,y+i*d),angle, col_array, opac));
     }
   }
   

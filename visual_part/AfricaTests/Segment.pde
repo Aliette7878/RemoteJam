@@ -7,18 +7,20 @@ class Segment {
   ArrayList<Segment> children = new ArrayList<Segment>();
   int age;
   color col;
+  int opac; // between 0 and 255
   
-  Segment(float x_start, float y_start, float x_dest, float y_dest, color color_seg) {
+  Segment(float x_start, float y_start, float x_dest, float y_dest, color color_seg, int opacity) {
     x0 = x_start;
     y0 = y_start;
     x1 = x_dest;
     y1 = y_dest;
     age = 0;
     col = color_seg;
+    opac = opacity;
   }
   
   void display(){
-  stroke(col,120-age);
+  stroke(col,opac-age);
   strokeWeight(2); 
   line(x0,y0,x1,y1);
   age++;

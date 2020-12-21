@@ -2,55 +2,75 @@
 (
 s.waitForBoot({
 
-	//****************** OSC **************************
+	//**************** INITIALIZATION *******************
 
-	s.boot
-	s.addr
-	n = NetAddr.new("192.168.1.50", 7400);
-	NetAddr.localAddr
+	var sinx, siny, sinz;
+	var wobble;
+	var osc_linx, osc_liny, osc_linz;
 
+	s.plotTree;
 
-	OSCdef('Accelerometer',{
-		arg msg;
+	//******************* SOUND DEF *********************
 
-		postln(msg);
+	SynthDef(\wobble, {
+		arg note = 22, gate = 1, dur = 2, gain = 1;
 
-		try{
-			if(msg.size > 2) {
-			}  {postln("Error: Empty msg")};
-		}
+		var sig = Mix.ar(LFSaw.ar(note.midicps));
 
-	},'/accelerometer/raw/x');
+		var env = EnvGen.kr(Env.asr(0.05,dur, 0.5, -4.5));
+		var out = env * sig * gain;
 
-	OSCdef.new(
-		\x,
-		{
-			arg msg, time, addr, port;
-			msg[1].postln;
-		},
-		'/accelerometer/raw/x'
-	);
-
-	o = OSCFunc({ arg msg, time, addr, recvPort; [msg, time, addr, recvPort].postln; }, '/accelerometer/raw/x', n);
-
-	o = OSCFunc({arg msg, time, address, receivedPort;
-		"received trigger!".postln;
-		msg.postln;
-	}, "/accelerometer/raw/x", n);
-
-
-	OSCresponder(n, "/accelerometer/raw/x", {arg time, responder, msg;
-		"received trigger!".postln;
-		msg.postln;
+		Out.ar(0, out);
 	}).add;
 
-	OSCFunc.trace(false);
 
-	o.free;
+	wobble = Synth(\wobble);
+	//wobble.set(\gain, 0)
+
+	//******************* OSC ************************
+
+	n = NetAddr.new("127.0.0.1", 57120);
+
+
+	osc_linx = OSCdef("Accelerometer-x", {
+		arg msg, time, addr, port;
+		("acc linear x:" + msg[1]).postln;
+
+		// if the linear acceleration is less than 0.1, the sound stops. I know, not optimal, but for the moment it is like that
+		if(msg[1]<0.1, {
+			wobble.set(\gain, 0); "The sound stops".postln}, {wobble.set(\gain, 1)
+		});
+		},
+		'/accelerometer/linear/x'
+	);
+
+	osc_liny = OSCdef(
+		"Accelerometer-y",
+		{
+			arg msg, time, addr, port;
+			("acc linear y:" + msg[1]).postln;
+		},
+		'/accelerometer/linear/y'
+	);
+
+	osc_linz = OSCdef(
+		"Accelerometer-z",
+		{
+			arg msg, time, addr, port;
+				("acc linear z:" + msg[1]).postln;
+		},
+		'/accelerometer/linear/z'
+	);
 
 }))
 
 
+//OSCdef.freeAll
+//o.free
+
+
+//s.plotTree
+//s.meter
 
 
 

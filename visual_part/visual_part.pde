@@ -166,7 +166,7 @@ void oscEvent(OscMessage theOscMessage) {
       telephone2Inclination = theOscMessage.get(0).floatValue();  // Between -90 (phone pointing up) and +90 (phone pointing down) (and 0 when phone horizontally pointing towards you..)
       println("IP2 pitch: "+telephone2Inclination);
       
-      OscMessage m = new OscMessage("/IP2/inclination");
+      OscMessage m = new OscMessage("/IP2/pitch");
       m.add(telephone2Inclination);
       oscP5.send(m, superColliderLocation);
     }

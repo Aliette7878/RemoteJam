@@ -1,4 +1,3 @@
-
 (
 s.waitForBoot({
 
@@ -6,7 +5,7 @@ s.waitForBoot({
 
 	var sinx, siny, sinz;
 	var wobble;
-	var osc_linx, osc_liny, osc_linz;
+	var osc_light, osc_linx, osc_liny, osc_linz;
 
 	s.plotTree;
 
@@ -31,21 +30,30 @@ s.waitForBoot({
 
 	n = NetAddr.new("127.0.0.1", 57120);
 
+	osc_light = OSCdef("Light",
+		{
+			arg msg, time, addr, port;
+			("light:" + msg[1]).postln;
 
-	osc_linx = OSCdef("Accelerometer-x", {
-		arg msg, time, addr, port;
-		("acc linear x:" + msg[1]).postln;
+			// if the light is less than 0.1, the sound stops. I know, not optimal, but for the moment it is like that
+			if(msg[1]<0.05, {
+				wobble.set(\gain, 0); "The sound stops".postln}, {wobble.set(\gain, 1)
+			});
+		},
+		'/light'
+	);
 
-		// if the linear acceleration is less than 0.1, the sound stops. I know, not optimal, but for the moment it is like that
-		if(msg[1]<0.1, {
-			wobble.set(\gain, 0); "The sound stops".postln}, {wobble.set(\gain, 1)
-		});
+
+	osc_linx = OSCdef("Accelerometer-x",
+		{
+			arg msg, time, addr, port;
+			("acc linear x:" + msg[1]).postln;
+
 		},
 		'/accelerometer/linear/x'
 	);
 
-	osc_liny = OSCdef(
-		"Accelerometer-y",
+	osc_liny = OSCdef("Accelerometer-y",
 		{
 			arg msg, time, addr, port;
 			("acc linear y:" + msg[1]).postln;
@@ -53,17 +61,15 @@ s.waitForBoot({
 		'/accelerometer/linear/y'
 	);
 
-	osc_linz = OSCdef(
-		"Accelerometer-z",
+	osc_linz = OSCdef( "Accelerometer-z",
 		{
 			arg msg, time, addr, port;
-				("acc linear z:" + msg[1]).postln;
+			("acc linear z:" + msg[1]).postln;
 		},
 		'/accelerometer/linear/z'
 	);
 
 }))
-
 
 //OSCdef.freeAll
 //o.free
@@ -71,6 +77,3 @@ s.waitForBoot({
 
 //s.plotTree
 //s.meter
-
-
-

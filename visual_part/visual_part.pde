@@ -31,6 +31,7 @@ void setup()
   /* If it doesn't work, try also to change 127.0.0.1 into your pc IPV4 adress.
   /* You can also try to change the sending rate on your OSC app.*/
   oscP5 = new OscP5(this, 7400);
+  myRemoteLocation = new NetAddress("127.0.0.1", 57120);
   
   img = loadImage("flying-birds-clip-art_666444.png");
   
@@ -66,6 +67,7 @@ void oscEvent(OscMessage theOscMessage) {
   /* check if theOscMessage has the address pattern we are looking for. */
   
   println(theOscMessage);
+  oscP5.send(theOscMessage, myRemoteLocation);
 
 
   if (theOscMessage.checkAddrPattern("/accelerometer/raw/x")==true) {
@@ -85,10 +87,10 @@ void oscEvent(OscMessage theOscMessage) {
       println("speedX: "+speedX+", speedY: "+speedY);
     }
   }
-  /*
+
   if (theOscMessage.checkAddrPattern("/accelerometer/raw/z")==true) {
     accelZ = theOscMessage.get(0).floatValue();  
     println("z: "+accelZ);
   }
-  */
+  
 }

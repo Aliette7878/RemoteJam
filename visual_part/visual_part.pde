@@ -135,20 +135,20 @@ void oscEvent(OscMessage theOscMessage) {
     if(orientationUpdated){
       if(-45<pitchOrientation && pitchOrientation<45){
         if(-45<rollOrientation && rollOrientation<45){
-          pattern = "Patern A";
+          pattern = "Pattern A";
         }
         else if(rollOrientation>45){
-          pattern = "Patern B";
+          pattern = "Pattern B";
         }
         else{
-          pattern = "Patern C";
+          pattern = "Pattern C";
         }
       }
       else if(pitchOrientation>45){
-        pattern = "Patern D";
+        pattern = "Pattern D";
       }
       else{
-        pattern = "Patern E";
+        pattern = "Pattern E";
       }
       
       println("IP1 pattern: "+pattern);

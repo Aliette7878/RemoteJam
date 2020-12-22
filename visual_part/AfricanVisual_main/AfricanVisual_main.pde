@@ -39,7 +39,7 @@ void setup() {
   size(1200,800); // Switch to full size ?
   
   // Images
-  bg = loadImage("bgforms.jpg"); // Can also try Savane1 or Savane2
+  bg = loadImage("Asset 5.png"); // Can also try Savane1 or Savane2
   bg.resize(width,height);
   scrolling_img = loadImage("frise1.png");
   scrolling_img.resize(width, int(height/10));
@@ -54,9 +54,8 @@ void setup() {
   GrowingArray_yellow = new GrowingArray(200, 100, 15, 50, PI/3, color(255,255,0), 60);
 
   // Drum
-  Drum0 = new SvgPic("DrumRed2.svg",440,700, drum_period);
-  Drum0.svg.scale(1.1);
-  Drum0.svg.rotate(-PI/2);
+  Drum0 = new SvgPic("djembe.svg", 385, 230, drum_period);
+  Drum0.svg.scale(0.85);
   
   // Processing Tree
   PTree0 = new ProcessingTree(new PVector(width-220,height-82)); // Inspired by a Processing tutorial

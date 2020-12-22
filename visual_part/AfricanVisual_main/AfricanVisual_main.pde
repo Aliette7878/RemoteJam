@@ -85,7 +85,6 @@ void draw(){
   GrowingArray_yellow.display();
 
   Drum0.display();
-  GrowingArray_white.opac=200;
   //PTree0.angle =(mouseX / (float) width) * 90f;
   //PTree0.size =(mouseY / (float) height) *130;
   PTree0.display(); // Careful to always display this tree at the very end (issues with translate(), will solve it later)

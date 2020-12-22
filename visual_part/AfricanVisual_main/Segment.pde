@@ -20,7 +20,7 @@ class Segment {
   }
   
   void display(){
-  stroke(col,opac-age);
+  stroke(col,opac-age*2);
   strokeWeight(2); 
   line(x0,y0,x1,y1);
   age++;

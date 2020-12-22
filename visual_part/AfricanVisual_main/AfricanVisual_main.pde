@@ -39,7 +39,7 @@ void setup() {
   size(1200,800); // Switch to full size ?
   
   // Images
-  bg = loadImage("Asset 5.png"); // Can also try Savane1 or Savane2
+  bg = loadImage("Asset 7.png"); // Can also try Savane1 or Savane2
   bg.resize(width,height);
   scrolling_img = loadImage("frise1.png");
   scrolling_img.resize(width, int(height/10));
@@ -49,12 +49,12 @@ void setup() {
   ScrollingAfrican0 = new ScrollingObject(scrolling_img, 0, 0, height-scrolling_img.height);
   
   // Arrays of trees
-  GrowingArray_green = new GrowingArray(0, 100, 15, 50, PI/3, color(0,255,0), 60);  // (inx, iny, 15 trees, 50 pxls of distance, green, 255 opacity) 
-  GrowingArray_white = new GrowingArray(100, 100, 15, 50, PI/3, color(255), 60);
-  GrowingArray_yellow = new GrowingArray(200, 100, 15, 50, PI/3, color(255,255,0), 60);
+  GrowingArray_green = new GrowingArray(800, 100, 15, 50, PI/3, color(0,255,0), 60);  // (inx, iny, 15 trees, 50 pxls of distance, green, 255 opacity) 
+  GrowingArray_white = new GrowingArray(200, 100, 15, 50, PI/3, color(255), 60);
+  GrowingArray_yellow = new GrowingArray(320, 100, 15, 50, PI/3, color(255,255,0), 60);
 
   // Drum
-  Drum0 = new SvgPic("djembe.svg", 385, 230, drum_period);
+  Drum0 = new SvgPic("djembe.svg", 391, 240, drum_period);
   Drum0.svg.scale(0.85);
   
   // Processing Tree
@@ -189,6 +189,19 @@ void oscEvent(OscMessage theOscMessage) {
       oscP5.send(m, superColliderLocation);
       
       PTree0.size = (130-IP2Pitch)/2;   // [20-110]
+    }
+    
+    // Checking if the phone has been shaken. //THIS SHOULD BE CHANGED LATER BC RIGHT NOW IT SENDS IT AS THE 1ST USER
+    if (theOscMessage.checkAddrPattern("/accelerometer/linear/x")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/y")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/z")==true) {
+      linearAcc = theOscMessage.get(0).floatValue();
+      if(abs(linearAcc)>minAcc && abs(1000*second()+millis()-lastShakeTime)>400){
+        lastShakeTime=1000*second()+millis();
+        println("IP2 shaken");
+        
+        OscMessage m = new OscMessage("/IP2/shaken");
+        m.add(1);
+        oscP5.send(m, superColliderLocation);
+      }
     }
     
     else if (theOscMessage.checkAddrPattern("/orientation/roll")==true) {

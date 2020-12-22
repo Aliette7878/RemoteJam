@@ -24,23 +24,27 @@ s.waitForBoot({
 
 	//Imported "rain sand" file
 	~rain = Buffer.read(s, "sounds/rain-maker.wav", 0, s.sampleRate*3);
+	~rattle = Buffer.read(s, "sounds/sandyrb.wav", 0, s.sampleRate*3);
 
 
 	//synthdef for the buffer sounds
 	SynthDef(\playbuf, {
-		arg amp = 1, out = 0, buf, rate = 1, t_trig, start=0, rel = 0.5, loop = 0, da = 2;
+		arg amp = 2, out = 0, buf, rate = 1, t_trig, start=0, rel = 0.5, loop = 0, da = 2;
 		var sig, env;
 		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, loop, doneAction: da);
 		env = EnvGen.kr(Env.new([0,1,0], [0, rel], [1,-1]), doneAction:2);
 		sig = sig*env;
-		sig = FreeVerb.ar(sig, mix:0.4)*amp;
+		sig = FreeVerb.ar(sig, mix:0.5)*amp;
 
 		Out.ar(out, sig);
 	}).add;
 
-	~playbuf = Synth.new(\playbuf, [\buf, ~mid.bufnum]);
+	//~playbuf = Synth.new(\playbuf, [\buf, ~mid.bufnum]);
 
 	~playbuf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.5, \rel, 2]);
+
+	~playbuf = Synth.new(\playbuf, [\buf, ~rattle.bufnum, \rate, 1.5, \rel, 2, \amp, 1]);
+
 
 
 
@@ -53,9 +57,20 @@ s.waitForBoot({
 		env = EnvGen.kr(Env.new([0,1,0], [atk, rel], [1,-1]), doneAction:2);
 		sig = Pan2.ar(sig, pan, amp);
 		sig = sig * env;
+		sig = FreeVerb.ar(sig);
 		Out.ar(0, sig);
 	}).add;
 
+	SynthDef(\ks_string, {
+		arg note, rand, delayTime;
+		var x, y, env;
+		env = Env.new(#[1, 1, 0],#[2, 0.001]);
+		// A simple exciter x, with some randomness.
+		x = Decay.ar(Impulse.ar(0, 0, rand), 0.1+rand, WhiteNoise.ar);
+		x = CombL.ar(x, 0.05, note.reciprocal, delayTime, EnvGen.ar(env, doneAction:2));
+		x = x*0.5;
+		Out.ar(0, LeakDC.ar(x));
+	}).add;
 
 	//************* SEQUENCING: TONE ********************
 
@@ -90,16 +105,16 @@ s.waitForBoot({
 	).play(quant: 1.875);
 
 	~toneB1 = Pdef(
-		\sinetone3,
+		\tone3,
 		Pbind(
-			\instrument, \sine,
-			//\dur, Pseq([0.5, 0.5], inf),
-			\freq, Prand([[79, 84], [81, 86], [81, 76]].midicps, inf),
-			\atk, Pwhite(0.0, 0.15, inf),
-			\rel, Pwhite(0.7, 0.9, inf),
-			\harmonic, Pexprand(1, 20, inf).round,
-			\amp, Pexprand(0.2, 0.4, inf),
-			);
+			\instrument, \ks_string,
+			\dur, Pseq([0.25, 0.125, 0.125, 0.25], inf),
+			//\note, Prand([[79, 84], [81, 86], [81, 76]].midicps, inf),
+			\note, Prand([48, 50, 55, 57].midicps, inf),
+			\rand, 0.1+0.1.rand,
+			\delayTime, 1+1.0.rand,
+			\amp, Pexprand(0.02, 0.05, inf),
+		);
 	).play(quant: 1.875);
 
 	~toneB2 = Pdef(
@@ -109,22 +124,21 @@ s.waitForBoot({
 			\dur, Pseq([0.25, 0.25, 0.25, 0.25], inf),
 			\freq, Prand([48, 50, 43, 45].midicps, inf),
 			\atk, Pwhite(0.0, 0.05, inf),
-			\rel, Pwhite(0.2, 0.4, inf),
+			\rel, Pwhite(0.1, 0.4, inf),
 			\harmonic, Pexprand(1, 20, inf).round,
-			\amp, Pexprand(0.2, 0.5, inf),
+			\amp, Pexprand(0.2, 0.4, inf),
 			);
 	).play(quant: 1.875);
 
 	~toneC1 = Pdef(
 		\sinetone5,
 		Pbind(
-			\instrument, \sine,
-			\dur, Pseq([0.125, 0.125, 0.125, 0.25, 0.125, 0.25], inf),
-			\freq, Prand([88, 86, 84, 79, 93, 83, 64, 69, 71].midicps, inf),
-			\atk, Pwhite(0.0, 0.05, inf),
-			\rel, Pwhite(0.1, 0.5, inf),
-			\harmonic, Pexprand(1, 20, inf).round,
-			\amp, Pexprand(0.2, 0.4, inf),
+			\instrument, \ks_string,
+			\dur, Pseq([0.125, 0.125, 0.125, 0.25, 0.125, 0.125], inf),
+			\note, Prand([88, 86, 84, 79, 93, 83, 64, 69, 71].midicps, inf),
+			\rand, 0.1+0.1.rand,
+			\delayTime, 2+1.0.rand,
+			\amp, Pexprand(0.01, 0.1, inf),
 			);
 	).play(quant: 1.875);
 
@@ -187,7 +201,7 @@ s.waitForBoot({
 				], inf
 			),
 			\rate, Pexprand(1, 1.05, inf),
-			\amp, Pseq([0.8, Pexprand(0.005,0.3,7)], inf),
+			\amp, Pseq([0.9, Pexprand(0.1,0.5,7)], inf),
 		);
 	).play(quant: 1.875);
 
@@ -197,9 +211,9 @@ s.waitForBoot({
 			\instrument, \playbuf,
 			\dur, Pseq([1/8], inf),
 			\stretch, 60/120 * 4,
-			\buf, Pwrand([~low, ~high, ~mid],[0.5, 0.25, 0.25], inf),
-			\rate, Pexprand(1, 1.05, inf),
-			//\amp, Pseq([0.6, Pexprand(0.005,0.2,2), 0.6, Pexprand(0.005,0.2,4)], inf),
+			\buf, Pwrand([~low, ~mid],[0.6, 0.4], inf),
+			\rate, Pexprand(0.7, 1.05, inf),
+			\amp, Pexprand(0.2,0.5, inf),
 		);
 	).play(quant: 1.875);
 
@@ -208,7 +222,8 @@ s.waitForBoot({
 
 	n = NetAddr.new("127.0.0.1", 57120);
 
-	~osc_light = OSCdef("Light",
+	//FOR LATER: MAP THE LIGHT TO VOLUME
+	/*~osc_light = OSCdef("Light",
 		{
 			arg msg, time, addr, port;
 			("light:" + msg[1]).postln;
@@ -218,19 +233,31 @@ s.waitForBoot({
 			});
 		},
 		'/light'
-	);
+	);*/
 
 
-	~osc_shaker = OSCdef("IP1 shaker",
+	~osc_shaker1 = OSCdef("IP1 shaker",
 		{
 			arg msg, time, addr, port;
 			("IP1 shaken:" + msg[1]).postln;
 			if(msg[1]==1,{
-				~playbuf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.5, \rel, 2]);
+				~playbuf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2, \amp, 3]);
 			});
 
 		},
 		'/IP1/shaken'
+	);
+
+	~osc_shaker2 = OSCdef("IP2 shaker",
+		{
+			arg msg, time, addr, port;
+			("IP2 shaken:" + msg[1]).postln;
+			if(msg[1]==1,{
+				~playbuf = Synth.new(\playbuf, [\buf, ~rattle.bufnum, \rate, 1.5, \rel, 2, \amp, 1]);
+			});
+
+		},
+		'/IP2/shaken'
 	);
 
 	~osc_pattern_1 = OSCdef("Pattern 1",
@@ -285,9 +312,8 @@ s.waitForBoot({
 				~toneA2.stop;
 			});
 		},
-		'/IP1/pattern'
+		'/IP2/timbre'
 	);
-
 
 }))
 
@@ -390,3 +416,5 @@ if(File.exists("sounds/rain-maker.wav"),
 	v.set(\kfreq, 5);
 
 */
+
+

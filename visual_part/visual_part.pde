@@ -1,3 +1,5 @@
+// Script not meant to be used anymore
+
 import netP5.*;
 import oscP5.*;
 
@@ -24,7 +26,7 @@ boolean orientationUpdated;
 String pattern;
 
 float linearAcc;
-float lastAccTime;
+float lastShakeTime;
 int minAcc = 6;
 
 // Variables for IP 2
@@ -54,7 +56,7 @@ void setup()
   posY = height/2-height/20;
   speedX = 0;
   speedY = 0;
-  lastAccTime = 0;
+  lastShakeTime = 0;
   
   IPdevices = new ArrayList<String>();
 }
@@ -98,9 +100,9 @@ void oscEvent(OscMessage theOscMessage) {
     // Checking if the phone has been shaken.
     if (theOscMessage.checkAddrPattern("/accelerometer/linear/x")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/y")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/z")==true) {
       linearAcc = theOscMessage.get(0).floatValue();
-      if(abs(linearAcc)>minAcc && abs(1000*second()+millis()-lastAccTime)>400){
+      if(abs(linearAcc)>minAcc && abs(1000*second()+millis()-lastShakeTime)>400){
         speedX = linearAcc;
-        lastAccTime=1000*second()+millis();
+        lastShakeTime=1000*second()+millis();
         println("IP1 shaken");
         
         OscMessage m = new OscMessage("/IP1/shaken");
@@ -192,5 +194,4 @@ void oscEvent(OscMessage theOscMessage) {
   else{
     println("Too many devices connected (max 2)");
   }
-  
 }

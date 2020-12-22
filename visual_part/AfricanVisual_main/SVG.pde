@@ -35,16 +35,4 @@ class SvgPic {
     update_shape();
     shape(svg, position.x, position.y, shape.x, shape.y);
   }
-  
-}
-
-
-void oscEvent(OscMessage theOscMessage) {
-  /* check if theOscMessage has the address pattern we are looking for. */
-    
-  if (theOscMessage.checkAddrPattern("/light")==true) {
-    drum_period = theOscMessage.get(0).floatValue();  
-    println("new period: "+drum_period);
-  }
-  
 }

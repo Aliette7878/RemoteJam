@@ -1,6 +1,10 @@
-// Parametered linked to OSC messages //
-// User 1 - continuous : angle of PTree0 = PTree0.angle (line 65) for now linked to the mouse, in [0-90°]
-// User 2 - continuous : size of PTree0 = PTree.size (line 66) for now linked to the mouse, in [0 - 130]
+// Parameters linked to OSC messages //
+// User 1 - continuous : angle of PTree0 = PTree0.angle (line 71-72-73) for now linked to the mouse, in [0-90°], or [20-70°] if you prefer the style
+// User 2 - continuous : size of PTree0 = PTree.size (line 71) for now linked to the mouse, in [0 - 130], or [20-120], less weird
+
+// Pattern A - yes/no : opacity of the GrowingArray = GrowingArray_yellow.opac; should be mapped in {60 ; 200} (line 69, example)
+// Pattern B - yes/no : opacity of the GrowingArray = GrowingArray_white.opac; should be mapped in {60 ; 200}, 60=no, 200=yes
+// Pattern C - yes/no : opacity of the GrowingArray = GrowingArray_green.opac; should be mapped in {60 ; 200}, 60=no, 200=yes
 
 
 // Variables
@@ -11,7 +15,7 @@ SvgPic Drum0;
 ScrollingObject ScrollingAfrican0, ScrollingAfrican1;
 GrowingTree GrowingTree0;
 ProcessingTree PTree0;                                 
-GrowingArray GrowingArray_right0,GrowingArray_right1,GrowingArray_right2 ;
+GrowingArray GrowingArray_green,GrowingArray_white,GrowingArray_yellow ;
 
 // OSC setup
 import netP5.*;
@@ -38,9 +42,9 @@ void setup() {
   ScrollingAfrican0 = new ScrollingObject(scrolling_img, 0, 0, height-scrolling_img.height);
   
   // Arrays of trees
-  GrowingArray_right0 = new GrowingArray(0, 100, 15, 50, PI/3, color(0,255,0), 255);  // (inx, iny, 15 trees, 50 pxls of distance, green, 255 opacity) 
-  GrowingArray_right1 = new GrowingArray(100, 100, 15, 50, PI/3, color(255), 100);
-  GrowingArray_right2 = new GrowingArray(200, 100, 15, 50, PI/3, color(255,255,0), 20);
+  GrowingArray_green = new GrowingArray(0, 100, 15, 50, PI/3, color(0,255,0), 60);  // (inx, iny, 15 trees, 50 pxls of distance, green, 255 opacity) 
+  GrowingArray_white = new GrowingArray(100, 100, 15, 50, PI/3, color(255), 60);
+  GrowingArray_yellow = new GrowingArray(200, 100, 15, 50, PI/3, color(255,255,0), 60);
 
   // Drum
   Drum0 = new SvgPic("DrumRed2.svg",440,700, drum_period);
@@ -60,12 +64,12 @@ void draw(){
   ScrollingAfrican1.scroll();
   ScrollingAfrican0.scroll(); 
 
-  GrowingArray_right0.display();
-  GrowingArray_right1.display();
-  GrowingArray_right2.display();
-  
+  GrowingArray_green.display();
+  GrowingArray_white.display();
+  GrowingArray_yellow.display();
+
   Drum0.display();
-  
+  GrowingArray_white.opac=200;
   PTree0.angle =(mouseX / (float) width) * 90f;
   PTree0.size =(mouseY / (float) height) *130;
   PTree0.display(); // Careful to always display this tree at the very end (issues with translate(), will solve it later)

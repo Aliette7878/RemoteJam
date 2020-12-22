@@ -10,8 +10,8 @@ class GrowingTree {
   color col;
   int opac; // Opacity 
   int h = 15; // Length of branches
-  int lifespan = 20; // Lifespan in frames
-  int min_size = 80; // We don't destroy semgents below min_size
+  int lifespan = 50; // Lifespan in frames
+  int min_size = 50; // We don't destroy semgents below min_size
 
   GrowingTree(PVector position, float theta_direction, color color_tree, int opacity) {
     pos = position.get();
@@ -54,7 +54,7 @@ class GrowingTree {
       Segment segment=list_segment.get(l);
       segment.children.remove(destroyed_child);
       if(segment.age>lifespan){list_segment.remove(segment);}
-      } 
+      }
   }
 
   void evolve(){   // Build or destroy a segment
@@ -101,6 +101,8 @@ class GrowingArray{
   void display(){
     for(int i=0; i<n; i++){
       GrowingTree tree = list_growingtree.get(i);
+      tree.opac = opac;
+      tree.col = col;
       tree.display();  }
 }
 }

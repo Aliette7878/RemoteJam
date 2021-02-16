@@ -33,7 +33,7 @@ class ParticleSystem{
       if (mousePressed==true){force1=10; p.lifespan+=2;}; // can be mapped with a special effect, such as the shaker instead of mouseP
       // When sticks are hiting, particles bounce 
       /*if ((theta>-0.03)&&(theta>previous_theta)&&(forsticks==1)){p.applyForce(new PVector(force1*random(-0.1,0.1), -0.3*force1));}*/
-      p.applyForce(new PVector(force1*random(-0.1, 0.1), force1* random(-0.1,0.1))); 
+      p.applyForce(new PVector(force1*random(-0.1*c, 0.1*c), force1* random(-0.1*c,0.1*c))); 
       force1=1; // reset force1
 
       p.action();

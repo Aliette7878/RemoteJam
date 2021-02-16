@@ -12,8 +12,8 @@ class Walker {
   PVector noff;
 
   Walker() {
-    int x = int(random(100, width-100));
-    int y = int(random(100,height-100));
+    int x = int(random(300, width-300));
+    int y = int(random(300,height-300));
     location = new PVector(x,y);
     history = new ArrayList<PVector>();
     noff = new PVector(random(1000), random(1000));
@@ -25,7 +25,7 @@ class Walker {
   void walk() {
     acceleration.x = map(noise(noff.x), 0, 1, -1, 1);
     acceleration.y = map(noise(noff.y), 0, 1, -0.75, 1);
-    acceleration.mult(0.005);
+    acceleration.mult(0.05);
 
     noff.add(0.1,0.1, 0);
 
@@ -38,7 +38,7 @@ class Walker {
       history.remove(0);
     }
     
-    location.y = constrain(location.y, 100, height-100);
+    location.y = constrain(location.y, 200, height-200);
   }
   
   boolean outofscreen(){

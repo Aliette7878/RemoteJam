@@ -14,9 +14,10 @@ void setup() {
 void draw(){
   bg.draw_background();
   theta = theta(frameCount); // theta in [-0.5,0]; 
-  if (random(1)<0.008){Birds.addBird();}
+  if (random(1)<0.01){Birds.addBird();}
   Birds.display();
   Birds.deleteBird();
+  println(frameRate);
 }
 
 

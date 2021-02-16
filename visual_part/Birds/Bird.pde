@@ -1,6 +1,8 @@
 // Bird class
 float density = 0.5;
-int WingLength = 60;
+int WingLength = 40;
+float c = 0.4; // controls the force applied to each particles 
+
 
 class Bird{
   PVector pos; // Position

@@ -13,9 +13,6 @@ void setup() {
   bg.resize(width,height);
   
   //black = loadImage("black.png");
-  
-  //Bluring filters
-  //bg.filter(BLUR, 1);
 
 }
 

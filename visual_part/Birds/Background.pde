@@ -29,6 +29,6 @@ void draw_background(){
   //strokeWeight(14);
   rect(-20, 700, width + 40, 250);
   //image(black, 0, 600, width, 250);
-  } 
+}
 
 }

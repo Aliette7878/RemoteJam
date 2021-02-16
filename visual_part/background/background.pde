@@ -2,7 +2,7 @@ import netP5.*;
 import oscP5.*;
 
 // Variables
-PImage bg, sun, sun2, black;
+PImage bg, black;
 
 void setup() {
   frameRate(60); 
@@ -12,16 +12,10 @@ void setup() {
   bg = loadImage("bg-warli.png");
   bg.resize(width,height);
   
-  sun = loadImage("sun.png");
-  sun2 = loadImage("sun.png");
-  
-  black = loadImage("black.png");
+  //black = loadImage("black.png");
   
   //Bluring filters
-  bg.filter(BLUR, 1);
-  sun.filter(BLUR, 1);
-  sun2.filter(BLUR, 1);
-  black.filter(BLUR, 1);
+  //bg.filter(BLUR, 1);
 
 }
 
@@ -29,6 +23,7 @@ void setup() {
 void draw(){
   
   draw_background();
+  println(frameRate);
   
 }
 
@@ -38,13 +33,19 @@ void draw_background(){
   background(bg);
   
   //The sun (two of them on top of each other)
-  tint(255, 80); //transparency
-  image(sun, width/2 - 375, height/2 + 50, 750, 500);
-  image(sun2, width/2 - 375*0.9, height/2 + 50*1.4, 750*0.9, 500*0.9);
-  
+  fill(255, 240, 0, 100);
+  //noStroke();
+  stroke(250, 200, 50, 80);
+  strokeWeight(10);
+  ellipse(width/2, height/2 + 200, 500, 500);
+    
   //The black horizon
-  tint(255);
-  image(black, 0, 600, width, 250);
+  fill(20,5,5);
+  //stroke(200,250,200,15);
+  //strokeWeight(14);
+  rect(-20, 700, width + 40, 250);
+  
+  //image(black, 0, 600, width, 250);
 }
 
 

@@ -1,18 +1,13 @@
 class Background{
-  PImage bg, sun, sun2, black;
+  PImage bg, black;
   
   Background(){
     // Images
-    bg = loadImage("bg-orange.jpg");
+    bg = loadImage("bg-warli.png");
     bg.resize(width,height);
     
-    sun = loadImage("sun.png");
-    sun2 = loadImage("sun.png");
-    
-    black = loadImage("black.png");
+    //black = loadImage("black.png");
   }
-
-
 
 
 void draw_background(){
@@ -20,18 +15,20 @@ void draw_background(){
   //Yellow background
   background(bg);
   
-  //----------------
-  // -------- THE FOLLOWING LINES CHANGE THE SPEED OF THE ALGORITHM -------
-  //------------------
-  
-  //The sun (two of them on top of each other)
-  tint(255, 80); //transparency
-  image(sun, width/2 - 375, height/2 + 50, 750, 500);
-  image(sun2, width/2 - 375*0.9, height/2 + 50*1.4, 750*0.9, 500*0.9);
-  
+  //The sun
+  // The transparency parameters and the stroke slow the thing a bit
+  fill(255, 240, 0, 100);
+  //noStroke();
+  stroke(250, 200, 50, 80);
+  strokeWeight(10);
+  ellipse(width/2, height/2 + 200, 500, 500);
+    
   //The black horizon
-  tint(255);
-  image(black, 0, 600, width, 250);
+  fill(15,5,5);
+  //stroke(200,250,200,15);
+  //strokeWeight(14);
+  rect(-20, 700, width + 40, 250);
+  //image(black, 0, 600, width, 250);
   } 
 
 }

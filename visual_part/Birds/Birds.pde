@@ -17,8 +17,6 @@ void draw(){
   if (random(1)<0.01){Birds.addBird();}
   Birds.display();
   Birds.deleteBird();
-
-  println(frameRate);
 }
 
 

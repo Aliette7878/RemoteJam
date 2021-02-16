@@ -1,7 +1,6 @@
 // Bird class
 float density = 0.5;
 int WingLength = 40;
-float c = 0.4; // controls the force applied to each particles 
 
 
 class Bird{
@@ -44,6 +43,7 @@ class Bird{
   
   void shrink(){
     N = max(0,N-N*0.001);
+    if (mousePressed==true){N = N-N*0.003;}
     SegR.L=int(N/density);
     SegL.L=SegR.L;
     PSR.N = int(N); PSL.N = int(N);

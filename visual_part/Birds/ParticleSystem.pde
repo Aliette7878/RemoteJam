@@ -1,6 +1,7 @@
 // ParticleSystem class for cpac
 
 // Additional option : mouse pressed --> more particles
+float c = 0.1; // controls the force applied to each particles 
 
 class ParticleSystem{
   ArrayList<Particle> particles;
@@ -30,10 +31,10 @@ class ParticleSystem{
     for(int i=this.particles.size()-1; i>=0; i--){
       p=this.particles.get(i);
       // When mousePressed, particles get wilder
-      if (mousePressed==true){force1=10; p.lifespan+=2;}; // can be mapped with a special effect, such as the shaker instead of mouseP
+      //if (mousePressed==true){force1=10; p.lifespan+=2;}; // can be mapped with a special effect, such as the shaker instead of mouseP
       // When sticks are hiting, particles bounce 
       /*if ((theta>-0.03)&&(theta>previous_theta)&&(forsticks==1)){p.applyForce(new PVector(force1*random(-0.1,0.1), -0.3*force1));}*/
-      p.applyForce(new PVector(force1*random(-0.1, 0.1), force1* random(-0.1,0.1))); 
+      p.applyForce(new PVector(force1*random(-0.1*c, 0.1*c), force1* random(-0.1*c,0.1*c))); 
       force1=1; // reset force1
 
       p.action();

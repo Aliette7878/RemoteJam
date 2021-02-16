@@ -1,23 +1,22 @@
 float theta;
 BirdArray Birds ;
+Background bg ;
 
 void setup() {
   frameRate(60); 
   size(1200,800);
   Birds = new BirdArray();
-  Birds.addBird();
-  
+  bg  = new Background();
 
 }
 
 
 void draw(){
-  background(255,165,0);
-  theta = theta(frameCount); // theta in [-0.5,0];  
+  bg.draw_background();
+  theta = theta(frameCount); // theta in [-0.5,0]; 
+  if (random(1)<0.008){Birds.addBird();}
   Birds.display();
   Birds.deleteBird();
-  if (random(1)<0.008){Birds.addBird();}
-
 }
 
 

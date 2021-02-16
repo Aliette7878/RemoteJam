@@ -1,3 +1,5 @@
+// A segment can be updated
+
 class Segment {
   PVector pos1; // Position (fixed)
   PVector pos2; // Position
@@ -13,7 +15,7 @@ class Segment {
   }
   
   
-  void display(){
+  void update(){
     strokeWeight(4); 
     stroke(0);
     pos2 = new PVector(pos1.x + side*L*cos(theta-PI/6),pos1.y + L*sin(theta-PI/6));

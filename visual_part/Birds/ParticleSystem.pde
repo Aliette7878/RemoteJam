@@ -1,32 +1,32 @@
 // ParticleSystem class for cpac
-// Additional options : mouse pressed --> more particles
+
+// Additional option : mouse pressed --> more particles
 
 class ParticleSystem{
   ArrayList<Particle> particles;
   PVector origin;
   float force1=1;
+  int N;
   
-  ParticleSystem(){
+  ParticleSystem(PVector origin, int NParticles){
     this.particles = new ArrayList<Particle>();
+    this.origin=origin.copy(); 
+    N = NParticles;
   }
-  ParticleSystem(PVector origin){
-    this.particles = new ArrayList<Particle>();
-    this.origin=origin.copy();
-  }
+  
   void addParticle(){
     this.particles.add(new Particle(this.origin, 3, random(50,255)));   
   }
   
-  // the origin of the particleSystem is randomly placed on the stick
-  void updateOrigin(Segment segment){ 
+  void updateOrigin(Segment segment){    // the origin of the particleSystem is randomly placed on the stick
   float i = random(1);
   origin.x = int(i*segment.pos1.x + (1-i)*segment.pos2.x);
   origin.y = int(i*segment.pos1.y + (1-i)*segment.pos2.y);
   }  
   
-  void action(int forsticks){
+  void action(){
     Particle p;
-    float previous_theta = theta(frameCount-1); // previous theta
+    //float previous_theta = theta(frameCount-1); // previous theta
     for(int i=this.particles.size()-1; i>=0; i--){
       p=this.particles.get(i);
       // When mousePressed, particles get wilder
@@ -40,7 +40,7 @@ class ParticleSystem{
       p.lifespan-=5;
       if(p.isDead()){
          particles.remove(i);
-         this.addParticle();
+         if (this.particles.size()<N){this.addParticle();}
       }
     
     }

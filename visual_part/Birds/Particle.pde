@@ -28,6 +28,7 @@ class Particle{
     noStroke();
     ellipse(this.location.x, this.location.y, this.radius_circle, this.radius_circle);    
   }
+  
   boolean isDead(){
     return this.lifespan<=0;
   }

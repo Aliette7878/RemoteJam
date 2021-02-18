@@ -21,7 +21,7 @@ class leaf {
     rotate(angle);
     svg.disableStyle();
     fill(col);
-    shape(svg,-leaf1.w/2,-leaf1.h);
+    shape(svg,-w/2,-h);
     popMatrix();
   }
 }

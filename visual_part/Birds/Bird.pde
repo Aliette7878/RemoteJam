@@ -30,15 +30,14 @@ class Bird{
       }
     } 
 
-  void move(){    
+  void move(){  
+    Walker.walk();
     SegL.update(); // Update segment's angle according to theta
-    SegR.update();
-    //SegL.pos1.mult(1.0003); // Update segment's position
-    SegL.pos1 = Walker.location;
+    SegR.update(); 
+    SegL.pos1 = Walker.location; // Update segment's position
     SegR.pos1 = Walker.location;
     PSR.updateOrigin(SegR); // Update the PS position
     PSL.updateOrigin(SegL); 
-    Walker.walk();
   }
   
   void shrink(){
@@ -56,4 +55,5 @@ class Bird{
     PSL.action();
 
   }
+
 }

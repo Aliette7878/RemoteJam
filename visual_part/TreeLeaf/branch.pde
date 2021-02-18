@@ -1,4 +1,4 @@
-float crook = 0.3;  // how twisted the branch will be
+float crook = 0.1;  // how twisted the branch will be
 // we're working on a tree going for the left to the right for now
   
 class branch {
@@ -17,7 +17,7 @@ class branch {
   void display(){
 
   noFill();
-  stroke(255,10,10);
+  stroke(0);
   beginShape();
   curveVertex(start.x,start.y); // the first control point
   curveVertex(start.x,start.y); // is also the start point of curve

@@ -1,23 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!-- Created with Vectornator for iOS (http://vectornator.io/) --><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 1190.7 841.995">
-<metadata>
-<vectornator:setting key="DimensionsVisible" value="1"/>
-<vectornator:setting key="New" value="1"/>
-<vectornator:setting key="SnapToPoints" value="0"/>
-<vectornator:setting key="GuidesVisible" value="1"/>
-<vectornator:setting key="RulersVisible" value="1"/>
-<vectornator:setting key="CMYKEnabledKey" value="0"/>
-<vectornator:setting key="SnapToEdges" value="0"/>
-<vectornator:setting key="DisplayWhiteBackground" value="0"/>
-<vectornator:setting key="SnapToGuides" value="1"/>
-<vectornator:setting key="GridSpacing" value="36"/>
-<vectornator:setting key="Units" value="Millimeters"/>
-<vectornator:setting key="DynamicGuides" value="0"/>
-<vectornator:setting key="SnapToGrid" value="0"/>
-</metadata>
-<defs/>
-<g id="Calque 1" vectornator:layerName="Calque 1">
-<path stroke="#000000" stroke-width="1" d="M443.775+648.186C443.364+650.188+439.103+646.13+439.743+649.914C443.338+671.162+430.812+712.714+430.627+733.219C430.56+740.636+436.879+735.355+436.879+735.355C436.879+735.355+440.569+658.846+447.007+649.66" fill="#000000" stroke-linecap="butt" opacity="1" stroke-linejoin="round"/>
-<path stroke="#000000" stroke-width="1" d="M437.304+735.286C437.304+735.286+432.3+737.431+428.262+739.374C427.017+739.973+422.047+738.106+419.66+739.096C417.272+740.086+417.12+743.194+418.712+743.334C421.419+743.571+427.423+743.534+431.683+743.156C434.067+742.945+435.905+742.627+436.314+742.192C439.689+738.6+437.304+735.286+437.304+735.286Z" fill="#000000" stroke-linecap="butt" opacity="1" stroke-linejoin="round"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.0" id="Layer_1" xmlns:vectornator="http://vectornator.io"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1190.7 842"
+	 style="enable-background:new 0 0 1190.7 842;" xml:space="preserve">
+<g id="Calque_1" vectornator:layerName="Calque 1">
+	<path style="stroke:#000000;stroke-linejoin:round;" d="M443.8,648.2c-0.4,2-4.7-2.1-4,1.7c3.6,21.2-8.9,62.8-9.1,83.3
+		c-0.1,7.4,6.3,2.1,6.3,2.1s3.7-76.5,10.1-85.7"/>
+	<path style="stroke:#000000;stroke-linejoin:round;" d="M437.3,735.3c0,0-5,2.1-9,4.1c-1.2,0.6-6.2-1.3-8.6-0.3
+		c-2.4,1-2.5,4.1-0.9,4.2c2.7,0.2,8.7,0.2,13-0.2c2.4-0.2,4.2-0.5,4.6-1C439.7,738.6,437.3,735.3,437.3,735.3z"/>
 </g>
 </svg>

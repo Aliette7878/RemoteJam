@@ -52,7 +52,7 @@ class Character {
   }
 
   public void DrawCharacter() {
-    BodyPart trying1 = new BodyPart(dataPath("sprites/body_low.obj  "));
+    BodyPart trying1 = new BodyPart(dataPath("sprites/Stickman_full.svg"));
     trying1.DrawBodyPart(new PVector(centerX,centerY), 0, 0.1);
   }
 }

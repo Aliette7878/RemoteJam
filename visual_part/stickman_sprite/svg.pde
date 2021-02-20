@@ -2,21 +2,31 @@ class BodyPart {
   PShape svg; // Image
   int w, h; // Dimensions
   color col = color(255, 10, 10);
+  float posX, posY;
 
   BodyPart(String file_name) {
     svg = loadShape(file_name);
-    svg.scale(0.3);  // TODO: erase this line
-    w = int(svg.width); 
-    h = int(svg.height);
+    float scale = 0.15;
+    svg.scale(scale);  // TODO: erase this line
+    w = int(svg.width*scale); 
+    h = int(svg.height*scale*0.98);
   }
 
-  void DrawBodyPart(PVector position, float angle, float scale) {
+  void SetOriginalPosition(PVector originalPosition) {
+    posX = originalPosition.x;
+    posY = originalPosition.y;
+  }
+
+  void DrawBodyPart(float shiftX, float shiftY, float angle) {
     pushMatrix();
-    translate(position.x, position.y);
-    rotate(angle);
+    translate(posX+shiftX, posY+shiftY);
+    if (angle != 0) {
+      rotate(angle);
+    }
     svg.disableStyle();
     fill(col);
-    shape(svg, -scale*w/2, -scale*h);
+    // each image is centered horizontally, but not vertically! its y coordinate will be the anchor of the top of the picture.
+    shape(svg, -w/2, 0);
     popMatrix();
   }
 }

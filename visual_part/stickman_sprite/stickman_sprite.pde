@@ -4,9 +4,9 @@ int populationSize;
 
 void setup() {
   size (1080, 720);
-  frameRate(120);
+  frameRate(60);
 
-  populationSize = 1;
+  populationSize = 20;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
     people[i] = new Character();
@@ -23,8 +23,8 @@ void draw() {
   }
   //println(frameRate);
 }
-//void mouseClicked() {
-//  for (Character charact : people) {
-//    charact.dancing=false;
-//  }
-//}
+void mouseClicked() {
+  for (Character charact : people) {
+    charact.dancing=false;
+  }
+}

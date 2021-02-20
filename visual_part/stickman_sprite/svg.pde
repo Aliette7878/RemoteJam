@@ -5,7 +5,7 @@ class BodyPart {
 
   BodyPart(String file_name) {
     svg = loadShape(file_name);
-    svg.scale(1);  // TODO: erase this line
+    svg.scale(0.3);  // TODO: erase this line
     w = int(svg.width); 
     h = int(svg.height);
   }

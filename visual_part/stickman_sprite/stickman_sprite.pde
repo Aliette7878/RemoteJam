@@ -6,7 +6,7 @@ void setup() {
   size (1080, 720);
   frameRate(120);
 
-  populationSize = 40;
+  populationSize = 1;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
     people[i] = new Character();
@@ -21,7 +21,7 @@ void draw() {
     charact.UpdateChar();
     charact.DrawCharacter();
   }
-  println(frameRate);
+  //println(frameRate);
 }
 //void mouseClicked() {
 //  for (Character charact : people) {

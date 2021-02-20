@@ -1,21 +1,35 @@
-class Character {
+class Character { //<>//
 
   private int centerX;
   private int centerY;
-  //private float headY;
-  //private float dancingStep;
-  //private int dancingAmplitude;
-  //private float walkingStep;
-  //private int walkingAmplitude;
-  //private float walkingSpeed;
-  //private int walkingStepSens;
-  //private int walkingDirection;
-  //private boolean dancing;
 
+  BodyPart leftLeg;
+  BodyPart rightLeg;
+  BodyPart leftForeLeg;
+  BodyPart rightForeLeg;
+  BodyPart lowBody;
+  BodyPart highBody;
+  BodyPart head;
+  BodyPart leftForearm;
+  BodyPart rightForearm;
+  BodyPart leftArm;
+  BodyPart rightArm;
 
   Character() {
-    centerX = int(random(0, width));
-    centerY = 135;
+    centerX = int(random(width/10, 9*width/10));
+    centerY = 600;
+
+    leftLeg = new BodyPart(dataPath("sprites/leg_left.svg"));
+    rightLeg = new BodyPart(dataPath("sprites/leg_right.svg"));
+    leftForeLeg = new BodyPart(dataPath("sprites/foreleg_left.svg"));
+    rightForeLeg = new BodyPart(dataPath("sprites/foreleg_right.svg"));
+    lowBody = new BodyPart(dataPath("sprites/body_low.svg"));
+    highBody = new BodyPart(dataPath("sprites/body_high.svg"));
+    head = new BodyPart(dataPath("sprites/head_and_neck.svg"));
+    leftForearm = new BodyPart(dataPath("sprites/forearm_left.svg"));
+    rightForearm = new BodyPart(dataPath("sprites/forearm_right.svg"));
+    leftArm = new BodyPart(dataPath("sprites/arm_left.svg"));
+    rightArm = new BodyPart(dataPath("sprites/arm_right.svg"));
 
     //headY = 60;
     //dancingStep = 0;
@@ -33,7 +47,7 @@ class Character {
 
   public void UpdateChar() {
 
-    centerX+=1;
+    centerX+=0.2;
 
     //if (dancing) {
     //  dancingStep+=dancingAmplitude/20.0;
@@ -52,7 +66,17 @@ class Character {
   }
 
   public void DrawCharacter() {
-    BodyPart trying1 = new BodyPart(dataPath("sprites/Stickman_full.svg"));
-    trying1.DrawBodyPart(new PVector(centerX,centerY), 0, 0.1);
+    leftLeg.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    rightLeg.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    leftForeLeg.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    rightForeLeg.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    lowBody.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    highBody.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    head.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    leftForearm.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    rightForearm.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    leftArm.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+    rightArm.DrawBodyPart(new PVector(centerX, centerY), 0, 0.5);
+
   }
 }

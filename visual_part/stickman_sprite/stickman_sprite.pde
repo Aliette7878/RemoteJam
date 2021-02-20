@@ -4,7 +4,7 @@ int populationSize;
 
 void setup() {
   size (1080, 720);
-  frameRate(60);
+  frameRate(30);
 
   populationSize = 20;
   people = new Character[populationSize];

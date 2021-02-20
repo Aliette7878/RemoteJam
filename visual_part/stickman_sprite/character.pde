@@ -55,7 +55,7 @@ class Character { //<>//
 
     headY = 0;
     dancingStep = 0;
-    dancingAmplitude = 30;
+    dancingAmplitude = 40;
     dancing = true;
 
     //walkingStep = 0;
@@ -97,17 +97,32 @@ class Character { //<>//
   public void DrawCharacter() {
 
     if (dancing) {
+      float horizontalUpperDrift;
+      float armsAngle;
+      float forearmsAngle;
+      float cosArmsAngle;
+      float cosForearmsAngle;
+      if (dancingStep<20) {
+        horizontalUpperDrift = (dancingStep-dancingAmplitude/4)/3;
+        armsAngle = dancingStep/10.0;
+      } else {
+        horizontalUpperDrift = (40-dancingStep-dancingAmplitude/4)/3;
+        armsAngle = (40-dancingStep)/10.0;
+      }
+      cosArmsAngle = cos(armsAngle+0.5);
+      forearmsAngle = armsAngle*1.2;
+      cosForearmsAngle = cos(forearmsAngle+0.5);
 
       //tronc
       lowBody.DrawBodyPart(0, 0, 0);
-      highBody.DrawBodyPart((dancingStep-15)/3, 0, 0);
-      head.DrawBodyPart((dancingStep-15)/3, headY, 0);
+      highBody.DrawBodyPart(horizontalUpperDrift, 0, 0);
+      head.DrawBodyPart(horizontalUpperDrift, headY, 0);
 
       //arms
-      leftArm.DrawBodyPart((dancingStep-15)/3, 0, -dancingStep/10.0);
-      rightArm.DrawBodyPart((dancingStep-15)/3, 0, dancingStep/10.0);
-      leftForearm.DrawBodyPart((dancingStep-15)/3, 0, -dancingStep/10.0);
-      rightForearm.DrawBodyPart((dancingStep-15)/3, 0, dancingStep/10.0);
+      leftArm.DrawBodyPart(horizontalUpperDrift, leftArm.h*(cosArmsAngle-1)/2, -armsAngle);
+      rightArm.DrawBodyPart(horizontalUpperDrift, rightArm.h*(cosArmsAngle-1)/2, armsAngle);
+      leftForearm.DrawBodyPart(horizontalUpperDrift+leftArm.w*(1-cosForearmsAngle)/2, leftArm.h*(cosArmsAngle-1)+leftForearm.h*(cosArmsAngle-1)/2, -forearmsAngle);
+      rightForearm.DrawBodyPart(horizontalUpperDrift-rightArm.w*(1-cosForearmsAngle)/2, rightArm.h*(cosArmsAngle-1)+rightForearm.h*(cosArmsAngle-1)/2, forearmsAngle);
 
       //legs
       leftLeg.DrawBodyPart(0, 0, 0);

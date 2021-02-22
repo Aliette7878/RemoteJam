@@ -9,7 +9,7 @@ void setup() {
   populationSize = 20;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(20, 200);
+    people[i] = new Character(20, 100);
   }
 }
 

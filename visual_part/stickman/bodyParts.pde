@@ -12,7 +12,23 @@ class Body {
   void display() {
     if (c.dancing) {
       triangle (c.centerX, c.centerY, c.centerX+0.25*size, c.centerY-0.5*size, c.centerX-0.25*size, c.centerY-0.5*size);
-      triangle (c.centerX, c.centerY, c.centerX+0.25*size, c.centerY+0.5*size, c.centerX-0.25*size, c.centerY+0.5*size);
+      //triangle (c.centerX, c.centerY, c.centerX+0.25*size, c.centerY+0.5*size, c.centerX-0.25*size, c.centerY+0.5*size);
+      fill(255);
+      beginShape(TRIANGLE_STRIP);
+
+      vertex(c.centerX+0.525*size/2, c.centerY+size/2);
+      vertex(c.centerX, c.centerY);
+      vertex(c.centerX-0.525*size/2, c.centerY+size/2);
+
+      vertex(c.centerX-0.525*size/2, c.centerY+size/2);
+      vertex(c.centerX-0.35*size/2, c.centerY+0.6*size/2);
+      vertex(c.centerX-0.175*size/2, c.centerY+size/2);
+      vertex(c.centerX, c.centerY+0.6*size/2);
+      vertex(c.centerX+0.175*size/2, c.centerY+size/2);
+      vertex(c.centerX+0.35*size/2, c.centerY+0.6*size/2);
+      vertex(c.centerX+0.525*size/2, c.centerY+size/2);
+      endShape();
+      fill(0);
     } else {
       triangle (c.centerX, c.centerY, c.centerX+0.22*size, c.centerY-0.5*size, c.centerX-0.22*size, c.centerY-0.5*size);
       triangle (c.centerX, c.centerY, c.centerX+0.2*size, c.centerY+0.5*size, c.centerX-0.2*size, c.centerY+0.5*size);
@@ -95,7 +111,7 @@ class Arms {
   }
 
   void display() {
-    
+
 
     if (c.dancing) {
 
@@ -108,7 +124,7 @@ class Arms {
       line (c.centerX+0.4*size, c.centerY-0.15*size, c.centerX+0.5*size+c.dancingStep, c.centerY+0.25*size-c.dancingStep/2);
     } else {
 
-      
+
       //Arms
       line (c.centerX-0.15*size, c.centerY-0.5*size, c.centerX-0.15*size+c.walkingStep/2, c.centerY-0.15*size);
       line (c.centerX-0.15*size+c.walkingStep/2, c.centerY-0.15*size, c.centerX-0.15*size+1.5*c.walkingStep, c.centerY+0.25*size+c.walkingStep/2);
@@ -122,7 +138,7 @@ class Arms {
 class Head {
 
   private int size;
-  
+
   public float headY;
 
   private Character c;
@@ -134,7 +150,7 @@ class Head {
   }
 
   void display() {
-    
+
 
     //Head
     ellipse (c.centerX, headY, 0.86*size, 0.9*size);

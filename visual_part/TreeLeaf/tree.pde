@@ -1,10 +1,8 @@
-float sizeMax = pow(2,6); //nbMax branches pow(2,6) = smallsize to work with
 
 class tree{
   float nbBranch;
   int age = 0;
   int L= 80, opacity = 255;
-  float speed = frameRate*10; // speed of development for every branch
   ArrayList<branch> branches;  
   branch branch1;
   float bias;
@@ -72,11 +70,12 @@ class tree{
          branch.grow_leaf();
          // Branch creation
          if (branch.adultSwitch && (nbBranch<sizeMax)){
-           L=max(int(random(30,40)),int(L*0.95));
-           if (nbBranch<pow(2,4)){
-           nbBranch=nbBranch+2;
-           add2Branch(branch.end,L);}
-           else { nbBranch++; add1Branch(branch.mid,L);}
+           L=max(int(random(30,80)),int(L*0.95));
+           if (nbBranch<pow(2,2)){  // After 2 levels, we stop computing 2 branches from 1
+             nbBranch=nbBranch+2;
+             add2Branch(branch.end,L);
+             branch.adultSwitch=false;}
+           else { if (random(1)<0.3){nbBranch++; add1Branch(branch.mid,L); branch.adultSwitch=false;}}
          }    
       }
       

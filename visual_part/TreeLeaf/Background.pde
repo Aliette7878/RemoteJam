@@ -9,7 +9,6 @@ class Background{
     //black = loadImage("black.png");
   }
 
-
 void draw_background(){
   
   //Yellow background

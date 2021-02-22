@@ -1,11 +1,9 @@
-// Why is this class cool ? 
-// Because with "translate" and "rotate", we're able to command exactly the position & orientation of the leave
 
-// CAREFUL : for now, variables below CAN NOT BE MODIFIABLE
+//****DO NOT MODIFY****
 String file_name = "tree-leaf.svg" ;
 float s = 0.01; // first scaler for the svg file
-float N_scale = frameRate*12 ; // number of rescaling before staying at the same size (here 12sec)
 float step_s = 1.003; // scaler applied at each step of the growth
+float N_scale = frameRate*TimeLeaf ; // number of rescaling before staying at the same size (here 12sec)
 
 class leaf {
   PShape svg; // Image

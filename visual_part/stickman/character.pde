@@ -1,8 +1,19 @@
 class Character {
 
+  private int size;
+  
+  
   private int centerX;
   private int centerY;
-  private float headY;
+  
+  private Body body;
+  private Legs legs;
+  private Arms arms;
+  private Head head;
+  
+  
+  
+  
   private float dancingStep;
   private int dancingAmplitude;
   private float walkingStep;
@@ -13,10 +24,18 @@ class Character {
   private boolean dancing;
 
 
-  Character(int maxspeed) {
+  Character(int maxspeed, int size_input) {
+    size = size_input;
+    
     centerX = int(random(0, width));
-    centerY = 135;
-    headY = 60;
+    centerY = 110;
+    
+    body = new Body(this, size/2);
+    legs = new Legs(this, size/3);
+    arms = new Arms(this, size/2);
+    head = new Head(this, size/5);
+    
+    
     dancingStep = 0;
     dancingAmplitude = 30;
     walkingStep = 0;
@@ -35,7 +54,6 @@ class Character {
     if (dancing) {
       dancingStep+=dancingAmplitude/20.0;
       dancingStep %= dancingAmplitude;
-      headY = 60-dancingStep/4;
     } else {
       walkingStep+=walkingStepSens*walkingAmplitude*walkingSpeed/20;
       if (walkingStep>walkingAmplitude) {
@@ -43,7 +61,6 @@ class Character {
       } else if (walkingStep<-walkingAmplitude) {
         walkingStepSens= +1;
       }
-      headY = 60-walkingStep/6;
       centerX+=walkingDirection*walkingSpeed;
     }
   }
@@ -52,77 +69,14 @@ class Character {
     ellipseMode (CENTER);
     rectMode (CENTER);
     strokeWeight(3);
-
-    //Head
     fill(0);
-    ellipse (centerX, headY, 38, 40);
+    
+    
+    body.display();
+    legs.display();
+    arms.display();
+    head.display();
 
-    //Neck
-    line (centerX, headY+22, centerX, centerY-50);
-
-
-
-    if (dancing) {
-
-      //Body
-      triangle (centerX, centerY, centerX+25, centerY-50, centerX-25, centerY-50);
-      triangle (centerX, centerY, centerX+25, centerY+50, centerX-25, centerY+50);
-
-      //Arms
-      line (centerX-25, centerY-50, centerX-40, centerY-15);
-      line (centerX-40, centerY-15, centerX-50-dancingStep, centerY+25-dancingStep/2);
-
-      line (centerX+25, centerY-50, centerX+40, centerY-15);
-      line (centerX+40, centerY-15, centerX+50+dancingStep, centerY+25-dancingStep/2);
-
-      if (dancingStep<10) {
-
-        //Legs
-        line (centerX-10, centerY+50, centerX-20-dancingStep, centerY+80);
-        line (centerX-20-dancingStep, centerY+80, centerX-20-dancingStep, centerY+115);
-
-        line (centerX+10, centerY+50, centerX+20, centerY+80);
-        line (centerX+20, centerY+80, centerX+20, centerY+115);
-
-        //Feets
-        line (centerX-20-dancingStep, centerY+115, centerX-25-dancingStep, centerY+115);
-        line (centerX+20-dancingStep, centerY+115, centerX+25-dancingStep, centerY+115);
-      } else {
-
-        //Legs
-        line (centerX-10, centerY+50, centerX-20, centerY+80);
-        line (centerX-20, centerY+80, centerX-20, centerY+115);
-
-        line (centerX+10, centerY+50, centerX+20+dancingStep-10, centerY+80);
-        line (centerX+20+dancingStep-10, centerY+80, centerX+20+dancingStep-10, centerY+115);
-
-        //Feets
-        line (centerX-20+dancingStep-10, centerY+115, centerX-25+dancingStep-10, centerY+115);
-        line (centerX+20+dancingStep-10, centerY+115, centerX+25+dancingStep-10, centerY+115);
-      }
-    } else {
-
-      //Body
-      triangle (centerX, centerY, centerX+15, centerY-50, centerX-15, centerY-50);
-      triangle (centerX, centerY, centerX+20, centerY+50, centerX-20, centerY+50);
-      
-      //Arms
-      line (centerX-15, centerY-50, centerX-15+walkingStep/2, centerY-15);
-      line (centerX-15+walkingStep/2, centerY-15, centerX-15+1.5*walkingStep, centerY+25+walkingStep/2);
-
-      line (centerX+15, centerY-50, centerX+15-walkingStep/2, centerY-15);
-      line (centerX+15-walkingStep/2, centerY-15, centerX+15-1.5*walkingStep, centerY+25+walkingStep/2);
-
-      //Legs
-      line (centerX-10, centerY+50, centerX-20-walkingStep/2, centerY+80);
-      line (centerX-20-walkingStep/2, centerY+80, centerX-20-walkingStep, centerY+115);
-
-      line (centerX+10, centerY+50, centerX+20+walkingStep/2, centerY+80);
-      line (centerX+20+walkingStep/2, centerY+80, centerX+20+walkingStep, centerY+115);
-
-      //Feets
-      line (centerX-20-walkingStep, centerY+115, centerX-20-walkingStep+walkingDirection*5, centerY+115);
-      line (centerX+20+walkingStep, centerY+115, centerX+20+walkingStep+walkingDirection*5, centerY+115);
-    }
+    
   }
 }

@@ -4,12 +4,12 @@ int populationSize;
 
 void setup() {
   size (1080, 720);
-  frameRate(200);
+  frameRate(60);
 
   populationSize = 20;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(20);
+    people[i] = new Character(20, 200);
   }
 }
 

@@ -1,9 +1,13 @@
-
-//****DO NOT MODIFY****
+//****DO NOT MODIFY BELOW****
 String file_name = "tree-leaf.svg" ;
-float s = 0.02; // first scaler for the svg file
-float step_s = 1.003; // scaler applied at each step of the growth
-float N_scale = fps*TimeLeaf ; // number of rescaling before staying at the same size (here 12sec)
+// A bit of math to understant what follow : 
+// o We saw that when fps=60 and TimeLeave=12sec, we need step_s = 1.003
+// o pow(step_s, N_scale) is the equivalent scaler for every fps, and this constant is also equal to step_s = pow(1.003, 60*12);
+// o step_s = pow(pow(1.003, 60*12), 1/Nscale)
+float N_scale = fps*TimeLeaf; 
+float s = 0.012; // first scaler applied to the svg file
+float step_s = pow(pow(1.003, 60*12), 1/N_scale); // scaler applied at every iteration of the growth
+
 
 class leaf {
   PShape svg; // Image

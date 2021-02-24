@@ -1,4 +1,4 @@
-float adult_age = TimeBranch*fps ;
+float adult_age = TimeBranch*fps ; // nb frame before the branch is adult
 
 class warlitree{
   
@@ -48,8 +48,7 @@ class warlitree{
   
   void addBranch(){
       int lengthy = int(random(20, L));
-      println(lengthy);
-      if (col=="red" && (lengthy<80)){side = 1; println(side);} 
+      if (col=="red" && (lengthy<80)){side = 1; } 
       else if (col=="blue" && (lengthy<80)){side = -1;} 
       branch c = new branch(side*int(random(20, lengthy)),lengthy, new PVector(0,random(-L,0)),col); 
       branches.add(c);
@@ -90,6 +89,7 @@ class branch{
   leaf leaf1, leaf2;
   float t;
   boolean falling=false;
+  float bias;
   
     branch(int Lengthx, int Lengthy, PVector position, String col){  
       fLx = Lengthx;
@@ -99,7 +99,7 @@ class branch{
       leaf1 = new leaf(col);
       leaf2 = new leaf(col);
       leaf_angle = random(-PI,PI);
-      t = random(0.7,1);
+      t = random(0.1,0.95);
       A = new PVector(pos.x, pos.y-Ly);
       B = new PVector(pos.x - Lx, pos.y-Ly);
       end = new PVector( pos.x-Lx, pos.y-Ly/2); // END
@@ -123,26 +123,26 @@ class branch{
     // Make the branch and its leaf grow
     void grow(){
        age++;
+       leaf1.grow();
+       leaf2.grow();
        if (age<adult_age) {
-           leaf1.grow();
-           //leaf2.grow();
            Lx=int(map(age,1,adult_age,0,fLx));
            Ly = int(map(age, 1, adult_age, 0, fLy));
            leaf1.position = new PVector(pos.x*pow(1-t,3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t,3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
-           //leaf2.position = new PVector(end.x*pow(1-t,3)+3*B.x*t*(1-t)*(1-t)+3*A.x*t*t*(1-t)+pos.x*t*t*t, end.y*pow(1-t,3)+3*B.y*t*(1-t)*(1-t)+3*A.y*t*t*(1-t)+pos.y*t*t*t);
-
+           leaf2.position = new PVector(end.x, end.y);
      }
     }
     
     void displayLeaf(){
       if (falling){
             leaf1.position.add(new PVector(random(-1,1),random(2,3)));
-            //leaf2.position.add(new PVector(random(-1,1),random(2,3)));
+            leaf2.position.add(new PVector(random(-1,1),random(2,3)));
             leaf_angle=leaf_angle+random(-PI/12,PI/12);
             if (leaf1.position.y>height){falling = false;}
       }
+
       leaf1.display(leaf_angle);
-      leaf2.display(leaf_angle);
+      leaf2.display(-leaf_angle);
 
     }
     

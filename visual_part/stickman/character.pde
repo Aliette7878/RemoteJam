@@ -52,10 +52,10 @@ class Character {
   public void UpdateChar() {
 
     if (dancing) {
-      dancingStep+=dancingAmplitude/20.0;
+      dancingStep+=2*dancingAmplitude/frameRate;
       dancingStep %= dancingAmplitude;
     } else {
-      walkingStep+=walkingStepSens*walkingAmplitude*walkingSpeed/20;
+      walkingStep+=2*walkingStepSens*walkingAmplitude*walkingSpeed/frameRate;
       if (walkingStep>walkingAmplitude) {
         walkingStepSens = -1;
       } else if (walkingStep<-walkingAmplitude) {
@@ -63,6 +63,7 @@ class Character {
       }
       centerX+=walkingDirection*walkingSpeed;
     }
+    arms.updatePart();
   }
 
   public void DrawCharacter() {

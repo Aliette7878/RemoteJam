@@ -36,6 +36,8 @@ class Body {
   }
 }
 
+
+
 class Legs {
 
   private int size;
@@ -62,8 +64,8 @@ class Legs {
         line (c.centerX+0.12*size, centerYLegs, c.centerX+0.12*size, centerYLegs+size/2);
 
         //Feets
-        line (c.centerX-0.12*size-c.dancingStep, centerYLegs+size/2, c.centerX-0.2*size-c.dancingStep, centerYLegs+size/2);
-        line (c.centerX+0.12*size-c.dancingStep, centerYLegs+size/2, c.centerX+0.2*size-c.dancingStep, centerYLegs+size/2);
+        line (c.centerX-0.12*size-c.dancingStep/2, centerYLegs+size/2, c.centerX-0.2*size-c.dancingStep/2, centerYLegs+size/2);
+        line (c.centerX+0.12*size-c.dancingStep/2, centerYLegs+size/2, c.centerX+0.2*size-c.dancingStep/2, centerYLegs+size/2);
       } else {
 
         //Legs
@@ -74,8 +76,8 @@ class Legs {
         line (c.centerX+0.12*size+c.dancingStep-10, centerYLegs, c.centerX+0.12*size+c.dancingStep-10, centerYLegs+size/2);
 
         //Feets
-        line (c.centerX-0.12*size-c.dancingStep-10, centerYLegs+size/2, c.centerX-0.2*size-c.dancingStep-10, centerYLegs+size/2);
-        line (c.centerX+0.12*size-c.dancingStep-10, centerYLegs+size/2, c.centerX+0.2*size-c.dancingStep-10, centerYLegs+size/2);
+        line (c.centerX-0.12*size+c.dancingStep/2-5, centerYLegs+size/2, c.centerX-0.2*size+c.dancingStep/2-5, centerYLegs+size/2);
+        line (c.centerX+0.12*size+c.dancingStep/2-5, centerYLegs+size/2, c.centerX+0.2*size+c.dancingStep/2-5, centerYLegs+size/2);
       }
     } else {
 
@@ -104,36 +106,67 @@ class Arms {
   private int size;
 
   private Character c;
+  private float RshoulderX, RshoulderY;
+  private float RelbowX, RelbowY;
+  private float RwristX, RwristY;
+  private float LshoulderX, LshoulderY;
+  private float LelbowX, LelbowY;
+  private float LwristX, LwristY;
 
   Arms(Character character, int size_input) {
     size = size_input;
     c = character;
+    updatePart();
+  }
+
+  void updatePart() {
+
+    if (c.dancing) {
+      float armsAngle = (PI/2)*c.dancingStep/c.dancingAmplitude;
+      RshoulderX = c.centerX-0.25*size; 
+      RshoulderY = c.centerY-0.5*size;
+      LshoulderX = c.centerX+0.25*size; 
+      LshoulderY = c.centerY-0.5*size;
+
+      RelbowX = c.centerX-0.4*size + noise(4); 
+      RelbowY = c.centerY-0.15*size;
+      LelbowX = c.centerX+0.4*size + noise(4); 
+      LelbowY = c.centerY-0.15*size;
+
+      RwristX = RelbowX - 0.4*size*sin(armsAngle+0.1);
+      RwristY = RelbowY - 0.4*size*cos(armsAngle+0.1);
+      LwristX = LelbowX + 0.4*size*sin(armsAngle+0.1);
+      LwristY = LelbowY - 0.4*size*cos(armsAngle+0.1);
+    } else {
+      float armsAngle = (PI/4)*c.walkingStep/c.walkingAmplitude;
+      RshoulderX = c.centerX-0.15*size; 
+      RshoulderY = c.centerY-0.5*size;
+      LshoulderX = c.centerX+0.15*size; 
+      LshoulderY = c.centerY-0.5*size;
+
+
+      RelbowX = RshoulderX + 0.4*size*sin(armsAngle);
+      RelbowY = RshoulderY + 0.4*size*cos(armsAngle);
+      LelbowX = LshoulderX - 0.4*size*sin(armsAngle);
+      LelbowY = LshoulderY + 0.4*size*cos(armsAngle);
+
+      RwristX = RelbowX + 0.4*size*sin(1.4*armsAngle);
+      RwristY = RelbowY + 0.4*size*cos(1.4*armsAngle);
+      LwristX = LelbowX - 0.4*size*sin(1.4*armsAngle);
+      LwristY = LelbowY + 0.4*size*cos(1.4*armsAngle);
+    }
   }
 
   void display() {
-
-
-    if (c.dancing) {
-
-
-      //Arms
-      line (c.centerX-0.25*size, c.centerY-0.5*size, c.centerX-0.4*size, c.centerY-0.15*size);
-      line (c.centerX-0.4*size, c.centerY-0.15*size, c.centerX-0.5*size-c.dancingStep, c.centerY+0.25*size-c.dancingStep/2);
-
-      line (c.centerX+0.25*size, c.centerY-0.5*size, c.centerX+0.4*size, c.centerY-0.15*size);
-      line (c.centerX+0.4*size, c.centerY-0.15*size, c.centerX+0.5*size+c.dancingStep, c.centerY+0.25*size-c.dancingStep/2);
-    } else {
-
-
-      //Arms
-      line (c.centerX-0.15*size, c.centerY-0.5*size, c.centerX-0.15*size+c.walkingStep/2, c.centerY-0.15*size);
-      line (c.centerX-0.15*size+c.walkingStep/2, c.centerY-0.15*size, c.centerX-0.15*size+1.5*c.walkingStep, c.centerY+0.25*size+c.walkingStep/2);
-
-      line (c.centerX+0.15*size, c.centerY-0.5*size, c.centerX+0.15*size-c.walkingStep/2, c.centerY-0.15*size);
-      line (c.centerX+0.15*size-c.walkingStep/2, c.centerY-0.15*size, c.centerX+0.15*size-1.5*c.walkingStep, c.centerY+0.25*size+c.walkingStep/2);
-    }
+    //Arms
+    line (RshoulderX, RshoulderY, RelbowX, RelbowY);
+    line (LshoulderX, LshoulderY, LelbowX, LelbowY);
+    line (RelbowX, RelbowY, RwristX, RwristY);
+    line (LelbowX, LelbowY, LwristX, LwristY);
   }
 }
+
+
 
 class Head {
 

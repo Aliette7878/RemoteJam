@@ -16,6 +16,8 @@ class leaf {
   color col;
   int age;
   PVector position= new PVector(0,0);
+  float angle = 0;
+  boolean isfalling = false;
 
   leaf(String colorName) {
     colname = colorName;
@@ -26,9 +28,10 @@ class leaf {
     if (colorName=="green"){this.col = color(0,int(random(50,150)),0);} // different variation of red
     if (colorName=="blue"){this.col = color(0,0,int(random(50,150)));} 
     age = 0;
+    angle = random(-PI,PI);
   }
     
-  void display(float angle){
+  void display(){
     pushMatrix();
     translate(position.x, position.y);
     rotate(angle);
@@ -44,6 +47,20 @@ class leaf {
       w = int(svg.width*s*pow(step_s,age)); h = int(svg.height*s*pow(step_s,age));
     }
     age++;
-  }  
+  }
   
+  void fall(float bias){ // we want to rotate vector(a,b) from -bias (cos*(a)-sin*(b), sin*(a)+cos*(b)): 
+        float x = random(-2,1); // b = 2;
+        position.add(new PVector(cos(bias)*x-sin(-bias)*2,cos(-bias)*2+sin(-bias)*x));
+        angle=angle+random(-PI/12,PI/12);
+    }
+    
+  void reset(){
+    svg = loadShape(file_name);
+    svg.scale(s);
+    w = int(svg.width*s); h = int(svg.height*s);
+    age=0;
+    svg.setVisible(true);
+    isfalling=false;
+  }
 }

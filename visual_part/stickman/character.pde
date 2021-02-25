@@ -1,17 +1,15 @@
 class Character {
 
-  private int size;
+  private float size;
   
   
-  private int centerX;
-  private int centerY;
+  private float centerX;
+  private float centerY;
   
   private Body body;
   private Legs legs;
   private Arms arms;
   private Head head;
-  
-  
   
   
   private float dancingStep;
@@ -22,17 +20,20 @@ class Character {
   private int walkingStepSens;
   private int walkingDirection;
   private boolean dancing;
+  
+  private int id;
 
 
-  Character(int maxspeed, int size_input) {
+  Character(int maxspeed, float size_input) {
     size = size_input;
     
     centerX = int(random(0, width));
     centerY = 110;
+    id = int(random(1,10000));
     
     body = new Body(this, size/2);
-    legs = new Legs(this, size/3);
-    arms = new Arms(this, size/2);
+    legs = new Legs(this, 0.38*size);
+    arms = new Arms(this, 0.45*size);
     head = new Head(this, size/5);
     
     
@@ -52,6 +53,7 @@ class Character {
   public void UpdateChar() {
 
     if (dancing) {
+      centerX+=noise(id+frameCount/10)-0.5;
       dancingStep+=2*dancingAmplitude/frameRate;
       dancingStep %= dancingAmplitude;
     } else {
@@ -61,9 +63,11 @@ class Character {
       } else if (walkingStep<-walkingAmplitude) {
         walkingStepSens= +1;
       }
-      centerX+=walkingDirection*walkingSpeed;
+      centerX+=walkingDirection*walkingSpeed*100/frameRate;
     }
     arms.updatePart();
+    legs.updatePart();
+    head.updatePart();
   }
 
   public void DrawCharacter() {

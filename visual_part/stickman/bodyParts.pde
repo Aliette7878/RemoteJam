@@ -1,10 +1,10 @@
 class Body {
 
-  public int size;
+  public float size;
 
   private Character c;
 
-  Body(Character character, int size_input) {
+  Body(Character character, float size_input) {
     size = size_input;
     c = character;
   }
@@ -40,62 +40,81 @@ class Body {
 
 class Legs {
 
-  private int size;
-  private int centerYLegs;
+  private float size;
 
   private Character c;
 
-  Legs(Character character, int size_input) {
+  private float RhipX, RhipY;
+  private float RkneeX, RkneeY;
+  private float RheelX, RheelY;
+  private float RfoottipX;
+  private float LhipX, LhipY;
+  private float LkneeX, LkneeY;
+  private float LheelX, LheelY;
+  private float LfoottipX;
+
+  Legs(Character character, float size_input) {
     size = size_input;
     c = character;
-    centerYLegs = c.centerY + c.body.size/2+size/2;
+    updatePart();
+  }
+
+  void updatePart() {
+    float LthighsAngle;
+    float LcalvesAngle;
+    float RthighsAngle;
+    float RcalvesAngle;
+    if (c.dancing) {
+      if (c.dancingStep<c.dancingAmplitude/2) {
+        LthighsAngle = (PI/3)*c.dancingStep/c.dancingAmplitude;
+        LcalvesAngle = 0;
+        RthighsAngle = (PI/8);
+        RcalvesAngle = 0;
+      } else {
+        LthighsAngle = (PI/8);
+        LcalvesAngle = 0;
+        RthighsAngle = (PI/3)*(c.dancingStep-c.dancingAmplitude/2)/c.dancingAmplitude;
+        RcalvesAngle = 0;
+      }
+    } else {
+      LthighsAngle = (PI/3)*c.walkingStep/c.walkingAmplitude;
+      LcalvesAngle = (PI/5)*c.walkingStep/c.walkingAmplitude;
+      RthighsAngle = (PI/3)*c.walkingStep/c.walkingAmplitude;
+      RcalvesAngle = (PI/5)*c.walkingStep/c.walkingAmplitude;
+    }
+    RhipX = c.centerX - 0.1*size;
+    RhipY = c.centerY + c.body.size/2;
+    LhipX = c.centerX + 0.1*size;
+    LhipY = c.centerY + c.body.size/2;
+
+    RkneeX = RhipX - 0.5*size*sin(RthighsAngle);
+    RkneeY = RhipY + 0.5*size*cos(RthighsAngle);
+    LkneeX = LhipX + 0.5*size*sin(LthighsAngle);
+    LkneeY = LhipY + 0.5*size*cos(LthighsAngle);
+
+    RheelX = RkneeX - 0.5*size*sin(RcalvesAngle);
+    RheelY = RkneeY + 0.5*size*cos(RcalvesAngle);
+    LheelX = LkneeX + 0.5*size*sin(LcalvesAngle);
+    LheelY = LkneeY + 0.5*size*cos(LcalvesAngle);
+
+    if (c.dancing) {
+      RfoottipX=RheelX - 0.1*size*cos(PI*c.dancingStep/c.dancingAmplitude);
+      LfoottipX=LheelX + 0.1*size*cos(PI*c.dancingStep/c.dancingAmplitude);
+    } else {
+      RfoottipX=RheelX + c.walkingDirection*0.1*size;
+      LfoottipX=LheelX + c.walkingDirection*0.1*size;
+    }
   }
 
   void display() {
-    if (c.dancing) {
-
-      if (c.dancingStep<10) {
-
-        //Legs
-        line (c.centerX-0.1*size, centerYLegs-size/2, c.centerX-0.12*size-c.dancingStep, centerYLegs);
-        line (c.centerX-0.12*size-c.dancingStep, centerYLegs, c.centerX-0.12*size-c.dancingStep, centerYLegs+size/2);
-
-        line (c.centerX+0.1*size, centerYLegs-size/2, c.centerX+0.12*size, centerYLegs);
-        line (c.centerX+0.12*size, centerYLegs, c.centerX+0.12*size, centerYLegs+size/2);
-
-        //Feets
-        line (c.centerX-0.12*size-c.dancingStep/2, centerYLegs+size/2, c.centerX-0.2*size-c.dancingStep/2, centerYLegs+size/2);
-        line (c.centerX+0.12*size-c.dancingStep/2, centerYLegs+size/2, c.centerX+0.2*size-c.dancingStep/2, centerYLegs+size/2);
-      } else {
-
-        //Legs
-        line (c.centerX-0.1*size, centerYLegs-size/2, c.centerX-0.12*size, centerYLegs);
-        line (c.centerX-0.12*size, centerYLegs, c.centerX-0.12*size, centerYLegs+size/2);
-
-        line (c.centerX+0.1*size, centerYLegs-size/2, c.centerX+0.12*size+c.dancingStep-10, centerYLegs);
-        line (c.centerX+0.12*size+c.dancingStep-10, centerYLegs, c.centerX+0.12*size+c.dancingStep-10, centerYLegs+size/2);
-
-        //Feets
-        line (c.centerX-0.12*size+c.dancingStep/2-5, centerYLegs+size/2, c.centerX-0.2*size+c.dancingStep/2-5, centerYLegs+size/2);
-        line (c.centerX+0.12*size+c.dancingStep/2-5, centerYLegs+size/2, c.centerX+0.2*size+c.dancingStep/2-5, centerYLegs+size/2);
-      }
-    } else {
-
-
-
-      //Legs
-      line (c.centerX-0.1*size, centerYLegs-size/2, c.centerX-0.12*size-c.walkingStep/2, centerYLegs);
-      line (c.centerX-0.12*size-c.walkingStep/2, centerYLegs, c.centerX-0.12*size-c.walkingStep, centerYLegs+size/2);
-
-      line (c.centerX+0.1*size, centerYLegs-size/2, c.centerX+0.12*size+c.walkingStep/2, centerYLegs);
-      line (c.centerX+0.12*size+c.walkingStep/2, centerYLegs, c.centerX+0.12*size+c.walkingStep, centerYLegs+size/2);
-
-
-
-      //Feets
-      line (c.centerX-0.12*size-c.walkingStep, centerYLegs+size/2, c.centerX-0.2*size-c.walkingStep+c.walkingDirection*5, centerYLegs+size/2);
-      line (c.centerX+0.12*size+c.walkingStep, centerYLegs+size/2, c.centerX+0.2*size+c.walkingStep+c.walkingDirection*5, centerYLegs+size/2);
-    }
+    //Legs
+    line (RhipX, RhipY, RkneeX, RkneeY);
+    line (LhipX, LhipY, LkneeX, LkneeY);
+    line (RkneeX, RkneeY, RheelX, RheelY);
+    line (LkneeX, LkneeY, LheelX, LheelY);
+    //Feets
+    line (RheelX, RheelY, RfoottipX, RheelY);
+    line (LheelX, LheelY, LfoottipX, LheelY);
   }
 }
 
@@ -103,7 +122,7 @@ class Legs {
 
 class Arms {
 
-  private int size;
+  private float size;
 
   private Character c;
   private float RshoulderX, RshoulderY;
@@ -113,48 +132,39 @@ class Arms {
   private float LelbowX, LelbowY;
   private float LwristX, LwristY;
 
-  Arms(Character character, int size_input) {
+  Arms(Character character, float size_input) {
     size = size_input;
     c = character;
     updatePart();
   }
 
   void updatePart() {
-
+    float armsAngle;
+    float forearmsAngle;
     if (c.dancing) {
-      float armsAngle = (PI/2)*c.dancingStep/c.dancingAmplitude;
+      armsAngle = -PI/8 + noise(frameCount)/4;
+      forearmsAngle = PI+0.1 + (PI/2)*c.dancingStep/c.dancingAmplitude;
       RshoulderX = c.centerX-0.25*size; 
-      RshoulderY = c.centerY-0.5*size;
-      LshoulderX = c.centerX+0.25*size; 
-      LshoulderY = c.centerY-0.5*size;
-
-      RelbowX = c.centerX-0.4*size + noise(4); 
-      RelbowY = c.centerY-0.15*size;
-      LelbowX = c.centerX+0.4*size + noise(4); 
-      LelbowY = c.centerY-0.15*size;
-
-      RwristX = RelbowX - 0.4*size*sin(armsAngle+0.1);
-      RwristY = RelbowY - 0.4*size*cos(armsAngle+0.1);
-      LwristX = LelbowX + 0.4*size*sin(armsAngle+0.1);
-      LwristY = LelbowY - 0.4*size*cos(armsAngle+0.1);
+      LshoulderX = c.centerX+0.25*size;
     } else {
-      float armsAngle = (PI/4)*c.walkingStep/c.walkingAmplitude;
+      armsAngle = (PI/4)*c.walkingStep/c.walkingAmplitude;
+      forearmsAngle = 1.4*armsAngle;
       RshoulderX = c.centerX-0.15*size; 
-      RshoulderY = c.centerY-0.5*size;
-      LshoulderX = c.centerX+0.15*size; 
-      LshoulderY = c.centerY-0.5*size;
-
-
-      RelbowX = RshoulderX + 0.4*size*sin(armsAngle);
-      RelbowY = RshoulderY + 0.4*size*cos(armsAngle);
-      LelbowX = LshoulderX - 0.4*size*sin(armsAngle);
-      LelbowY = LshoulderY + 0.4*size*cos(armsAngle);
-
-      RwristX = RelbowX + 0.4*size*sin(1.4*armsAngle);
-      RwristY = RelbowY + 0.4*size*cos(1.4*armsAngle);
-      LwristX = LelbowX - 0.4*size*sin(1.4*armsAngle);
-      LwristY = LelbowY + 0.4*size*cos(1.4*armsAngle);
+      LshoulderX = c.centerX+0.15*size;
     }
+
+    RshoulderY = c.centerY-0.5*size;
+    LshoulderY = c.centerY-0.5*size;
+
+    RelbowX = RshoulderX + 0.4*size*sin(armsAngle);
+    RelbowY = RshoulderY + 0.4*size*cos(armsAngle);
+    LelbowX = LshoulderX - 0.4*size*sin(armsAngle);
+    LelbowY = LshoulderY + 0.4*size*cos(armsAngle);
+
+    RwristX = RelbowX + 0.4*size*sin(forearmsAngle);
+    RwristY = RelbowY + 0.4*size*cos(forearmsAngle);
+    LwristX = LelbowX - 0.4*size*sin(forearmsAngle);
+    LwristY = LelbowY + 0.4*size*cos(forearmsAngle);
   }
 
   void display() {
@@ -170,25 +180,30 @@ class Arms {
 
 class Head {
 
-  private int size;
-
+  private float size;
+  public float headX;
   public float headY;
 
   private Character c;
 
-  Head(Character character, int size_input) {
+  Head(Character character, float size_input) {
     size = size_input;
     c = character;
-    headY = c.centerY-0.74*c.body.size;
+    headY = c.centerY-0.78*c.body.size;
+    headX = c.centerX;
+  }
+  void updatePart() {
+    if (c.dancing) {
+      headX = c.centerX + 4*cos((PI/2)+((c.dancingStep/c.dancingAmplitude)-0.5));
+    } else {
+      headX = c.centerX;
+    }
   }
 
   void display() {
-
-
     //Head
-    ellipse (c.centerX, headY, 0.86*size, 0.9*size);
-
+    ellipse (headX, headY, 0.86*size, 0.9*size);
     //Neck
-    line (c.centerX, headY+size/2, c.centerX, headY+0.6*size);
+    line (headX, headY+size/2, c.centerX, headY+0.6*size);
   }
 }

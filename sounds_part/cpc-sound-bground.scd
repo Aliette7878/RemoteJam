@@ -15,7 +15,7 @@ s.waitForBoot({
 
 
 	SynthDef(\wind, {
-		arg amp = 0.001, freq_mul = 1000, freq_add = 1100;
+		arg amp = 0.002, freq_mul = 1000, freq_add = 1100;
 		var w1, w2;		//two identical functions, one left, one right
 		w1=RLPF.ar(
 			WhiteNoise.ar(1), 	//normal level, out level comes later
@@ -50,6 +50,17 @@ s.waitForBoot({
 	~bg_elephant = Buffer.read(s, "background/bg-elephant.wav", 0, -1);
 
 
+	//Importing people sounds
+	~tawny_1 = Buffer.read(s, "people/tawny-1.wav", 0, -1);
+	~tawny_2 = Buffer.read(s, "people/tawny-2.wav", 0, -1);
+	~tawny_3 = Buffer.read(s, "people/tawny-3.wav", 0, -1);
+	~owl = Buffer.read(s, "people/owl discrete.wav", 0, -1);
+	~scream = Buffer.read(s, "people/scream_high.wav", 0, -1);
+
+	//Importing birds sounds
+	~birds = Buffer.read(s, "birds/birds.wav", 0, -1);
+	~parrot = Buffer.read(s, "birds/grey-parrot.wav", 0, -1);
+
 
 	//Importing shakers sounds
 	~rain = Buffer.read(s, "shakers/rain-maker.wav", 0, s.sampleRate*4);
@@ -73,7 +84,7 @@ s.waitForBoot({
 
 	//TO DO: INSERT RANDOM AMPLITUDE
 	SynthDef(\playbuf_loop, {
-		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, loop = 0, done_act = 0, rev_mix = 0.25, rev_room = 0.15;
+		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, loop = 0, done_act = 0, rev_mix = 0.5, rev_room = 0.5;
 		var sig, env;
 		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, loop, doneAction:done_act);
 		env = EnvGen.kr(Env.new([0,1], [0.5]), t_trig, doneAction:done_act);
@@ -94,17 +105,106 @@ s.waitForBoot({
 
 
 	~lemur_buf = Synth.new(\playbuf, [\buf, ~bg_lemur.bufnum, \rel, 5, \amp, 0.3]);
-	~eleph_buf = Synth.new(\playbuf, [\buf, ~bg_elephant.bufnum, \rel, 2]);
+	~eleph_buf = Synth.new(\playbuf, [\buf, ~bg_elephant.bufnum, \rel, 2, \amp, 0.2]);
 	~eleph_buf.set(\t_trig, 1, \start, [0,2].choose*s.sampleRate);
 
 
-	~rain_buf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2.5, \done_act, 2, \amp, 4]);
+	~rain_buf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2, \done_act, 2, \amp, 4]);
 	~rattle_buf = Synth.new(\playbuf, [\buf, ~rattle.bufnum, \rate, 1.5, \rel, 2, \done_act, 2]);
 	~nut_buf = Synth.new(\playbuf, [\buf, ~nut.bufnum, \rate, 1, \rel, 2, \done_act, 2]);
 
 
 	//******************* SOUND DEF *********************
 
+
+	//BASS
+	SynthDef.new(\bass, {
+		arg freq=440, amp = 1;
+		var sig, env, oscfreq;
+		env = SinOsc.kr([0.1,1,1,0]).range(0.05,0.2);
+		//env = LFNoise2.kr(500);
+		oscfreq = {freq * LFNoise2.kr(0.5).range(0.98, 1.02)};
+		sig = SinOsc.ar([oscfreq, 0, 10, 100]);
+		sig = sig * env * amp;
+		sig = FreeVerb.ar(sig, room:0.7);
+		Out.ar(0, Mix.new(sig)*0.5);
+	}).add;
+
+	~bass = Synth(\bass, [\freq, 200, \amp, 0.1]);
+
+
+	//******************** DRUMS ************************
+
+	//Imported drum files
+	~low = Buffer.read(s, "drums/drum-sample-8.wav", 0, s.sampleRate*1);
+	~high = Buffer.read(s, "drums/drum-sample-9.wav", 0, s.sampleRate*1);
+	~mid = Buffer.read(s, "drums/kenkeni-drum.wav", 0, s.sampleRate*0.25);
+
+	//synthdef for the drum sounds
+	SynthDef(\playbuf_drum, {
+		arg amp = 2, out = 0, buf, rate = 1, t_trig, start=0, rel = 0.5, loop = 0, da = 2;
+		var sig, env;
+		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, loop, doneAction: da);
+		env = EnvGen.kr(Env.new([0,1,0], [0, rel], [1,-1]), doneAction:2);
+		sig = sig*env;
+		sig = FreeVerb.ar(sig, mix:0.5)*amp;
+
+		Out.ar(out, sig);
+	}).add;
+
+
+	//************* SEQUENCING: RHYTHM ********************
+
+	~patternA = Pdef(
+		\rhythmA,
+		Pbind(
+			\instrument, \playbuf_drum,
+			\dur, Pseq([1/4], inf),
+			\stretch, 60/120 * 4,
+			//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
+			\buf, Pseq(
+				[
+					~low,
+					Pwrand([~low, ~mid, ~high], [0.25,0.6,0.15], 2),
+					~high,
+				], inf
+			),
+			\rate, Pexprand(1, 1.05, inf),
+			\amp, Pseq([0.8, Pexprand(0.005,0.4,2), 0.6], inf),
+		);
+	).play(quant: 1.875);
+
+	~patternB = Pdef(
+		\rhythmB,
+		Pbind(
+			\instrument, \playbuf_drum,
+			\dur, Pseq([1/16], inf),
+			\stretch, 60/120 * 4,
+			//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
+			\buf, Pseq(
+				[
+					~low,
+					Pwrand([~low, ~mid, ~high], [0.25,0.6,0.15], 7),
+					~high,
+					Pwrand([~low, ~mid, ~high], [0.25,0.25,0.5], 7),
+				], inf
+			),
+			\rate, Pexprand(1, 1.05, inf),
+			\amp, Pseq([0.9, Pexprand(0.1,0.5,7)], inf),
+		);
+	).play(quant: 1.875);
+
+	~patternC = Pdef(
+		\rhythmC,
+		Pbind(
+			\instrument, \playbuf_drum,
+			\dur, Pseq([1/8], inf),
+			\stretch, 60/120 * 4,
+			\buf, Pwrand([~low, ~mid],[0.6, 0.4], inf),
+			\rate, Pexprand(0.7, 1.05, inf),
+			\amp, Pexprand(0.2,0.5, inf),
+		);
+	).play(quant: 1.875);
 
 
 	//******************* OSC ************************
@@ -156,24 +256,10 @@ s.waitForBoot({
 }))
 
 
-//BASS. TO DO: MAKE IT MODULATED
-/*SynthDef.new(\sine, {
-		arg freq=440, atk = 0.05, rel=0.3, amp = 1, pan = 0;
-		var sig, env;
-		sig = SinOsc.ar(freq);
-		env = EnvGen.kr(Env.new([0,1], [atk], [3]), doneAction:0);
-		sig = Pan2.ar(sig, pan, amp);
-		sig = sig * env;
-		sig = FreeVerb.ar(sig);
-		Out.ar(0, sig);
-	}).add;
-
-~sine = Synth(\sine, [\freq, 100, \amp, 0.1]);
-*/
 
 
 //COOL THING: JURASSIC PARK THUMP
-/*(
+(
 { var nse, env, kic;
 	kic = tanh(Ringz.ar(LPF.ar(Trig.ar(Impulse.ar(1.0),SampleDur.ir),1000),30,0.25,7).sin*2);
 	env = Env.perc(0.05, 1, 1, -4);
@@ -184,7 +270,7 @@ s.waitForBoot({
 
 }.play
 )
-*/
+
 
 //OSCdef.freeAll
 //s.freeAll

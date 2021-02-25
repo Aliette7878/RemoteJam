@@ -11,13 +11,13 @@ class Character {
   private Arms arms;
   private Head head;
   
-  
+  private int dancingCode;
   private float dancingStep;
   private int dancingAmplitude;
   private float walkingStep;
   private int walkingAmplitude;
   private float walkingSpeed;
-  private int walkingStepSens;
+  private int stepSens;
   private int walkingDirection;
   private boolean dancing;
   
@@ -36,11 +36,12 @@ class Character {
     arms = new Arms(this, 0.45*size);
     head = new Head(this, size/5);
     
-    
+    dancingCode = floor(random(1,3));    // code = 1 or 2
+    println(dancingCode);
     dancingStep = 0;
     dancingAmplitude = 30;
     walkingStep = 0;
-    walkingStepSens = +1;
+    stepSens = +1;
     walkingAmplitude = 30;
     walkingSpeed = (int)random(1,maxspeed);
     walkingDirection=floor(random(-1, +1));
@@ -53,21 +54,26 @@ class Character {
   public void UpdateChar() {
 
     if (dancing) {
-      centerX+=noise(id+frameCount/10)-0.5;
-      dancingStep+=2*dancingAmplitude/frameRate;
-      dancingStep %= dancingAmplitude;
+      centerX+=noise(id+frameCount/frameRate)-0.5;
+      dancingStep+=2*stepSens*dancingAmplitude/frameRate;
+      if (dancingStep>dancingAmplitude) {
+        stepSens = -1;
+      } else if (dancingStep<-dancingAmplitude) {
+        stepSens= +1;
+      }
     } else {
-      walkingStep+=2*walkingStepSens*walkingAmplitude*walkingSpeed/frameRate;
+      walkingStep+=2*stepSens*walkingAmplitude*walkingSpeed/frameRate;
       if (walkingStep>walkingAmplitude) {
-        walkingStepSens = -1;
+        stepSens = -1;
       } else if (walkingStep<-walkingAmplitude) {
-        walkingStepSens= +1;
+        stepSens= +1;
       }
       centerX+=walkingDirection*walkingSpeed*100/frameRate;
     }
-    arms.updatePart();
+    body.updatePart();
     legs.updatePart();
     head.updatePart();
+    arms.updatePart();
   }
 
   public void DrawCharacter() {

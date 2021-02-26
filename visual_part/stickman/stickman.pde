@@ -6,10 +6,10 @@ void setup() {
   size (1080, 720);
   frameRate(120);
 
-  populationSize = 20;
+  populationSize = 40;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(20, 100);
+    people[i] = new Character(random(85,105),random(1.5,5),150*(i/(int)ceil(populationSize/4)+1));
   }
 }
 

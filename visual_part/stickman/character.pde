@@ -24,26 +24,26 @@ class Character {
   private int id;
 
 
-  Character(int maxspeed, float size_input) {
+  Character(float size_input, float speed, int centerYcoor) {
     size = size_input;
     
     centerX = int(random(0, width));
-    centerY = 110;
+    centerY = centerYcoor - size/2;
     id = int(random(1,10000));
     
+    float memberProportion = random(0.97,1.03);
     body = new Body(this, size/2);
-    legs = new Legs(this, 0.38*size);
-    arms = new Arms(this, 0.45*size);
-    head = new Head(this, size/5);
+    legs = new Legs(this, 0.38*size*memberProportion);
+    arms = new Arms(this, 0.4*size*memberProportion);
+    head = new Head(this, size*random(0.15,0.19), size*random(0.18,0.23));
     
-    dancingCode = floor(random(1,3));    // code = 1 or 2
-    println(dancingCode);
+    dancingCode = floor(random(1,4));    // code = 1, 2 or 3
     dancingStep = 0;
     dancingAmplitude = 30;
     walkingStep = 0;
     stepSens = +1;
     walkingAmplitude = 30;
-    walkingSpeed = (int)random(1,maxspeed);
+    walkingSpeed = speed;
     walkingDirection=floor(random(-1, +1));
     if (walkingDirection==0) {
       walkingDirection=1;
@@ -74,6 +74,9 @@ class Character {
     legs.updatePart();
     head.updatePart();
     arms.updatePart();
+    if(centerX<-1000 || centerX > 2500){
+      walkingDirection*=-1;
+    }
   }
 
   public void DrawCharacter() {

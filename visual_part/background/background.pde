@@ -3,6 +3,7 @@ import oscP5.*;
 
 // Variables
 PImage bg, black;
+PShape blackline;
 
 void setup() {
   frameRate(60); 
@@ -13,6 +14,9 @@ void setup() {
   bg.resize(width,height);
   
   //black = loadImage("black.png");
+  blackline = loadShape("powerpoint_line.svg");
+  blackline.scale(1.5);
+  blackline.disableStyle();
 
 }
 
@@ -37,11 +41,14 @@ void draw_background(){
   ellipse(width/2, height/2 + 200, 500, 500);
     
   //The black horizon
+  
   fill(20,5,5);
+    shape(blackline,-20, 650);
   //stroke(200,250,200,15);
   //strokeWeight(14);
+  noStroke();
   rect(-20, 700, width + 40, 250);
-  
+
   //image(black, 0, 600, width, 250);
 }
 

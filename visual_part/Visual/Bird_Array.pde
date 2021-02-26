@@ -4,10 +4,11 @@ class BirdArray{
     ArrayList<Bird> birds;
     AttractionPoint AttractionPoint;
     boolean accelerationMode = false;
+    int lasttimeshake = 0;
     
     void accelerate(int time0){
       accelerationMode=true;
-      if (millis()-time0>2000){accelerationMode=false;}
+      lasttimeshake = time0;
     }
     
     BirdArray(){
@@ -20,6 +21,8 @@ class BirdArray{
     }
     
     void display(){
+      if (millis()-lasttimeshake>4000){accelerationMode=false;}
+
       theta = theta(frameCount, accelerationMode); // theta in [-0.5,0]; 
       if (random(1)<0.007){addBird();}
       if (accelerationMode && (random(1)<0.01)){addBird();}

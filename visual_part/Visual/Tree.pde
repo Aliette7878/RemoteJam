@@ -1,15 +1,13 @@
 // Main code for one tree
 
-
 // VARIABLES
-int fps=60;        // Framerate per seconds
 int TimeBranch = 5; // Number of seconds before a branch is fully grown up
 int TimeLeaf = 5; // Number of seconds before a leaf is fully grown up
 int globalL = 180;        // Length of the 1rst branch
 float sizeMax = 10; // Number maximum of branches on 1 tree
 
 // Not modify
-float adult_age = TimeBranch*fps ; // nb frame before the branch is adult
+float adult_age = TimeBranch*fps; // nb frame before the branch is adult : has to be higher if 
 
 class Warlitree{
   
@@ -22,6 +20,7 @@ class Warlitree{
   
   
   Warlitree(PVector Position, float Bias, String colorName ){  
+    println(adult_age);
     bias = Bias;
     countershaker = 0;
     position = Position;

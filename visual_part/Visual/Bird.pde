@@ -44,7 +44,7 @@ class Bird{
   
   void shrink(boolean accelerationMode){
     N = max(0,N-N*0.001);
-    if (mousePressed==true){N = N-N*0.003;}
+    if (accelerationMode==true){N = N-N*0.003;}
     SegR.L=int(N/density);
     SegL.L=SegR.L;
     PSR.N = int(N); PSL.N = int(N);

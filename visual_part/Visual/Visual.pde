@@ -1,6 +1,9 @@
 import netP5.*;
 import oscP5.*;
 
+// Framerate
+int fps=60;        // Framerate per seconds
+
 // Connexion
 OscP5 oscP5;
 NetAddress superColliderLocation;
@@ -31,7 +34,7 @@ Background bg;
 
 
 void setup() {
-  frameRate(60); 
+  frameRate(fps); 
   size(1200,800); 
   
   // VISUAL

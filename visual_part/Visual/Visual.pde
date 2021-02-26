@@ -29,9 +29,14 @@ BirdArray Birds;
 // Background
 Background bg; 
 
+//Stickmen
+Character[] people;
+int populationSize;
+
+
 
 void setup() {
-  frameRate(60); 
+  frameRate(120); 
   size(1200,800); 
   
   // VISUAL
@@ -40,6 +45,13 @@ void setup() {
   redTree = new Warlitree(new PVector(0,400),PI/12, "red"); 
   greenTree = new Warlitree(new PVector(width/2,0),PI-PI/12, "green");
   blueTree = new Warlitree(new PVector(width,400),-PI/6, "blue");
+  
+  // Stickmen
+  populationSize = 15;
+  people = new Character[populationSize];
+  for (int i=0; i<populationSize; i++) {
+    people[i] = new Character(random(85,105),random(1.5,5),680);
+  }
   
   // OSC
   /* start oscHook. go to IP/port setup. Look at the port value in oscHook*/
@@ -57,13 +69,19 @@ void setup() {
 
 void draw(){
   
-  //println(frameRate);
+  println(frameRate);
   
   bg.draw_background();
   Birds.display();
   redTree.display();
   greenTree.display();
   blueTree.display();
+  
+  // Stickmen
+  for (Character charact : people) {
+    charact.UpdateChar();
+    charact.DrawCharacter();
+  }
   
 }
 
@@ -75,6 +93,11 @@ void mousePressed(){
   blueTree.shake(); // USER3 SKAKING - not mapped yet
   Birds.accelerate(millis()); 
   println(millis());
+  
+  // Stickmen
+  for (Character charact : people) {
+    charact.dancing=false;
+  }
 }
 
 

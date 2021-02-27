@@ -60,6 +60,13 @@ class Warlitree{
 
   }
   
+  
+  void shake(float amplitude) {
+    // TODO: implement
+    println("SHAKE WITH AMPLITUDE NOT IMPLEMENTED, TREE L66");
+
+  }
+  
   void fall(){
     branch b;
       for(int i=int(this.branches.size()-1); i>=0; i--){

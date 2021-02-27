@@ -11,27 +11,19 @@ NetAddress superColliderLocation;
 // List of the connected IPs
 ArrayList<String> IPdevices;
 
-// Variables for IP  1
-float IP1Pitch;
-float IP1Roll;
-boolean orientationUpdated;
-String drumPattern;
-// We should rather implement a buffer to get the amplitude of the shaking. like taking the max of the last 3 messages, 
-//to be sure not to trigger the shaking on the first message over the treshold, which is not necessarely the highest one.
-float linearAcc;
-float lastShakeTime;
 int minAcc = 6;
+float minPeriodBtwShaking = 400; //ms
 
-// Variables for IP 2
-float IP2Pitch;
-float IP2Roll;
-String timbre;
-
-
-// Variables for IP 3
-float IP3Pitch;
-float IP3Roll;
-String IP3timbre;
+int numberOfUsers = 3;
+// Variables in arrays for all the users
+float[] pitchs = new float[numberOfUsers];
+float[] rolls = new float[numberOfUsers];
+boolean[] orientationsUpdated = new boolean[numberOfUsers];
+String[] exPositions = new String[numberOfUsers];
+String[] positions = new String[numberOfUsers];
+float[][] accelerationBuffers = new float[numberOfUsers][];
+float[] lastShakeTimes = new float[numberOfUsers];
+float[] lastActivityTimes = new float[numberOfUsers];
 
 // Tree
 Warlitree redTree, greenTree, blueTree;
@@ -73,8 +65,15 @@ void setup() {
   /* You can also try to change the sending rate on your OSC app.*/
   oscP5 = new OscP5(this, 7400);
   superColliderLocation = new NetAddress("127.0.0.1", 57120);
-  lastShakeTime = 0;
   IPdevices = new ArrayList<String>();
+  // Initialisation of the user OSC variables
+  for (int i=0; i<numberOfUsers; i++) {
+    orientationsUpdated[i] = false;
+    lastShakeTimes[i] = 0;
+    lastActivityTimes[i] = 0;
+    accelerationBuffers[i] = new float[6];  // Keeping the 6 last messages (2 timestams, 3 dimention), to be sure to get the highest intensity of a movement
+    exPositions[i] = "init";
+  }
 }
 
 
@@ -100,7 +99,7 @@ void draw() {
 void mousePressed() { 
   redTree.shake(); // USER 1 SHAKING - mapped, ok
   greenTree.shake(); // USER2 SHAKING - mapped, ok
-  blueTree.shake(); // USER3 SKAKING - not mapped yet
+  blueTree.shake(); // USER3 SKAKING - not mapped yet (or is it? feel free to add some TODO: ;) bc easy to ctrl+F, and some IDE even automatically check for TODOs)
   Birds.accelerate(millis());
 }
 
@@ -120,62 +119,66 @@ void oscEvent(OscMessage theOscMessage) {
     IPdevices.add(address);
     println(address+" connected successfully");
   }
-  
-  
-  
-  
 
-  // the First IP received will be given for role the drum machine. the orientation of the phone will determine the pattern of the rythm, and shaking the phone will result into a "crash" hit.
-  if (IPdevices.indexOf(address)==0) {
-
-    orientationUpdated = false;  // Reseting it to detect if then it was updated by this incomming message, or through pitch, or roll
-
-    // Checking if the phone has been shaken.
+  // Checking if the IP sending the message is one of the 3 first in the IPdevices array (bc only 3 players max for now)
+  if (IPdevices.indexOf(address)<numberOfUsers) {
+    int ipIndex = IPdevices.indexOf(address);
+    // Checking if the phone has been shaken. Working with a buffer to attend to get the highest value in an accelleration movement.
     if (theOscMessage.checkAddrPattern("/accelerometer/linear/x")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/y")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/z")==true) {
-      linearAcc = theOscMessage.get(0).floatValue();
-      if (abs(linearAcc)>minAcc && abs(1000*second()+millis()-lastShakeTime)>400) {
-        lastShakeTime=1000*second()+millis();
-        println("IP1 shaken");
-        redTree.shake(linearAcc); // 1st USER SHAKING
+      accelerationBuffers[ipIndex] = pushInBuffer(accelerationBuffers[ipIndex], theOscMessage.get(0).floatValue());
+      if (abs(accelerationBuffers[ipIndex][5])>minAcc && abs(1000*second()+millis()-lastShakeTimes[ipIndex])>minPeriodBtwShaking) {
+        lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
+        float accMaxValue = max(accelerationBuffers[ipIndex]);
+        lastShakeTimes[ipIndex]=1000*second()+millis();
+        println("IP"+ipIndex+" shaken");
+        if (ipIndex==0) {
+          redTree.shake(accMaxValue); // 1st USER SHAKING
+        } else if (ipIndex==1) {
+          greenTree.shake(accMaxValue); // 2nd USER SHAKING
+        } else if (ipIndex==2) {
+          blueTree.shake(accMaxValue); // 3rd USER SHAKING
+        }
 
-        OscMessage m = new OscMessage("/IP1/shaken");
-        m.add(1);
+        OscMessage m = new OscMessage("/IP"+ipIndex+"/shaken");
+        m.add(accMaxValue);
         oscP5.send(m, superColliderLocation);
       }
     }
 
     // Updating the orientation of the phone
     else if (theOscMessage.checkAddrPattern("/orientation/pitch")==true) {
-      IP1Pitch = theOscMessage.get(0).floatValue();   // Between -90 (phone pointing down) and +90 (phone pointing up) (and 0 when phone horizontally pointing towards you..) 
-      //println("IP1 pitch: "+IP1Pitch);
-      orientationUpdated = true;
+      pitchs[ipIndex] = theOscMessage.get(0).floatValue();   // Between -90 (phone pointing down) and +90 (phone pointing up) (and 0 when phone horizontally pointing towards you..) 
+      //println("IP"+ipIndex+" pitch: "+pitchs[ipIndex]);
+      orientationsUpdated[ipIndex] = true;
     } else if (theOscMessage.checkAddrPattern("/orientation/roll")==true) {
-      IP1Roll = theOscMessage.get(0).floatValue();    // To move between -90 (phone on its right spine) and +90 (phone on its left spine) (and 0 when phone at flat position) 
-      //println("IP1 roll: "+IP1Roll);
-      orientationUpdated = true;
-      //PTree0.angle = (IP1Roll+110)/2.5;  // [8°-80°]
+      rolls[ipIndex] = theOscMessage.get(0).floatValue();    // To move between -90 (phone on its right spine) and +90 (phone on its left spine) (and 0 when phone at flat position) 
+      //println("IP"+ipIndex+" roll: "+rolls[ipIndex]);
+      orientationsUpdated[ipIndex] = true;
     }
 
-    // Updating the category for the rythmic pattern
-    if (orientationUpdated) {
-      if (-45<IP1Pitch && IP1Pitch<45) {
-        if (-45<IP1Roll && IP1Roll<45) {
-          drumPattern = "Pattern A";
-        } else if (IP1Roll>45) {
-          drumPattern = "Pattern B";
+    // Updating the "category" of the Position
+    if (orientationsUpdated[ipIndex]) {
+      orientationsUpdated[ipIndex] = false;  // Reseting it to detect if then it was updated by this incomming message, or through pitch, or roll
+      exPositions[ipIndex] = positions[ipIndex];
+      if (-45<pitchs[ipIndex] && pitchs[ipIndex]<45) {
+        if (-45<rolls[ipIndex] && rolls[ipIndex]<45) {
+          positions[ipIndex] = "Position A";
+        } else if (rolls[ipIndex]>45) {
+          positions[ipIndex] = "Position B";
         } else {
-          drumPattern = "Pattern C";
+          positions[ipIndex] = "Position C";
         }
-      } else if (IP1Pitch>45) {
-        drumPattern = "Pattern B";  // could be D if we augment the number of pattern
+      } else if (pitchs[ipIndex]>45) {
+        positions[ipIndex] = "Position D";
       } else {
-        drumPattern = "Pattern C";  // could be E if we augment the number of pattern
+        positions[ipIndex] = "Position E";
       }
+      if (positions[ipIndex] != exPositions[ipIndex]) {lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();}
 
-      println("IP1 pattern: "+drumPattern);
+      println("IP"+ipIndex+" position: "+positions[ipIndex]);
 
-      OscMessage m = new OscMessage("/IP1/pattern");
-      m.add(drumPattern);
+      OscMessage m = new OscMessage("/IP"+ipIndex+"/position");
+      m.add(positions[ipIndex]);
       oscP5.send(m, superColliderLocation);
 
       // Updating the visual according to the pattern:
@@ -183,105 +186,15 @@ void oscEvent(OscMessage theOscMessage) {
       //GrowingArray_white.opac = (drumPattern=="Pattern B") ? 200 : 60;
       //GrowingArray_green.opac = (drumPattern=="Pattern C") ? 200 : 60;
     }
-  }
-
-
-
-
-  // The second IP (player) controlls the melodical part.
-  else if (IPdevices.indexOf(address)==1) {
-
-    if (theOscMessage.checkAddrPattern("/orientation/pitch")==true) {
-      IP2Pitch = theOscMessage.get(0).floatValue();  // Between -90 (phone pointing up) and +90 (phone pointing down) (and 0 when phone horizontally pointing towards you..)
-      println("IP2 pitch: "+IP2Pitch);
-
-      OscMessage m = new OscMessage("/IP2/pitch");
-      m.add(IP2Pitch);
-      oscP5.send(m, superColliderLocation);
-
-      //PTree0.size = (130-IP2Pitch)/2;   // [20-110]
-    }
-
-    // Checking if the phone has been shaken. //THIS SHOULD BE CHANGED LATER BC RIGHT NOW IT SENDS IT AS THE 1ST USER
-    if (theOscMessage.checkAddrPattern("/accelerometer/linear/x")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/y")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/z")==true) {
-      linearAcc = theOscMessage.get(0).floatValue();
-      if (abs(linearAcc)>minAcc && abs(1000*second()+millis()-lastShakeTime)>400) {
-        lastShakeTime=1000*second()+millis();
-        println("IP2 shaken");
-        greenTree.shake(linearAcc); // 2nd USER SHAKING
-
-        OscMessage m = new OscMessage("/IP2/shaken");
-        m.add(1);
-        oscP5.send(m, superColliderLocation);
-      }
-    } else if (theOscMessage.checkAddrPattern("/orientation/roll")==true) {
-      IP2Roll = theOscMessage.get(0).floatValue();    // To move between -90 (phone on its right spine) and +90 (phone on its left spine) (and 0 when phone at flat position) 
-      //println("IP2 roll: "+telephone2Roll);
-
-      if (IP2Roll<-45) { 
-        timbre = "timbre A";
-      } else if (IP2Roll>45) { 
-        timbre = "timbre C";
-      } else { 
-        timbre = "timbre B";
-      }
-
-      println("IP2 timbre: "+timbre);
-      OscMessage m = new OscMessage("/IP2/timbre");
-      m.add(timbre);
-      oscP5.send(m, superColliderLocation);
-    }
-  }
-
-
-
-
-  // The third IP (player) controlls whatever.
-  else if (IPdevices.indexOf(address)==2) {
-
-    if (theOscMessage.checkAddrPattern("/orientation/pitch")==true) {
-      IP3Pitch = theOscMessage.get(0).floatValue();  // Between -90 (phone pointing up) and +90 (phone pointing down) (and 0 when phone horizontally pointing towards you..)
-      println("IP3 pitch: "+IP3Pitch);
-
-      OscMessage m = new OscMessage("/IP3/pitch");
-      m.add(IP3Pitch);
-      oscP5.send(m, superColliderLocation);
-
-      //PTree0.size = (130-IP3Pitch)/2;   // [20-110]
-    }
-
-    // Checking if the phone has been shaken. //THIS SHOULD BE CHANGED LATER BC RIGHT NOW IT SENDS IT AS THE 1ST USER
-    if (theOscMessage.checkAddrPattern("/accelerometer/linear/x")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/y")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/z")==true) {
-      linearAcc = theOscMessage.get(0).floatValue();
-      if (abs(linearAcc)>minAcc && abs(1000*second()+millis()-lastShakeTime)>400) {
-        lastShakeTime=1000*second()+millis();
-        println("IP3 shaken");
-        blueTree.shake(linearAcc); // 3rd USER SHAKING
-
-        OscMessage m = new OscMessage("/IP3/shaken");
-        m.add(1);
-        oscP5.send(m, superColliderLocation);
-      }
-    } else if (theOscMessage.checkAddrPattern("/orientation/roll")==true) {
-      IP3Roll = theOscMessage.get(0).floatValue();    // To move between -90 (phone on its right spine) and +90 (phone on its left spine) (and 0 when phone at flat position) 
-      //println("IP3 roll: "+telephone2Roll);
-
-      if (IP3Roll<-45) { 
-        IP3timbre = "timbre A";
-      } else if (IP3Roll>45) { 
-        IP3timbre = "timbre C";
-      } else { 
-        IP3timbre = "timbre B";
-      }
-
-      println("IP3 timbre: "+IP3timbre);
-      OscMessage m = new OscMessage("/IP3/timbre");
-      m.add(IP3timbre);
-      oscP5.send(m, superColliderLocation);
-    }
-  } 
-  
-  else {
+  } else {
     println("Too many devices connected (max 3)");
   }
+}
+
+
+float[] pushInBuffer(float[] a, float element) {
+  float[] b = new float[a.length];
+  b[0] = element;
+  System.arraycopy(a, 0, b, 1, a.length-1);
+  return b;
 }

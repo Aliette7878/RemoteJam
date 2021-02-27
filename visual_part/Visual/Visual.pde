@@ -32,6 +32,9 @@ BirdArray Birds;
 // Background
 Background bg; 
 
+Character[] people;
+int populationSize;
+
 
 void setup() {
   frameRate(fps); 
@@ -43,6 +46,16 @@ void setup() {
   redTree = new Warlitree(new PVector(0,400),PI/12, "red"); 
   greenTree = new Warlitree(new PVector(width/2,0),PI-PI/12, "green");
   blueTree = new Warlitree(new PVector(width,400),-PI/6, "blue");
+  
+  populationSize = 15;
+  people = new Character[populationSize];
+  for (int i=0; i<populationSize; i++) {
+    people[i] = new Character(random(85,105),random(1.5,5),680);
+  }
+    // Stickmen
+  for (Character charact : people) {
+    charact.dancing=false;
+  }
   
   // OSC
   /* start oscHook. go to IP/port setup. Look at the port value in oscHook*/
@@ -67,6 +80,12 @@ void draw(){
   redTree.display();
   greenTree.display();
   blueTree.display();
+
+ // Stickmen
+  for (Character charact : people) {
+    charact.UpdateChar();
+    charact.DrawCharacter();
+  }
   
 }
 

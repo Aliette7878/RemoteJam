@@ -29,7 +29,7 @@ void draw_background(){
   fill(20,5,5);
   shape(blackline,-20, 650);
   noStroke();
-  rect(-20, 700, width + 40, 250);
+  //rect(-20, 700, width + 40, 250);
 }
 
 

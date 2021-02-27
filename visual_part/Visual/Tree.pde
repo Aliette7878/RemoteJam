@@ -1,10 +1,11 @@
 // Main code for one tree
 
 // VARIABLES
-int TimeBranch = 5; // Number of seconds before a branch is fully grown up
-int TimeLeaf = 5; // Number of seconds before a leaf is fully grown up
+int TimeBranch = 8; // Number of seconds before a branch is fully grown up
+int TimeLeaf = 8; // Number of seconds before a leaf is fully grown up
 int globalL = 180;        // Length of the 1rst branch
 float sizeMax = 10; // Number maximum of branches on 1 tree
+
 
 // Not modify
 float adult_age = TimeBranch*fps; // nb frame before the branch is adult : has to be higher if 
@@ -20,7 +21,6 @@ class Warlitree{
   
   
   Warlitree(PVector Position, float Bias, String colorName ){  
-    println(adult_age);
     bias = Bias;
     countershaker = 0;
     position = Position;
@@ -32,6 +32,7 @@ class Warlitree{
   
   
   void display(){
+
     grow();
     pushMatrix();
     translate(position.x, position.y);
@@ -59,13 +60,7 @@ class Warlitree{
       if (countershaker==3){fall(); countershaker=0;}
 
   }
-  
-  
-  void shake(float amplitude) {
-    // TODO: implement
-    println("SHAKE WITH AMPLITUDE NOT IMPLEMENTED, TREE L66");
 
-  }
   
   void fall(){
     branch b;
@@ -93,9 +88,22 @@ class Warlitree{
     for(int i=this.branches.size()-1; i>=0; i--){
       b=this.branches.get(i);
       b.grow();
-      if (b.age == adult_age && this.branches.size()<sizeMax){addBranch();}
-      if (b.age == -1){this.branches.remove(i);}
+      if (b.age == int(adult_age) && this.branches.size()<sizeMax ){
+        addBranch();
+      }
+      if (b.age == -1){this.branches.remove(i); addBranch();}
     }
+    if (previouslevel2!=level2){
+      addBranch();  
+    }
+    if (level2){
+      TimeLeaf=2; 
+      TimeBranch=2; 
+      adult_age = max(adult_age*0.95,TimeBranch*fps);// update
+      //if (random(1)<0.01 && this.branches.size()>2 ){this.branches.remove(1);}
+    }
+    else {TimeLeaf=8; TimeBranch=8; adult_age = min(adult_age*1.05,TimeBranch*fps);}
+    
   }
   
 }

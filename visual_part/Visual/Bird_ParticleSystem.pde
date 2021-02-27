@@ -8,11 +8,14 @@ class ParticleSystem{
   PVector origin;
   int N;
   boolean accelerationmode;
+  float l1, l2;
   
   ParticleSystem(PVector origin, int NParticles){
     this.particles = new ArrayList<Particle>();
     this.origin=origin.copy(); 
     N = NParticles;
+    l1 = 20;
+    l2 = 240;
   }
   
   void addParticle(){
@@ -25,15 +28,29 @@ class ParticleSystem{
   origin.y = int(i*segment.pos1.y + (1-i)*segment.pos2.y);
   }  
   
+  
   void action(boolean accelerationmode){
     Particle p;
-    //float previous_theta = theta(frameCount-1); // previous theta
+    if (accelerationmode==true){
+      if (millis()-lasttimeshake < 0.7*shakingduration){
+        l1=100; l2=200;
+      }
+      else {
+         l1 = map(millis()-lasttimeshake, 0.7*shakingduration, shakingduration,100, 20); // l1 = 100--> 0, l2 = 200-->250
+         l2 = map(millis()-lasttimeshake,  0.7*shakingduration, shakingduration,200, 240);
+      }
+    }
+
     for(int i=this.particles.size()-1; i>=0; i--){
       p=this.particles.get(i);
       // When mousePressed, particles get wilder
-      if (accelerationmode==true){if ((p.lifespan<100)|| (p.lifespan>200)){particles.remove(i);this.addParticle();}} // can be mapped with a special effect, such as the shaker instead of mouseP
-      else {p.applyForce(new PVector(c*random(-1,1), c* random(-1,1*c)));
-    }
+
+      //}
+      if (accelerationmode==false) {p.applyForce(new PVector(c*random(-1,1), c* random(-1,1*c)));
+      }
+      if ((p.lifespan<l1)|| (p.lifespan>l2)){
+        particles.remove(i);this.addParticle();
+      }
 
       p.action();
       p.lifespan-=5;
@@ -41,8 +58,9 @@ class ParticleSystem{
          particles.remove(i);
          if (this.particles.size()<N){this.addParticle();}
       }
-    
     }
   }
+    
+    
 
 }

@@ -3,6 +3,8 @@ import oscP5.*;
 
 // Framerate
 int fps=60;        // Framerate per seconds
+boolean level2=false, previouslevel2;
+
 
 // Connexion
 OscP5 oscP5;
@@ -92,15 +94,20 @@ void draw() {
     charact.UpdateChar();
     charact.DrawCharacter();
   }
+  
+  previouslevel2 = level2;
+
 }
 
 
 // SHOULD BE MAPPED TO OSC MESSAGES
-void mousePressed() { 
+void mousePressed() {
+    greenTree.shake(); // USER2 SHAKING - mapped, ok
+
   redTree.shake(); // USER 1 SHAKING - mapped, ok
-  greenTree.shake(); // USER2 SHAKING - mapped, ok
   blueTree.shake(); // USER3 SKAKING - not mapped yet (or is it? feel free to add some TODO: ;) bc easy to ctrl+F, and some IDE even automatically check for TODOs)
   Birds.accelerate(millis());
+  level2 = true;
 }
 
 
@@ -132,11 +139,11 @@ void oscEvent(OscMessage theOscMessage) {
         lastShakeTimes[ipIndex]=1000*second()+millis();
         println("IP"+ipIndex+" shaken");
         if (ipIndex==0) {
-          redTree.shake(accMaxValue); // 1st USER SHAKING
+          redTree.shake(); // 1st USER SHAKING
         } else if (ipIndex==1) {
-          greenTree.shake(accMaxValue); // 2nd USER SHAKING
+          greenTree.shake(); // 2nd USER SHAKING
         } else if (ipIndex==2) {
-          blueTree.shake(accMaxValue); // 3rd USER SHAKING
+          blueTree.shake(); // 3rd USER SHAKING
         }
 
         OscMessage m = new OscMessage("/IP"+ipIndex+"/shaken");

@@ -73,11 +73,11 @@ class branch{
            leaf1.position = new PVector(pos.x*pow(1-t,3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t,3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
            leaf2.position = new PVector(end.x, end.y);
        }
-       if (leaf1.position.y>height){
+       if (leaf1.position.y>height || leaf2.position.y<-height){
          leaf1.reset();       
          leaf1.position = new PVector(pos.x*pow(1-t,3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t,3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
        }
-       if (leaf2.position.y>height){leaf2.reset();leaf2.position = new PVector(end.x, end.y);}
+       if (leaf2.position.y>height || leaf2.position.y<-height){leaf2.reset();leaf2.position = new PVector(end.x, end.y);}
        if (dying){
          opacity--;
          if (opacity==0){age=-1;}}

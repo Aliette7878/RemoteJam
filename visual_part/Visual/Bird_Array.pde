@@ -1,10 +1,12 @@
 // Bird array
+int lasttimeshake = 0;
+int shakingduration = 2000;
 
 class BirdArray{
     ArrayList<Bird> birds;
     AttractionPoint AttractionPoint;
     boolean accelerationMode = false;
-    int lasttimeshake = 0;
+    float Pbird=0.003;
     
     void accelerate(int time0){
       accelerationMode=true;
@@ -14,6 +16,7 @@ class BirdArray{
     BirdArray(){
     this.birds = new ArrayList<Bird>();
     AttractionPoint =  new AttractionPoint();
+    addBird();
     }
     
     void addBird(){
@@ -21,10 +24,13 @@ class BirdArray{
     }
     
     void display(){
-      if (millis()-lasttimeshake>3000){accelerationMode=false;}
+      if (level2){Pbird=0.007; }
+      else {Pbird=0.003;}
+      
+      if (millis()-lasttimeshake>shakingduration){accelerationMode=false;}
 
       theta = theta(frameCount, accelerationMode); // theta in [-0.5,0]; 
-      if (random(1)<0.007){addBird();}
+      if (random(1)<Pbird){addBird();}
       if (accelerationMode && (random(1)<0.03)){addBird();}
       deleteBird();
       

@@ -21,15 +21,15 @@ class BirdArray{
     }
     
     void display(){
-      if (millis()-lasttimeshake>4000){accelerationMode=false;}
+      if (millis()-lasttimeshake>3000){accelerationMode=false;}
 
       theta = theta(frameCount, accelerationMode); // theta in [-0.5,0]; 
       if (random(1)<0.007){addBird();}
-      if (accelerationMode && (random(1)<0.01)){addBird();}
+      if (accelerationMode && (random(1)<0.03)){addBird();}
       deleteBird();
       
       Bird b;
-      AttractionPoint.walk();
+      AttractionPoint.walk(accelerationMode);
       
       for(int i=this.birds.size()-1; i>=0; i--){
         b=this.birds.get(i);
@@ -54,6 +54,6 @@ class BirdArray{
 // Update of theta - the angle for the wings
 float theta(int N, boolean accelerationMode){
   float theta = -abs(cos(N*0.02))*0.5;
-  if (accelerationMode){theta = -abs(cos(N*0.04))*0.5;}
+  if (accelerationMode){theta = -abs(cos(N*0.6))*0.5;}
   return(theta);
 }

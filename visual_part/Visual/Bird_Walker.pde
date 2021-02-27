@@ -15,7 +15,7 @@ class AttractionPoint{
     acceleration = new PVector();
   }
   
-    void walk() {
+    void walk(boolean accelerationMode) {
       acceleration.x = map(noise(noff.x), 0, 1, -1, 1);
       acceleration.y = map(noise(noff.y), 0, 1, -1, 1);
       acceleration.mult(0.1);
@@ -24,7 +24,7 @@ class AttractionPoint{
   
       velocity.add(acceleration);
       velocity.limit(0.8);
-      if (mousePressed==true){velocity.mult(2);}
+      if (accelerationMode==true){velocity.mult(2);}
       location.add(velocity);
   
       location.y = constrain(location.y, 100, height-100);
@@ -51,7 +51,7 @@ class Walker {
   }
 
   // Randomly move up, down, left, right, or stay in one place
-  void walk() {
+  void walk(boolean accelerationMode) {
     acceleration.x += map(noise(noff.x), 0, 1, -1, 1);
     acceleration.y += map(noise(noff.y), 0, 1, -0.7, 1);
     acceleration.mult(0.005);
@@ -60,7 +60,7 @@ class Walker {
 
     velocity.add(acceleration);
     velocity.limit(0.2);
-    if (mousePressed==true){velocity.mult(3);}
+    if (accelerationMode==true){velocity.mult(3);}
     location.add(velocity);
     
     location.y = constrain(location.y, 100, height-100);

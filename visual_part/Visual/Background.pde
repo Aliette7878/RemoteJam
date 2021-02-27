@@ -9,7 +9,7 @@ class Background{
     bg = loadImage("bg-warli.png");
     bg.resize(width,height);
     blackline = loadShape("powerpoint_line.svg");
-    blackline.scale(1.5);
+    blackline.scale(1.2);
     blackline.disableStyle();
   }
 
@@ -26,8 +26,8 @@ void draw_background(){
   ellipse(width/2, height/2 + 200, 500, 500);
     
   // The black horizon
-  fill(20,5,5);
-  shape(blackline,-20, 650);
+  fill(30,15,15);
+  shape(blackline,-40, 655);
   noStroke();
   //rect(-20, 700, width + 40, 250);
 }

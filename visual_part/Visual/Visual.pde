@@ -80,7 +80,7 @@ void draw(){
   redTree.display();
   greenTree.display();
   blueTree.display();
-
+  
  // Stickmen
   for (Character charact : people) {
     charact.UpdateChar();
@@ -96,7 +96,6 @@ void mousePressed(){
   greenTree.shake(); // USER2 SHAKING - mapped, ok
   blueTree.shake(); // USER3 SKAKING - not mapped yet
   Birds.accelerate(millis()); 
-  println(millis());
 }
 
 

@@ -7,6 +7,7 @@ class ParticleSystem{
   ArrayList<Particle> particles;
   PVector origin;
   int N;
+  boolean accelerationmode;
   
   ParticleSystem(PVector origin, int NParticles){
     this.particles = new ArrayList<Particle>();
@@ -24,13 +25,13 @@ class ParticleSystem{
   origin.y = int(i*segment.pos1.y + (1-i)*segment.pos2.y);
   }  
   
-  void action(){
+  void action(boolean accelerationmode){
     Particle p;
     //float previous_theta = theta(frameCount-1); // previous theta
     for(int i=this.particles.size()-1; i>=0; i--){
       p=this.particles.get(i);
       // When mousePressed, particles get wilder
-      if (mousePressed==true){if ((p.lifespan<100)|| (p.lifespan>200)){particles.remove(i);this.addParticle();}} // can be mapped with a special effect, such as the shaker instead of mouseP
+      if (accelerationmode==true){if ((p.lifespan<100)|| (p.lifespan>200)){particles.remove(i);this.addParticle();}} // can be mapped with a special effect, such as the shaker instead of mouseP
       else {p.applyForce(new PVector(c*random(-1,1), c* random(-1,1*c)));
     }
 

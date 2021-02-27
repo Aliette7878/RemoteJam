@@ -32,8 +32,8 @@ class Bird{
       }
     } 
 
-  void move(){  
-    Walker.walk();
+  void move(boolean accelerationMode){  
+    Walker.walk(accelerationMode);
     SegL.update(); // Update segment's angle according to theta
     SegR.update(); 
     SegL.pos1 = Walker.location; // Update segment's position
@@ -44,7 +44,7 @@ class Bird{
   
   void shrink(boolean accelerationMode){
     N = max(0,N-N*0.001);
-    if (accelerationMode==true){N = N-N*0.003;}
+    if (accelerationMode==true){N = N-N*0.005;} // particles disappear sooner
     SegR.L=int(N/density);
     SegL.L=SegR.L;
     PSR.N = int(N); PSL.N = int(N);
@@ -52,9 +52,9 @@ class Bird{
   
   void display(boolean accelerationMode){
     shrink(accelerationMode);
-    move();    
-    PSR.action();// Update & display particles (forces, dead, lifespan)
-    PSL.action();
+    move(accelerationMode);    
+    PSR.action(accelerationMode);// Update & display particles (forces, dead, lifespan)
+    PSL.action(accelerationMode);
     
 
   }

@@ -1,8 +1,8 @@
 // Main code for one tree
 
 // BRANCH VARIABLES
-int TimeBranch1 = 8, TimeBranch2 = 2; // Number of seconds before a branch is fully grown up
-int sizeMax1 = 4, sizeMax2 = 8;  // Number maximum of branches on 1 tree
+int TimeBranch1 = 7, TimeBranch2 = 2; // Number of seconds before a branch is fully grown up
+int sizeMax1 = 5, sizeMax2 = 8;  // Number maximum of branches on 1 tree
 int globalL = 180;        // Length of the 1rst branch
 // LEAF VARIABLES
 float global_s = 0.008; // first scaler applied to the svg file
@@ -122,7 +122,7 @@ class Warlitree{
   
   // When the tree is almost complete and nothing happens, it randomly looses branches & leaves
   void spontaneousDeath(){
-        if (random(1)<0.01 && this.branches.size()>sizeMax-2){
+        if (random(1)<0.01 && this.branches.size()>sizeMax-2 && level2){
           branch b;
           b = this.branches.get(1);
           b.dying = true;

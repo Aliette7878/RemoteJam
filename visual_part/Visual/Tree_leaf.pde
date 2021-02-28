@@ -67,7 +67,7 @@ class leaf {
    
   
   void grow(){
-    if (age<N_scale) {
+    if (age<N_scale && isfalling==false) {
       svg.scale(step_s);
       w = int(svg.width*s*pow(step_s,age)); h = int(svg.height*s*pow(step_s,age));
     }

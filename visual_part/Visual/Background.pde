@@ -1,5 +1,7 @@
 // Display the background 
 
+// VARIABLE
+
 class Background{
   PImage bg, black;
   PShape blackline;
@@ -25,6 +27,7 @@ void draw_background(){
   
   // The sun
   if (level2){g=min(g*1.05,250); r = min(r*1.05, 250); b=min(b*1.05, 100);}
+  if (darkmode) {g = g*0.01; r = r*0.01; b = b*0.01;}
   fill(r, g, b, 100);
   stroke(250, 200, 50, 80);
   strokeWeight(10);
@@ -34,7 +37,14 @@ void draw_background(){
   fill(30,15,15);
   shape(blackline,-40, 655);
   noStroke();
-  //rect(-20, 700, width + 40, 250);
+  //
+  
+  if (darkmode) {
+    fill(15,15,15,50);
+    rect(0, 0, 3000,3000);
+  }
+  
+
 }
 
 

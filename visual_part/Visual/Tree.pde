@@ -4,12 +4,6 @@
 int TimeBranch1 = 7, TimeBranch2 = 2; // Number of seconds before a branch is fully grown up
 int sizeMax1 = 5, sizeMax2 = 8;  // Number maximum of branches on 1 tree
 int globalL = 180;        // Length of the 1rst branch
-// LEAF VARIABLES
-float global_s = 0.008; // first scaler applied to the svg file
-int opacity1 = 255, opacity2 = 255; // ** TO DO : to erase maybe ** opacity of the 1rst level & 2nd level
-int TimeLeaf1 = 8, TimeLeaf2 = 3; // Number of seconds before a leaf is fully grown up, level1 & level2
-float size2 = 1.5; // Size multiplicator for the leaf at level 2 
-int colored = 0; // fully color : 1, not colored : 0
 
 
 // *** do not modify ***
@@ -136,6 +130,7 @@ class Warlitree{
   void updateLevel(){
     if (level2){
       adult_age = max(adult_age*0.95,TimeBranch*fps);// update
+      colored=1;
     }
     else {
       adult_age = min(adult_age*1.05,TimeBranch*fps);
@@ -146,12 +141,10 @@ class Warlitree{
         TimeLeaf=TimeLeaf2; 
         TimeBranch=TimeBranch2; 
         sizeMax = sizeMax2;
-        colored=1;
-        //if (random(1)<0.01 && this.branches.size()>2 ){this.branches.remove(1);}
       }
       else {
         TimeLeaf=TimeLeaf1; 
-        //TimeBranch=TimeBranch1;
+        TimeBranch=TimeBranch1;
         sizeMax = sizeMax1;
         colored = 0;
       }

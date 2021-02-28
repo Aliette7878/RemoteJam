@@ -1,5 +1,13 @@
 // Code for a leaf
 
+// LEAF VARIABLES
+float global_s = 0.008; // first scaler applied to the svg file
+int opacity1 = 255, opacity2 = 255; // ** TO DO : to erase maybe ** opacity of the 1rst level & 2nd level
+int TimeLeaf1 = 8, TimeLeaf2 = 3; // Number of seconds before a leaf is fully grown up, level1 & level2
+float size2 = 1.5; // Size multiplicator for the leaf at level 2 
+float colored = 0; // fully color : 1, not colored : 0
+float dark = 0.3; // darkness of the leaves during darkmode
+float darkopacity=180; // opacity of the leaves during darkmode
 
 //****DO NOT MODIFY BELOW****
 String file_name = "tree-leaf.svg" ;
@@ -50,7 +58,9 @@ class leaf {
     translate(position.x, position.y);
     rotate(angle);
     svg.disableStyle();
-    fill(this.col);
+    color col2 = col;
+    if (darkmode){col2 = color(red(this.col)*dark, green(this.col)*dark, blue(this.col)*dark, darkopacity);}
+    fill(col2);
     shape(svg,-w/2,-h);
     popMatrix();
    }

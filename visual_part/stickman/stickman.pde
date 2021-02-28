@@ -21,10 +21,11 @@ void draw() {
     charact.UpdateChar();
     charact.DrawCharacter();
   }
-  println(frameRate);
+  //println(frameRate);
 }
 void mouseClicked() {
   for (Character charact : people) {
-    charact.dancing=false;
+    charact.startWalking();
+    charact.jump(3);
   }
 }

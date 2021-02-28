@@ -22,6 +22,7 @@ int numberOfUsers = 3;
 // Variables in arrays for all the users
 float[] pitchs = new float[numberOfUsers];
 float[] rolls = new float[numberOfUsers];
+float[] luminosities = new float[numberOfUsers];
 boolean[] orientationsUpdated = new boolean[numberOfUsers];
 String[] exPositions = new String[numberOfUsers];
 String[] positions = new String[numberOfUsers];
@@ -54,7 +55,7 @@ void setup() {
   populationSize = 15;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(random(85, 105), random(1.5, 5), 680);
+    people[i] = new Character(random(85, 105), random(1.5, 3), 680);
   }
   // Stickmen
   for (Character charact : people) {
@@ -110,9 +111,12 @@ void mousePressed() {
   blueTree.shake(); // USER3 SKAKING - not mapped yet (or is it? feel free to add some TODO: ;) bc easy to ctrl+F, and some IDE even automatically check for TODOs)
   Birds.accelerate(millis());
   level2 = true;
+
+  // Stickmen
+  for (Character charact : people) {
+    charact.jump(5);
+  }
 }
-
-
 
 
 
@@ -164,6 +168,15 @@ void oscEvent(OscMessage theOscMessage) {
       //println("IP"+ipIndex+" roll: "+rolls[ipIndex]);
       orientationsUpdated[ipIndex] = true;
     }
+    else if (theOscMessage.checkAddrPattern("/light")==true) {
+      luminosities[ipIndex] = theOscMessage.get(0).floatValue();
+      if(min(luminosities)<<10){  // TODO: figure out if we rather want the mean under a certain treshold, etc...
+        darkmode=true;
+      }else
+        darkmode=false;
+      }
+    }
+    //TODO: last tmhing with distance btw phone ? (each phone needs to have exposure notifications on)
 
     // Updating the "category" of the Position
     if (orientationsUpdated[ipIndex]) {

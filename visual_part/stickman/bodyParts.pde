@@ -169,8 +169,8 @@ class Arms {
   void updatePart() {
     float armsAngle = c.body.chestInclination;
     float forearmsAngle = c.body.chestInclination;
-    if (c.dancing) {
-      if (c.dancingCode == 1) {
+    if (c.dancing || c.jumping) {
+      if (c.dancingCode == 1 && !c.jumping) {
         armsAngle += PI/8 + noise(frameCount)/4;
         forearmsAngle += (PI/2) + (PI/2)*c.dancingStep/c.dancingAmplitude;
       } else {
@@ -182,7 +182,7 @@ class Arms {
       forearmsAngle += 1.4*armsAngle;
     }
 
-    if (c.dancing && c.dancingCode == 3) {
+    if (c.dancing && c.dancingCode == 3 && !c.jumping) {
       RelbowX = c.body.RshoulderX - 0.4*size*sin(PI-armsAngle);
       RelbowY = c.body.RshoulderY + 0.4*size*cos(PI-armsAngle);
       LelbowX = c.body.LshoulderX + 0.4*size*sin(armsAngle);

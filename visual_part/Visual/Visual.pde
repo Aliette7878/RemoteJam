@@ -81,7 +81,7 @@ void setup() {
 
 void draw() {
 
-  //println(frameRate);
+  println(frameRate);
 
   bg.draw_background();
   Birds.display();

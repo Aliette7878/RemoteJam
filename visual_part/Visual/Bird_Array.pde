@@ -1,12 +1,12 @@
 // Bird array
 int lasttimeshake = 0;
-int shakingduration = 2000;
+
 
 class BirdArray{
     ArrayList<Bird> birds;
     AttractionPoint AttractionPoint;
     boolean accelerationMode = false;
-    float Pbird=0.003;
+    float Pbird=Pbird1;
     
     void accelerate(int time0){
       accelerationMode=true;
@@ -24,13 +24,13 @@ class BirdArray{
     }
     
     void display(){
-      if (level2){Pbird=0.007; }
-      else {Pbird=0.003;}
+      if (level2){Pbird=Pbird2; }
+      else {Pbird=Pbird1;}
       
       if (millis()-lasttimeshake>shakingduration){accelerationMode=false;}
 
       theta = theta(frameCount, accelerationMode); // theta in [-0.5,0]; 
-      if (random(1)<Pbird){addBird();}
+      if (random(1)<Pbird && this.birds.size()<sizeMaxBird){addBird();}
       if (accelerationMode && (random(1)<0.03)){addBird();}
       deleteBird();
       
@@ -59,7 +59,7 @@ class BirdArray{
 
 // Update of theta - the angle for the wings
 float theta(int N, boolean accelerationMode){
-  float theta = -abs(cos(N*0.02))*0.5;
-  if (accelerationMode){theta = -abs(cos(N*0.6))*0.5;}
+  float theta = -abs(cos(N*f1))*0.5;
+  if (accelerationMode){theta = -abs(cos(N*f2))*0.5;}
   return(theta);
 }

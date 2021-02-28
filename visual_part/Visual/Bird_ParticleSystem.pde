@@ -43,15 +43,11 @@ class ParticleSystem{
 
     for(int i=this.particles.size()-1; i>=0; i--){
       p=this.particles.get(i);
-      // When mousePressed, particles get wilder
-
-      //}
       if (accelerationmode==false) {p.applyForce(new PVector(c*random(-1,1), c* random(-1,1*c)));
       }
       if ((p.lifespan<l1)|| (p.lifespan>l2)){
         particles.remove(i);this.addParticle();
       }
-
       p.action();
       p.lifespan-=5;
       if(p.isDead()){

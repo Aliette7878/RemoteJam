@@ -7,7 +7,7 @@ class AttractionPoint{
   PVector noff ;
   
     AttractionPoint() {
-    int x = int(random(200, width-200));
+    int x = int(random(100, width-100));
     int y = int(random(100,height-100));
     location = new PVector(x,y);
     noff = new PVector(random(1000), random(1000));
@@ -28,7 +28,7 @@ class AttractionPoint{
       location.add(velocity);
   
       location.y = constrain(location.y, 100, height-100);
-      location.x = constrain(location.x, 200, width-200);
+      location.x = constrain(location.x, 100, width-100);
     }
 }
 
@@ -64,7 +64,7 @@ class Walker {
     location.add(velocity);
     
     location.y = constrain(location.y, 100, height-100);
-    location.x = constrain(location.x, 200, width-200);
+    location.x = constrain(location.x, 100, width-100);
     acceleration=new PVector(0,0);
       
   }

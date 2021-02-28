@@ -10,7 +10,7 @@ class Segment {
 
   Segment(PVector position, int Side, int Length) {
       pos1 = position; 
-      L = Length; //60
+      L = Length; 
       side = Side; 
       pos2 = new PVector(pos1.x, pos1.y);
   }

@@ -1,9 +1,16 @@
 // Main code for one single bird
 
+// VARIABLES
+float Pbird1 = 0.002;
+float Pbird2 = 0.008;
+int shakingduration = 2000; // acceleration time during a shaker
+float f1 = 0.02, f2 = 0.06; // frequency of wings movement
+int sizeMaxBird = 8;
+
+// Do not modify
 float theta;
 float density = 0.5;
 int WingLength = 40;
-
 
 class Bird{
   PVector pos; // Position
@@ -44,8 +51,11 @@ class Bird{
   
   void shrink(boolean accelerationMode){
     N = max(0,N-N*0.001);
-    if (accelerationMode==true){N = N-N*0.005;} // particles disappear sooner
-    SegR.L=int(N/density);
+    if (accelerationMode==true){
+      N = N-N*0.007; // particles disappear sooner
+      SegR.L=int(N/density*0.90);
+    } 
+    else {SegR.L=int(N/density);}
     SegL.L=SegR.L;
     PSR.N = int(N); PSL.N = int(N);
   }

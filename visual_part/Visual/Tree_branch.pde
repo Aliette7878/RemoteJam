@@ -1,6 +1,5 @@
 // One branch of a tree welcomes 1 or 2 leaves
 
-
 class branch{
   int Lx, Ly, fLx, fLy, age=0, opacity, countershakes, c;
   PVector A, B, C,end;
@@ -11,6 +10,7 @@ class branch{
   float bias;
   float s=2;
   
+  
     branch(int Lengthx, int Lengthy, PVector position, String col, float biasoftree){  
       fLx = Lengthx;
       fLy = Lengthy;
@@ -19,7 +19,7 @@ class branch{
       leaf1 = new leaf(col);
       leaf2 = new leaf(col);
       leaf2.svg.setVisible(false);
-      t = random(0.1,0.95);
+      t = random(0.1,0.75);
       A = new PVector(pos.x, pos.y-Ly);
       B = new PVector(pos.x - Lx, pos.y-Ly);
       end = new PVector( pos.x-Lx, pos.y-Ly/2); // END
@@ -28,12 +28,10 @@ class branch{
       countershakes=0;
     }
     
-    // shake :
+    // One branch shakes and can loose its leaves
     void shake(int c){
       s = s*0.99;
       float x=s*cos(c*10*millis()/1000);  
-      //A.add(s,s);
-      //B.add(x,x);
       end.add(c*x,c*x);
       if (leaf1.isfalling==false){leaf1.position = new PVector(pos.x*pow(1-t,3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t,3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
       }
@@ -62,7 +60,7 @@ class branch{
     }
     
 
-    // Make the branch and its leaf grow
+    // Make the branch and its leaves grow
     void grow(){
        age++;
        leaf1.grow();

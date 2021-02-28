@@ -5,7 +5,7 @@ import oscP5.*;
 int fps=60;        // Framerate per seconds
 // Modes and levels
 boolean level2=false, previouslevel2;
-boolean darkmode = true;
+boolean darkmode = false;
 
 
 // Connexion

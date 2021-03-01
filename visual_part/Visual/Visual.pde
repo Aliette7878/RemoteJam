@@ -97,15 +97,14 @@ void draw() {
     charact.UpdateChar();
     charact.DrawCharacter();
   }
-  
-  previouslevel2 = level2;
 
+  previouslevel2 = level2;
 }
 
 
 // SHOULD BE MAPPED TO OSC MESSAGES
 void mousePressed() {
-    greenTree.shake(); // USER2 SHAKING - mapped, ok
+  greenTree.shake(); // USER2 SHAKING - mapped, ok
 
   redTree.shake(); // USER 1 SHAKING - mapped, ok
   blueTree.shake(); // USER3 SKAKING - not mapped yet (or is it? feel free to add some TODO: ;) bc easy to ctrl+F, and some IDE even automatically check for TODOs)
@@ -167,12 +166,11 @@ void oscEvent(OscMessage theOscMessage) {
       rolls[ipIndex] = theOscMessage.get(0).floatValue();    // To move between -90 (phone on its right spine) and +90 (phone on its left spine) (and 0 when phone at flat position) 
       //println("IP"+ipIndex+" roll: "+rolls[ipIndex]);
       orientationsUpdated[ipIndex] = true;
-    }
-    else if (theOscMessage.checkAddrPattern("/light")==true) {
+    } else if (theOscMessage.checkAddrPattern("/light")==true) {
       luminosities[ipIndex] = theOscMessage.get(0).floatValue();
-      if(min(luminosities)<<10){  // TODO: figure out if we rather want the mean under a certain treshold, etc...
+      if (min(luminosities)<10) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
         darkmode=true;
-      }else
+      } else {
         darkmode=false;
       }
     }
@@ -195,7 +193,9 @@ void oscEvent(OscMessage theOscMessage) {
       } else {
         positions[ipIndex] = "Position E";
       }
-      if (positions[ipIndex] != exPositions[ipIndex]) {lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();}
+      if (positions[ipIndex] != exPositions[ipIndex]) {
+        lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
+      }
 
       println("IP"+ipIndex+" position: "+positions[ipIndex]);
 

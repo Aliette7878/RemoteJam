@@ -1,4 +1,4 @@
-//s.boot
+s.boot
 
 //Players: 1, 2, 3
 //Patterns: A, B, C
@@ -33,7 +33,42 @@ s.waitForBoot({
 		Out.ar(0,[w1, w2] )
 	}).add;
 
-	~wind = Synth.new(\wind);
+	//**************** SYNTHDEF FOR BUFFER SOUNDS ***************
+
+	SynthDef(\playbuf, {
+		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, done_act = 2, rev_mix = 0.25, rev_room = 0.15;
+		var sig, env;
+		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, doneAction:done_act);
+		env = EnvGen.kr(Env.new([0,1,0], [0.4, rel], [3, -1]), t_trig, doneAction:done_act);
+		sig = sig*env;
+		sig = FreeVerb.ar(sig, mix: rev_mix, room: rev_room)*amp;
+
+		Out.ar(out, sig);
+	}).add;
+
+
+	//TO DO: INSERT RANDOM AMPLITUDE
+	SynthDef(\playbuf_loop, {
+		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, loop = 0, done_act = 0, rev_mix = 0.5, rev_room = 0.5;
+		var sig, env;
+		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, loop, doneAction:done_act);
+		env = EnvGen.kr(Env.new([0,1], [0.5]), t_trig, doneAction:done_act);
+		sig = sig*env*LFNoise1.kr(0.3, 0.2, 0.46);
+		sig = FreeVerb.ar(sig, mix: rev_mix, room: rev_room)*amp;
+		Out.ar(out, sig);
+	}).add;
+
+	SynthDef(\playbuf_kal, {
+		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, done_act = 2, rev_mix = 0.25, rev_room = 0.4;
+		var sig, env;
+		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, doneAction:done_act);
+		env = EnvGen.kr(Env.new([0,1,0], [0, rel], [1, -1]), t_trig, doneAction:done_act);
+		sig = sig*env;
+		sig = FreeVerb.ar(sig, mix: rev_mix, room: rev_room)*amp;
+
+		Out.ar(out, sig);
+	}).add;
+
 
 	//************** EXT FILES & BUFFERS ****************
 
@@ -41,8 +76,8 @@ s.waitForBoot({
 
 	//Importing background sounds
 	//~bg_wind = Buffer.read(s, "background/bg-soft-wind.wav", 0, -1);
-	~bg_lotar= Buffer.read(s, "background/bg-lotar.wav", 0, -1);
-	~bg_crickets = Buffer.read(s, "background/bg-crickets.wav", 0, -1);
+	//~bg_lotar= Buffer.read(s, "background/bg-lotar.wav", 0, -1);
+	//~bg_crickets = Buffer.read(s, "background/bg-crickets.wav", 0, -1);
 	~bg_crickets_birds = Buffer.read(s, "background/bg-crickets_birds.wav", 0, s.sampleRate*25);
 
 	//Importing other nature sounds
@@ -58,9 +93,54 @@ s.waitForBoot({
 	~scream = Buffer.read(s, "people/scream_high.wav", 0, -1);
 
 	//Importing birds sounds
-	~birds = Buffer.read(s, "birds/birds.wav", 0, -1);
-	~parrot = Buffer.read(s, "birds/grey-parrot.wav", 0, -1);
+	~birds = Buffer.read(s, "birds/birds.wav", 0, s.sampleRate*6);
+	//~parrot = Buffer.read(s, "birds/grey-parrot.wav", 0, -1);
 
+
+	//Importing kalimba sounds
+	~k_c0 = Buffer.read(s, "kalimba/k-c-low.wav", 0, -1);
+	~k_f0 = Buffer.read(s, "kalimba/k-f0.wav", 0, -1);
+	~k_c1 = Buffer.read(s, "kalimba/k-c.wav", 0, -1);
+	~k_f1 = Buffer.read(s, "kalimba/k-f1.wav", 0, -1);
+	~k_c2 = Buffer.read(s, "kalimba/k-c-high.wav", 0, -1);
+	~k_short_a = Buffer.read(s, "kalimba/k-short-a.wav", 0, -1);
+	~k_short_c = Buffer.read(s, "kalimba/k-short-c.wav", 0, -1);
+	~k_short_d = Buffer.read(s, "kalimba/k-short-d.wav", 0, -1);
+
+	~k_buf = Synth.new(\playbuf_kal, [\buf, ~k_f0.bufnum, \rel, 2, \rate, 1, \amp, 0.3]);
+
+	//Just to hear the sounds
+
+	//~lemur_buf = Synth.new(\playbuf, [\buf, ~bg_lemur.bufnum, \rel, 5, \amp, 0.3]);
+
+
+
+	//******************* SOUND DEF: BASS *********************
+
+
+	SynthDef.new(\bass, {
+		arg freq=440, amp = 1;
+		var sig, env, oscfreq;
+		env = SinOsc.kr([0.1,1,1,0]).range(0.05,0.2);
+		//env = LFNoise2.kr(500);
+		oscfreq = {freq * LFNoise2.kr(0.5).range(0.99, 1.01)};
+		sig = SinOsc.ar([oscfreq, 0, 10, 100]);
+		sig = sig * env * amp;
+		sig = FreeVerb.ar(sig, room:0.7);
+		Out.ar(0, Mix.new(sig)*0.5);
+	}).add;
+
+
+	//****************** DRUMS & SHAKERS *********************
+
+
+	//Imported drum files
+
+	~tom = Buffer.read(s, "drums/tom.wav", 0, s.sampleRate*1);
+	~low = Buffer.read(s, "drums/b-low.wav", 0, s.sampleRate*1);
+	~high = Buffer.read(s, "drums/high-hit.wav", 0, s.sampleRate*1);
+	~mid = Buffer.read(s, "drums/mid-kenkeni.wav", 0, s.sampleRate*1);
+	~snap = Buffer.read(s, "drums/b-snap.wav", 0, s.sampleRate*1);
 
 	//Importing shakers sounds
 	~rain = Buffer.read(s, "shakers/rain-maker.wav", 0, s.sampleRate*4);
@@ -68,92 +148,20 @@ s.waitForBoot({
 	~nut = Buffer.read(s, "shakers/nut-shaker.wav", 0, s.sampleRate*4);
 
 
-	//synthdef for the buffer sounds
-
-	SynthDef(\playbuf, {
-		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, done_act = 0, rev_mix = 0.25, rev_room = 0.15;
-		var sig, env;
-		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, doneAction:done_act);
-		env = EnvGen.kr(Env.new([0,1,0], [0.5, rel], [3, -1]), t_trig, doneAction:done_act);
-		sig = sig*env;
-		sig = FreeVerb.ar(sig, mix: rev_mix, room: rev_room)*amp;
-
-		Out.ar(out, sig);
-	}).add;
-
-
-	//TO DO: INSERT RANDOM AMPLITUDE
-	SynthDef(\playbuf_loop, {
-		arg amp = 1, out = 0, buf, rate = 1, t_trig = 1, start=0, rel = 2, loop = 0, done_act = 0, rev_mix = 0.5, rev_room = 0.5;
-		var sig, env;
-		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, loop, doneAction:done_act);
-		env = EnvGen.kr(Env.new([0,1], [0.5]), t_trig, doneAction:done_act);
-		sig = sig*env;
-		sig = FreeVerb.ar(sig, mix: rev_mix, room: rev_room)*amp;
-		Out.ar(out, sig);
-	}).add;
-
-
-	//Just to hear the sounds
-	//~playbuf = Synth.new(\playbuf, [\buf, ~bg_wind.bufnum, \rate, 1, \rel, 25]);
-	~crick_buf = Synth.new(\playbuf, [\buf, ~bg_crickets.bufnum, \rate, 1, \amp, 1, \rel, 25]);
-	~crick_buf.set(\t_trig, 1, \start, ~bg_crickets.numFrames.rand);
-
-	~crick_birds_buf = Synth.new(\playbuf_loop, [\buf, ~bg_crickets_birds.bufnum, \loop, 1, \amp, 0.05]);
-
-	~lotar_buf = Synth.new(\playbuf_loop, [\buf, ~bg_lotar.bufnum, \loop, 1, \amp, 0.5]);
-
-
-	~lemur_buf = Synth.new(\playbuf, [\buf, ~bg_lemur.bufnum, \rel, 5, \amp, 0.3]);
-	~eleph_buf = Synth.new(\playbuf, [\buf, ~bg_elephant.bufnum, \rel, 2, \amp, 0.2]);
-	~eleph_buf.set(\t_trig, 1, \start, [0,2].choose*s.sampleRate);
-
-
-	~rain_buf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2, \done_act, 2, \amp, 4]);
-	~rattle_buf = Synth.new(\playbuf, [\buf, ~rattle.bufnum, \rate, 1.5, \rel, 2, \done_act, 2]);
-	~nut_buf = Synth.new(\playbuf, [\buf, ~nut.bufnum, \rate, 1, \rel, 2, \done_act, 2]);
-
-
-	//******************* SOUND DEF *********************
-
-
-	//BASS
-	SynthDef.new(\bass, {
-		arg freq=440, amp = 1;
-		var sig, env, oscfreq;
-		env = SinOsc.kr([0.1,1,1,0]).range(0.05,0.2);
-		//env = LFNoise2.kr(500);
-		oscfreq = {freq * LFNoise2.kr(0.5).range(0.98, 1.02)};
-		sig = SinOsc.ar([oscfreq, 0, 10, 100]);
-		sig = sig * env * amp;
-		sig = FreeVerb.ar(sig, room:0.7);
-		Out.ar(0, Mix.new(sig)*0.5);
-	}).add;
-
-	~bass = Synth(\bass, [\freq, 200, \amp, 0.1]);
-
-
-	//******************** DRUMS ************************
-
-	//Imported drum files
-	~low = Buffer.read(s, "drums/drum-sample-8.wav", 0, s.sampleRate*1);
-	~high = Buffer.read(s, "drums/drum-sample-9.wav", 0, s.sampleRate*1);
-	~mid = Buffer.read(s, "drums/kenkeni-drum.wav", 0, s.sampleRate*0.25);
-
 	//synthdef for the drum sounds
 	SynthDef(\playbuf_drum, {
-		arg amp = 2, out = 0, buf, rate = 1, t_trig, start=0, rel = 0.5, loop = 0, da = 2;
+		arg amp = 2, out = 0, buf, rate = 1, t_trig, start=0, rel = 1, da = 2;
 		var sig, env;
-		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, loop, doneAction: da);
+		sig = PlayBuf.ar(2, buf, rate * BufRateScale.kr(buf), t_trig, start, doneAction: da);
 		env = EnvGen.kr(Env.new([0,1,0], [0, rel], [1,-1]), doneAction:2);
 		sig = sig*env;
-		sig = FreeVerb.ar(sig, mix:0.5)*amp;
-
+		sig = FreeVerb.ar(sig, mix:0.5, room:0.7)*amp;
 		Out.ar(out, sig);
 	}).add;
 
 
 	//************* SEQUENCING: RHYTHM ********************
+
 
 	~patternA = Pdef(
 		\rhythmA,
@@ -170,7 +178,7 @@ s.waitForBoot({
 				], inf
 			),
 			\rate, Pexprand(1, 1.05, inf),
-			\amp, Pseq([0.8, Pexprand(0.005,0.4,2), 0.6], inf),
+			\amp, Pseq([0.6, Pexprand(0.005,0.4,2), 0.6], inf),
 		);
 	).play(quant: 1.875);
 
@@ -178,7 +186,7 @@ s.waitForBoot({
 		\rhythmB,
 		Pbind(
 			\instrument, \playbuf_drum,
-			\dur, Pseq([1/16], inf),
+			\dur, Pseq([1/8], inf),
 			\stretch, 60/120 * 4,
 			//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
 			\buf, Pseq(
@@ -186,13 +194,14 @@ s.waitForBoot({
 					~low,
 					Pwrand([~low, ~mid, ~high], [0.25,0.6,0.15], 7),
 					~high,
-					Pwrand([~low, ~mid, ~high], [0.25,0.25,0.5], 7),
+					Pwrand([~tom, ~mid, ~high], [0.25,0.25,0.5], 7),
 				], inf
 			),
 			\rate, Pexprand(1, 1.05, inf),
 			\amp, Pseq([0.9, Pexprand(0.1,0.5,7)], inf),
 		);
 	).play(quant: 1.875);
+
 
 	~patternC = Pdef(
 		\rhythmC,
@@ -211,16 +220,36 @@ s.waitForBoot({
 
 	n = NetAddr.new("127.0.0.1", 57120);
 
+	// OSC START
+
+	~osc_start = OSCdef("start",
+		{
+			arg msg, time, addr, port;
+			("OSC start:" + msg[1]).postln;
+			if(msg[1]==1,{
+				~wind = Synth.new(\wind);
+				~crick_birds_buf = Synth.new(\playbuf_loop, [\buf, ~bg_crickets_birds.bufnum, \loop, 1, \amp, 0.05]);
+				~eleph_buf = Synth.new(\playbuf, [\buf, ~bg_elephant.bufnum, \rel, 2, \amp, 0]);
+				~bass1 = Synth(\bass, [\freq, 196, \amp, 0.3]);
+				~bass2 = Synth(\bass, [\freq, 260, \amp, 0.3]);
+
+				//~lotar_buf = Synth.new(\playbuf_loop, [\buf, ~bg_lotar.bufnum, \loop, 1, \amp, 0.5]);
+
+			});
+
+		},
+		'/OSCstart'
+	);
 
 
-	// DISCRETE EVENTS: SHAKERS
+	// OSC EVENTS: SHAKERS
 
 	~osc_shaker1 = OSCdef("IP1 shaker",
 		{
 			arg msg, time, addr, port;
-			("IP1 shaken:" + msg[1]).postln;
+			("IP1 shaken:" + msg[0]).postln;
 			if(msg[1]==1,{
-				~rain_buf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2.5, \done_act, 2, \amp, 4]);
+				~rain_buf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2, \done_act, 2, \amp, 3]);
 			});
 
 		},
@@ -228,6 +257,63 @@ s.waitForBoot({
 	);
 
 
+	~osc_shaker2 = OSCdef("IP2 shaker",
+		{
+			arg msg, time, addr, port;
+			("IP2 shaken:" + msg[1]).postln;
+			if(msg[1]==1,{
+				~rattle_buf = Synth.new(\playbuf, [\buf, ~rattle.bufnum, \rate, 1.5, \rel, 2, \done_act, 2]);
+			});
+
+		},
+		'/IP2/shaken'
+	);
+
+	~osc_shaker1 = OSCdef("IP3 shaker",
+		{
+			arg msg, time, addr, port;
+			("IP3 shaken:" + msg[1]).postln;
+			if(msg[1]==1,{
+				~nut_buf = Synth.new(\playbuf, [\buf, ~nut.bufnum, \rate, 1, \rel, 2, \done_act, 2]);
+			});
+
+		},
+		'/IP3/shaken'
+	);
+
+
+	// OSC EVENTS: DISCRETE EVENTS
+
+	~osc_events = OSCdef("Discrete events",
+		{
+			arg msg, time, addr, port;
+			("Discrete event:" + msg[0]).postln;
+			if(msg[1]==1,{
+				~birds_buf = Synth.new(\playbuf, [\buf, ~birds.bufnum, \rate, 1, \rel, 5, \done_act, 2, \amp, 0.2]);
+				~scream_buf = Synth.new(\playbuf, [\buf, ~scream.bufnum, \rate, 1.1, \rel, 2, \done_act, 2, \amp, 0.2]);
+				//~eleph_buf.set(\t_trig, 1, \start, [0,2].choose*s.sampleRate);
+
+			});
+
+		},
+		'/IP1/shaken'
+	);
+
+
+	//FOR LATER: MAP THE LIGHT TO VOLUME
+	~osc_light = OSCdef("IP1 light",
+		{
+			arg msg, time, addr, port;
+			("IP1 light:" + msg[1]).postln;
+			if(msg[1]<0.05, {
+				Synth(\playbuf_drum).set(\amp, 0);
+				~patternA.resume;
+				"The sound stops".postln},
+			{//wobble.set(\gain, 1)
+			});
+		},
+		'/light'
+	);
 
 	~osc_pattern_1 = OSCdef("Pattern 1",
 		{
@@ -253,23 +339,10 @@ s.waitForBoot({
 	);
 
 
+
 }))
 
 
-
-
-//COOL THING: JURASSIC PARK THUMP
-(
-{ var nse, env, kic;
-	kic = tanh(Ringz.ar(LPF.ar(Trig.ar(Impulse.ar(1.0),SampleDur.ir),1000),30,0.25,7).sin*2);
-	env = Env.perc(0.05, 1, 1, -4);
-	nse = BrownNoise.ar(2) + PinkNoise.ar(0.5)  * EnvGen.kr(env,Impulse.kr(1), doneAction: 2);
-
-	nse = Mix.ar(BPF.ar(nse,[100,1200,80,40,20],MouseX.kr(0,1),[1,0.2,1,1,1]));
-	nse = LPF.ar(nse + kic, MouseY.kr(100,1000))! 2
-
-}.play
-)
 
 
 //OSCdef.freeAll

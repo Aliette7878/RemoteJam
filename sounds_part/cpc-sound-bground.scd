@@ -17,20 +17,19 @@ s.waitForBoot({
 	//File.getcwd  //to check what is the current working directory
 
 	//Importing background sounds
-	//~bg_wind = Buffer.read(s, "background/bg-soft-wind.wav", 0, -1);
-	//~bg_lotar= Buffer.read(s, "background/bg-lotar.wav", 0, -1);
-	//~bg_crickets = Buffer.read(s, "background/bg-crickets.wav", 0, -1);
+	~bg_lotar= Buffer.read(s, "background/bg-lotar.wav", 0, -1);
 	~bg_crickets_birds = Buffer.read(s, "background/bg-crickets_birds.wav", 0, s.sampleRate*25);
 
-	//Importing birds sounds
+	//Importing birds/animals sounds
 	~birds = Buffer.read(s, "birds/birds.wav", 0, s.sampleRate*6);
-
-	//Importing other nature/instruments sounds
 	~lemur = Buffer.read(s, "background/bg-lemur.wav", 0, -1);
 	~elephant = Buffer.read(s, "background/bg-elephant.wav", 0, -1);
+	~elephant2 = Buffer.read(s, "background/bg-elephant.wav", s.sampleRate*2, -1);
+
+	//Importing other instruments sounds
 	~didgeridoo = Buffer.read(s, "instruments/didgeridoo-a.wav", 0, -1);
 	~flute_rnd = Buffer.read(s, "instruments/flute-glissando.wav", 0, -1);
-
+	~panpipe = Buffer.read(s, "pan-pipe/pan-pipe-a1.wav", 0, -1);
 
 	//Importing people sounds
 	~tawny_1 = Buffer.read(s, "people/tawny-1.wav", 0, -1);
@@ -38,7 +37,6 @@ s.waitForBoot({
 	~tawny_3 = Buffer.read(s, "people/tawny-3.wav", 0, -1);
 	~owl = Buffer.read(s, "people/owl discrete.wav", 0, -1);
 	~scream = Buffer.read(s, "people/scream_high.wav", 0, -1);
-
 
 	//Importing shakers sounds
 	~rain = Buffer.read(s, "shakers/rain-maker.wav", 0, s.sampleRate*4);
@@ -54,10 +52,6 @@ s.waitForBoot({
 	~k_short_a = Buffer.read(s, "kalimba/k-short-a.wav", 0, -1);
 	~k_short_c = Buffer.read(s, "kalimba/k-short-c.wav", 0, -1);
 	~k_short_d = Buffer.read(s, "kalimba/k-short-d.wav", 0, -1);
-
-	//Just to hear the sounds
-
-	//~lemur_buf = Synth.new(\playbuf, [\buf, ~bg_lemur.bufnum, \rel, 5, \amp, 0.3]);
 
 
 	//******************** SYNTHDEFS *************************
@@ -118,7 +112,6 @@ s.waitForBoot({
 		Out.ar(out, sig);
 	}).add;
 
-	//synthdef for the drum sounds
 	SynthDef(\playbuf_drum, {
 		arg amp = 1, out = 0, buf, rate = 1, t_trig, start=0, rel = 1, da = 2;
 		var sig, env;
@@ -131,11 +124,10 @@ s.waitForBoot({
 
 	//******************* SYNTHDEF: BASS *********************
 
-	SynthDef.new(\bass, {
+	SynthDef(\bass, {
 		arg freq=440, amp = 1;
 		var sig, env, oscfreq;
 		env = SinOsc.kr([0.1,1,1,0]).range(0.05,0.2);
-		//env = LFNoise2.kr(500);
 		oscfreq = {freq * LFNoise2.kr(0.5).range(0.99, 1.01)};
 		sig = SinOsc.ar([oscfreq, 0, 10, 100]);
 		sig = sig * env * amp;
@@ -146,8 +138,7 @@ s.waitForBoot({
 
 	//******************** DRUMS **************************
 
-
-	//Imported drum files
+	//Importing drum files
 
 	~tom = Buffer.read(s, "drums/tom.wav", 0, s.sampleRate*1);
 	~low = Buffer.read(s, "drums/b-low.wav", 0, s.sampleRate*1);
@@ -159,56 +150,56 @@ s.waitForBoot({
 	//************* SEQUENCING: RHYTHM ********************
 
 
-	~drum_A = Pdef(
-		\rhythmA,
-		Pbind(
-			\instrument, \playbuf_drum,
-			\dur, Pseq([1/4], inf),
-			\stretch, 60/120 * 4,
-			\buf, Pseq(
-				[
-					~low,
-					Pwrand([~low, ~tom], [0.6, 0.4], 2),
-					~high,
-				], inf
-			),
-			\rate, Pexprand(1, 1.05, inf),
-			\amp, Pseq([0.8, Pexprand(0.005,0.6,2), 0.6], inf),
-		);
-	).play(quant: 1.875);
+	~drum_A = Pbind(
+		\instrument, \playbuf_drum,
+		\dur, Pseq([1/8], inf),
+		\stretch, 60/120*4,
+		\buf, Pseq(
+			[
+				Pwrand([~low, ~tom], [0.6, 0.4], 1),
+				Pwrand([~mid, ~snap], [0.6, 0.4], 1),
+				~tom,
+				~high,
+				Pwrand([~mid, ~snap], [0.6, 0.4], 3),
+				Pwrand([~low, ~tom], [0.6, 0.4], 1),
+			], inf
+		),
+		\rate, Pexprand(1, 1.05, inf),
+		\amp, Pseq([0.8, Pexprand(0.005,0.6,2), 0.4], inf),
+	).play(quant:1.875);
 
-	~drum_B = Pdef(
-		\rhythmB,
-		Pbind(
-			\instrument, \playbuf_drum,
-			\dur, Pseq([1/8], inf),
-			\stretch, 60/120 * 4,
-			//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
-			\buf, Pseq(
-				[
-					~tom,
-					Pwrand([~low, ~mid, ~high], [0.25,0.6,0.15], 7),
-					~high,
-					Pwrand([~tom, ~mid, ~high], [0.25,0.25,0.5], 7),
-				], inf
-			),
-			\rate, Pexprand(1, 1.05, inf),
-			\amp, Pseq([0.9, Pexprand(0.1,0.5,7)], inf),
-		);
-	).stop;
+	~drum_A.stop;
 
+	~drum_B = Pbind(
+		\instrument, \playbuf_drum,
+		\dur, Pseq([1/8], inf),
+		\stretch, 60/120 * 4,
+		//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
+		\buf, Pseq(
+			[
+				~tom,
+				Pwrand([~low, ~mid, ~high], [0.25,0.6,0.15], 7),
+				~high,
+				Pwrand([~tom, ~mid, ~high], [0.25,0.25,0.5], 7),
+			], inf
+		),
+		\rate, Pexprand(1, 1.05, inf),
+		\amp, Pseq([0.9, Pexprand(0.1,0.5,7)], inf),
+	).play(quant:1.875);
 
-	~drum_C = Pdef(
-		\rhythmC,
-		Pbind(
-			\instrument, \playbuf_drum,
-			\dur, Pseq([1/8], inf),
-			\stretch, 60/120 * 4,
-			\buf, Pwrand([~low, ~mid],[0.6, 0.4], inf),
-			\rate, Pexprand(0.7, 1.05, inf),
-			\amp, Pexprand(0.2,0.5, inf),
-		);
-	).stop;
+	~drum_B.stop;
+
+	~drum_C = Pbind(
+		\instrument, \playbuf_drum,
+		\dur, Pseq([1/8], inf),
+		\stretch, 60/120 * 4,
+		\buf, Pwrand([~low, ~mid],[0.6, 0.4], inf),
+		\rate, Pexprand(0.7, 1.05, inf),
+		\amp, Pexprand(0.2,0.5, inf),
+	).play(quant:1.875);
+
+	~drum_C.stop;
+
 
 	//************* SEQUENCING: KALIMBA ********************
 
@@ -227,7 +218,7 @@ s.waitForBoot({
 		\amp, Pseq([1.5, Pexprand(0.2,1,2), 1.5], inf),
 		\rate, Prand([1, 2/3, 3/2, 4/3, 5/4], inf);
 
-	).play(quant: 1.875);
+	);
 
 	~kalimba_B = Pbind(
 		\instrument, \playbuf_kal,
@@ -249,13 +240,12 @@ s.waitForBoot({
 				1,
 			], inf
 		),
-	).play(quant: 1.875);
+	);
 
 	~kalimba_C = Pbind(
 		\instrument, \playbuf_kal,
 		\dur, Pseq([0.1875, 0.1875, 0.1875, 0.1875, 0.125, 0.125], inf),
 		\stretch, 60/120 * 4,
-		//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
 		\buf, Pseq(
 			[
 				Pwrand([~k_f0, ~k_c0], [0.4, 0.6], 4),
@@ -269,21 +259,37 @@ s.waitForBoot({
 				Prand([1, 8/7], 2),
 			], inf
 		),
-	).play(quant: 1.875);
+	);
 
-	~toneA1 = Pdef(
-		\sinetone1,
-		Pbind(
-			\instrument, \sine,
-			\dur, Pseq([0.5, 0.25, 0.25], inf),
-			//\freq, Prand([330, 247, 277, 370, 220], inf).trace,
-			\freq, Prand([57, 59, 62, 64, 67].midicps, inf),
-			\atk, Pwhite(0.0, 0.005, inf),
-			\rel, Pwhite(0.2, 0.4, inf),
-			\harmonic, Pexprand(1, 20, inf).round,
-			\amp, Pexprand(0.2, 0.5, inf),
-			);
-	).stop;
+	//************* SEQUENCING: 3RD USER ********************
+
+
+	~events_A = Pbind(
+		\instrument, \playbuf,
+		\dur, Pseq([1], inf),
+		\stretch, 60/120 * 4,
+		\buf, Prand([~lemur, ~owl, ~tawny_1, ~birds], inf),
+		\amp, Pwrand([0,0.7, 0.8], [0.7, 0.1, 0.2], inf),
+		\rate, Pexprand(0.8, 1.3, inf),
+	);
+
+	~events_B = Pbind(
+		\instrument, \playbuf,
+		\dur, Pseq([1], inf),
+		\stretch, 60/120 * 4,
+		\buf, Prand([~flute_rnd, ~panpipe], inf),
+		\amp, Pwrand([0, 3, 5], [0.8, 0.1, 0.1], inf),
+		\rate, Pexprand(1, 1.1, inf),
+	);
+
+	~events_C = Pbind(
+		\instrument, \playbuf,
+		\dur, Pseq([1], inf),
+		\stretch, 60/120 * 4,
+		\buf, Prand([~elephant, ~elephant2], inf),
+		\amp, Pwrand([0, 0.2, 0.3], [0.8, 0.1, 0.1], inf),
+		\rate, Pexprand(0.9, 1.2, inf),
+	);
 
 	//******************* OSC ************************
 
@@ -291,48 +297,29 @@ s.waitForBoot({
 
 	// OSC START
 
-	~osc_start = OSCdef("start",
+	~osc_start = OSCdef("Processing start",
 		{
 			arg msg, time, addr, port;
-			("OSC start:" + msg[1]).postln;
+			("Processing start:" + msg[1]).postln;
 			if(msg[1]==1,{
 				~wind = Synth.new(\wind);
 				~crick_birds_buf = Synth.new(\playbuf_loop, [\buf, ~bg_crickets_birds.bufnum, \loop, 1, \amp, 0.05]);
-				~eleph_buf = Synth.new(\playbuf, [\buf, ~elephant.bufnum, \rel, 2, \amp, 0.3]);
+
 				~bass1 = Synth(\bass, [\freq, 174, \amp, 0.3]);
 				~bass2 = Synth(\bass, [\freq, 260, \amp, 0.3]);
 
-				~drum_A.play(quant: 1.875)
-
-				//~lotar_buf = Synth.new(\playbuf_loop, [\buf, ~bg_lotar.bufnum, \loop, 1, \amp, 0.5]);
+				~drum_A.play(quant: 1.875);
+				~kalimba_C.play(quant: 1.875);
+				~events_A.play(quant: 1.875);
 
 			});
-
 		},
-		'/OSCstart'
+		'/processing/start'
 	);
 
 
 	// OSC EVENTS: DISCRETE EVENTS
 
-	~osc_events = OSCdef("Discrete events",
-		{
-			arg msg, time, addr, port;
-			("Discrete event:" + msg[0]).postln;
-			if(msg[1]==1,{
-				~birds_buf = Synth.new(\playbuf, [\buf, ~birds.bufnum, \rate, 1.3, \rel, 4, \done_act, 2, \amp, 0.8]);
-				~scream_buf = Synth.new(\playbuf, [\buf, ~scream.bufnum, \rate, 1.1, \rel, 3, \done_act, 2, \amp, 0.4]);
-				~didg_buf = Synth.new(\playbuf, [\buf, ~didgeridoo.bufnum, \rate, 1.3, \rel, 3, \done_act, 2, \amp, 0.8]);
-
-				~flute_rnd_buf = Synth.new(\playbuf, [\buf, ~flute_rnd.bufnum, \rate, 1.2, \rel, 4, \done_act, 2, \amp, 6]);
-
-				~eleph_buf.set(\t_trig, 1, \start, [0,2].choose*s.sampleRate, \amp, 0.3);
-
-			});
-
-		},
-		'/IP1/shaken'
-	);
 
 	~osc_stickmen = OSCdef("Stickmen",
 		{
@@ -346,20 +333,86 @@ s.waitForBoot({
 		'/stickmen/jumped'
 	);
 
-	//FOR LATER: MAP THE LIGHT TO VOLUME
-	~osc_light = OSCdef("IP1 light",
+	~osc_level2 = OSCdef("Level2",
 		{
 			arg msg, time, addr, port;
-			("IP1 light:" + msg[1]).postln;
-			if(msg[1]<0.05, {
-				Synth(\playbuf_drum).set(\amp, 0);
-				~patternA.resume;
-				"The sound stops".postln},
-			{//wobble.set(\gain, 1)
+			("Stickmen:" + msg[0]).postln;
+			if(msg[1]==1,{
+				~didg_buf = Synth.new(\playbuf, [\buf, ~didgeridoo.bufnum, \rate, 1.3, \rel, 3, \done_act, 2, \amp, 0.8]);
+				~lotar_buf = Synth.new(\playbuf_loop, [\buf, ~bg_lotar.bufnum, \loop, 1, \amp, 0.5]);
+				~wind.set(\amp, 0.01);
+				~bass1.set([\freq, 174, \amp, 0.5]);
+				~bass2.set([\freq, 130, \amp, 0.5]);
 			});
+
 		},
-		'/light'
+		'/level2'
 	);
+
+	// OSC LUMINOSITY
+
+	~osc_luminosity1 = OSCdef("IP1 luminosity",
+		{
+			arg msg, time, addr, port;
+			("IP1 luminosity:" + msg[1]).postln;
+			if(msg[1]<0.05, {
+				~drum_A.mute;
+				~drum_B.mute;
+				~drum_C.mute;
+				"The drums get muted".postln},
+
+			{
+				~drum_A.unmute;
+				~drum_B.unmute;
+				~drum_C.unmute;
+				"The drums get unmuted".postln},
+			);
+		},
+		'/IP1/luminosity'
+	);
+
+	~osc_luminosity2 = OSCdef("IP2 luminosity",
+		{
+			arg msg, time, addr, port;
+			("IP2 luminosity:" + msg[1]).postln;
+			if(msg[1]<0.05, {
+				~kalimba_A.mute;
+				~kalimba_B.mute;
+				~kalimba_C.mute;
+				"The kalimbas get muted".postln},
+
+			{
+				~kalimba_A.unmute;
+				~drum_B.unmute;
+				~drum_C.unmute;
+				"The kalimbas get unmuted".postln},
+			);
+		},
+		'/IP2/luminosity'
+	);
+
+	~osc_luminosity3 = OSCdef("IP3 luminosity",
+		{
+			arg msg, time, addr, port;
+			("IP2 luminosity:" + msg[1]).postln;
+			if(msg[1]<0.05, {
+				~events_A.mute;
+				~events_B.mute;
+				~events_C.mute;
+				"The discrete events get muted".postln},
+
+			{
+				~events_A.unmute;
+				~events_B.unmute;
+				~events_C.unmute;
+				"The discrete events get unmuted".postln},
+			);
+		},
+		'/IP3/luminosity'
+	);
+
+
+	// OSC EVENTS: PATTERNS
 
 	~osc_pattern_1 = OSCdef("Pattern 1",
 		{
@@ -384,7 +437,51 @@ s.waitForBoot({
 		'/IP1/pattern'
 	);
 
+	~osc_pattern_2 = OSCdef("Pattern 2",
+		{
+			arg msg, time, addr, port;
+			//("pattern 1:" + msg[1]).postln;
+			if(msg[1]== 'Pattern A',{
+				~kalimba_A.play(quant: 1.875);
+				~kalimba_B.stop;
+				~kalimba_C.stop;
+			});
+			if(msg[1]=='Pattern B', {
+				~kalimba_B.play(quant: 1.875);
+				~kalimba_A.stop;
+				~kalimba_C.stop;
+			});
+			if(msg[1]=='Pattern C', {
+				~kalimba_C.play(quant: 1.875);
+				~kalimba_A.stop;
+				~kalimba_B.stop;
+			});
+		},
+		'/IP2/pattern'
+	);
 
+	~osc_pattern_3 = OSCdef("Pattern 3",
+		{
+			arg msg, time, addr, port;
+			//("pattern 1:" + msg[1]).postln;
+			if(msg[1]== 'Pattern A',{
+				~event_A.play(quant: 1.875);
+				~event_B.stop;
+				~event_C.stop;
+			});
+			if(msg[1]=='Pattern B', {
+				~event_B.play(quant: 1.875);
+				~event_A.stop;
+				~event_C.stop;
+			});
+			if(msg[1]=='Pattern C', {
+				~event_C.play(quant: 1.875);
+				~event_A.stop;
+				~event_B.stop;
+			});
+		},
+		'/IP3/pattern'
+	);
 
 	// OSC EVENTS: SHAKERS
 
@@ -427,8 +524,6 @@ s.waitForBoot({
 
 
 }))
-
-
 
 
 //OSCdef.freeAll

@@ -6,6 +6,7 @@ int fps=60;        // Framerate per seconds
 // Modes and levels
 boolean level2=false, previouslevel2;
 boolean darkmode = false;
+int luminosityTrehold = 10;
 
 
 // Connexion
@@ -55,7 +56,7 @@ void setup() {
   populationSize = 15;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(random(85, 105), random(1.5, 3), 680);
+    people[i] = new Character(random(85, 105), random(1, 2), 680);
   }
   // Stickmen
   for (Character charact : people) {
@@ -70,13 +71,16 @@ void setup() {
   /* You can also try to change the sending rate on your OSC app.*/
   oscP5 = new OscP5(this, 7400);
   superColliderLocation = new NetAddress("127.0.0.1", 57120);
+  OscMessage m = new OscMessage("/processing/start");
+  m.add(1);
+  oscP5.send(m, superColliderLocation);
   IPdevices = new ArrayList<String>();
   // Initialisation of the user OSC variables
   for (int i=0; i<numberOfUsers; i++) {
     orientationsUpdated[i] = false;
     lastShakeTimes[i] = 0;
     lastActivityTimes[i] = 0;
-    accelerationBuffers[i] = new float[6];  // Keeping the 6 last messages (2 timestams, 3 dimention), to be sure to get the highest intensity of a movement
+    accelerationBuffers[i] = new float[12];  // Keeping the 12 last messages (4 timestams, 3 dimention), to be sure to get the highest intensity of a movement
     exPositions[i] = "init";
   }
 }
@@ -84,7 +88,7 @@ void setup() {
 
 void draw() {
 
-  println(frameRate);
+  //println(frameRate);
 
   bg.draw_background();
   Birds.display();
@@ -97,8 +101,24 @@ void draw() {
     charact.UpdateChar();
     charact.DrawCharacter();
   }
+  updStickmanInterractions();
 
   previouslevel2 = level2;
+}
+
+void updStickmanInterractions() {
+  for (Character stick1 : people) {
+    for (Character stick2 : people) {
+      if (abs(stick1.centerX-stick2.centerX)<1.5 && stick1!=stick2) {
+        stick1.jump(5);
+        stick2.jump(5);
+
+        OscMessage m = new OscMessage("/stickmen/jumped");
+        m.add(1);
+        oscP5.send(m, superColliderLocation);
+      }
+    }
+  }
 }
 
 
@@ -155,6 +175,16 @@ void oscEvent(OscMessage theOscMessage) {
         m.add(accMaxValue);
         oscP5.send(m, superColliderLocation);
       }
+      float[] maxAccPerUser = new float[numberOfUsers];
+      for (int j=0; j<numberOfUsers; j++) {
+        maxAccPerUser[j] = max(accelerationBuffers[j]);
+      }
+      if (min(maxAccPerUser)>minAcc) {  // Everyone shaking at the same time
+        level2 = true;
+        OscMessage m = new OscMessage("/level2");
+        m.add(true);
+        oscP5.send(m, superColliderLocation);
+      }
     }
 
     // Updating the orientation of the phone
@@ -168,10 +198,15 @@ void oscEvent(OscMessage theOscMessage) {
       orientationsUpdated[ipIndex] = true;
     } else if (theOscMessage.checkAddrPattern("/light")==true) {
       luminosities[ipIndex] = theOscMessage.get(0).floatValue();
-      if (min(luminosities)<10) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
+      if (min(luminosities)<luminosityTrehold) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
         darkmode=true;
       } else {
         darkmode=false;
+      }
+      if (luminosities[ipIndex]<luminosityTrehold) {
+        OscMessage m = new OscMessage("/IP"+ipIndex+"/luminosity");
+        m.add(luminosities[ipIndex]);
+        oscP5.send(m, superColliderLocation);
       }
     }
     //TODO: last tmhing with distance btw phone ? (each phone needs to have exposure notifications on)

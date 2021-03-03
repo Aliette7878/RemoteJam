@@ -61,10 +61,6 @@ void setup() {
   for (int i=0; i<populationSize; i++) {
     people[i] = new Character(random(85, 105), random(1, 2), stickmenYcoor);
   }
-  // Stickmen
-  for (Character charact : people) {
-    charact.dancing=false;
-  }
 
   // OSC
   /* start oscHook. go to IP/port setup. Look at the port value in oscHook*/
@@ -161,7 +157,7 @@ void oscEvent(OscMessage theOscMessage) {
   if (IPdevices.indexOf(address)<numberOfUsers) {
     int ipIndex = IPdevices.indexOf(address);
     // Checking if the phone has been shaken. Working with a buffer to attend to get the highest value in an accelleration movement.
-    if (theOscMessage.checkAddrPattern("/accelerometer/linear/x")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/y")==true || theOscMessage.checkAddrPattern("/accelerometer/linear/z")==true) {
+    if (theOscMessage.checkAddrPattern("/linear_acceleration/x")==true || theOscMessage.checkAddrPattern("/linear_acceleration/y")==true || theOscMessage.checkAddrPattern("/linear_acceleration/z")==true) {
       accelerationBuffers[ipIndex] = pushInBuffer(accelerationBuffers[ipIndex], theOscMessage.get(0).floatValue());
       if (abs(accelerationBuffers[ipIndex][5])>minAcc && abs(1000*second()+millis()-lastShakeTimes[ipIndex])>minPeriodBtwShaking) {
         lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
@@ -170,24 +166,24 @@ void oscEvent(OscMessage theOscMessage) {
         println("IP"+ipIndex+" shaken");
         if (ipIndex==0) {
           redTree.shake(); // 1st USER SHAKING
-          for (int i=0; i<populationSize/3;i++) {
+          for (int i=0; i<populationSize/3; i++) {
             people[i].startWalking();
             people[i].jump(2);
           }
         } else if (ipIndex==1) {
           greenTree.shake(); // 2nd USER SHAKING
-          for (int i=populationSize/3; i<2*populationSize/3;i++) {
+          for (int i=populationSize/3; i<2*populationSize/3; i++) {
             people[i].startWalking();
             people[i].jump(2);
           }
         } else if (ipIndex==2) {
           blueTree.shake(); // 3rd USER SHAKING
-          for (int i=2*populationSize/3; i<populationSize;i++) {
+          for (int i=2*populationSize/3; i<populationSize; i++) {
             people[i].startWalking();
             people[i].jump(2);
           }
         }
-
+        println("shaken");
         OscMessage m = new OscMessage("/IP"+ipIndex+"/shaken");
         m.add(accMaxValue);
         oscP5.send(m, superColliderLocation);
@@ -203,7 +199,7 @@ void oscEvent(OscMessage theOscMessage) {
         m.add(true);
         oscP5.send(m, superColliderLocation);
         println("LEVEL 2");
-        for (int i=0; i<populationSize;i++) {
+        for (int i=0; i<populationSize; i++) {
           people[i].setDancingAmplitude(45);
           people[i].setWalkingAmplitude(45);
           people[i].setWalkingSpeed(random(1.5, 3));
@@ -215,7 +211,7 @@ void oscEvent(OscMessage theOscMessage) {
         m.add(false);
         oscP5.send(m, superColliderLocation);
         println("LEVEL 1");
-        for (int i=0; i<populationSize;i++) {
+        for (int i=0; i<populationSize; i++) {
           people[i].setDancingAmplitude(30);
           people[i].setWalkingAmplitude(30);
           people[i].setWalkingSpeed(random(1, 2));
@@ -224,11 +220,11 @@ void oscEvent(OscMessage theOscMessage) {
     }
 
     // Updating the orientation of the phone
-    else if (theOscMessage.checkAddrPattern("/orientation/pitch")==true) {
+    else if (theOscMessage.checkAddrPattern("/orientation/beta")==true) {
       pitchs[ipIndex] = theOscMessage.get(0).floatValue();   // Between -90 (phone pointing down) and +90 (phone pointing up) (and 0 when phone horizontally pointing towards you..) 
       //println("IP"+ipIndex+" pitch: "+pitchs[ipIndex]);
       orientationsUpdated[ipIndex] = true;
-    } else if (theOscMessage.checkAddrPattern("/orientation/roll")==true) {
+    } else if (theOscMessage.checkAddrPattern("/orientation/gamma")==true) {
       rolls[ipIndex] = theOscMessage.get(0).floatValue();    // To move between -90 (phone on its right spine) and +90 (phone on its left spine) (and 0 when phone at flat position) 
       //println("IP"+ipIndex+" roll: "+rolls[ipIndex]);
       orientationsUpdated[ipIndex] = true;
@@ -239,14 +235,14 @@ void oscEvent(OscMessage theOscMessage) {
       oscP5.send(m, superColliderLocation);
       if (min(luminosities)<luminosityTreshold) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
         darkmode=true;
-        for (int i=0; i<populationSize;i++) {
+        for (int i=0; i<populationSize; i++) {
           people[i].setDancingAmplitude(15);
           people[i].setWalkingAmplitude(15);
           people[i].setWalkingSpeed(random(0.5, 1));
         }
       } else {
         darkmode=false;
-        for (int i=0; i<populationSize;i++) {
+        for (int i=0; i<populationSize; i++) {
           people[i].setDancingAmplitude(30);
           people[i].setWalkingAmplitude(30);
           people[i].setWalkingSpeed(random(1, 2));
@@ -273,13 +269,13 @@ void oscEvent(OscMessage theOscMessage) {
         positions[ipIndex] = "Position E";
       }
       if (positions[ipIndex] != exPositions[ipIndex]) {
+        println("IP"+ipIndex+" position: "+positions[ipIndex]);
         lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
-        for (int i=ipIndex*populationSize/numberOfUsers; i<(ipIndex+1)*populationSize/numberOfUsers;i++) {
+        for (int i=ipIndex*populationSize/numberOfUsers; i<(ipIndex+1)*populationSize/numberOfUsers; i++) {
           people[i].startDancing();
         }
       }
 
-      println("IP"+ipIndex+" position: "+positions[ipIndex]);
 
       OscMessage m = new OscMessage("/IP"+ipIndex+"/position");
       m.add(positions[ipIndex]);

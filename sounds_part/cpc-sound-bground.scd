@@ -414,73 +414,73 @@ s.waitForBoot({
 
 	// OSC EVENTS: PATTERNS
 
-	~osc_pattern_1 = OSCdef("Pattern 1",
+	~osc_position_1 = OSCdef("Position 1",
 		{
 			arg msg, time, addr, port;
-			//("pattern 1:" + msg[1]).postln;
-			if(msg[1]== 'Pattern A',{
+			//("position 1:" + msg[1]).postln;
+			if(msg[1]== 'Position A',{
 				~drum_A.play(quant: 1.875);
 				~drum_B.stop;
 				~drum_C.stop;
 			});
-			if(msg[1]=='Pattern B', {
+			if(msg[1]=='Position B', {
 				~drum_B.play(quant: 1.875);
 				~drum_A.stop;
 				~drum_C.stop;
 			});
-			if(msg[1]=='Pattern C', {
+			if(msg[1]=='Position C', {
 				~drum_C.play(quant: 1.875);
 				~drum_A.stop;
 				~drum_B.stop;
 			});
 		},
-		'/IP1/pattern'
+		'/IP1/position'
 	);
 
-	~osc_pattern_2 = OSCdef("Pattern 2",
+	~osc_position_2 = OSCdef("Position 2",
 		{
 			arg msg, time, addr, port;
 			//("pattern 1:" + msg[1]).postln;
-			if(msg[1]== 'Pattern A',{
+			if(msg[1]== 'Position A',{
 				~kalimba_A.play(quant: 1.875);
 				~kalimba_B.stop;
 				~kalimba_C.stop;
 			});
-			if(msg[1]=='Pattern B', {
+			if(msg[1]=='Position B', {
 				~kalimba_B.play(quant: 1.875);
 				~kalimba_A.stop;
 				~kalimba_C.stop;
 			});
-			if(msg[1]=='Pattern C', {
+			if(msg[1]=='Position C', {
 				~kalimba_C.play(quant: 1.875);
 				~kalimba_A.stop;
 				~kalimba_B.stop;
 			});
 		},
-		'/IP2/pattern'
+		'/IP2/position'
 	);
 
-	~osc_pattern_3 = OSCdef("Pattern 3",
+	~osc_position_3 = OSCdef("Position 3",
 		{
 			arg msg, time, addr, port;
 			//("pattern 1:" + msg[1]).postln;
-			if(msg[1]== 'Pattern A',{
+			if(msg[1]== 'Position A',{
 				~event_A.play(quant: 1.875);
 				~event_B.stop;
 				~event_C.stop;
 			});
-			if(msg[1]=='Pattern B', {
+			if(msg[1]=='Position B', {
 				~event_B.play(quant: 1.875);
 				~event_A.stop;
 				~event_C.stop;
 			});
-			if(msg[1]=='Pattern C', {
+			if(msg[1]=='Position C', {
 				~event_C.play(quant: 1.875);
 				~event_A.stop;
 				~event_B.stop;
 			});
 		},
-		'/IP3/pattern'
+		'/IP3/position'
 	);
 
 	// OSC EVENTS: SHAKERS

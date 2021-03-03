@@ -118,7 +118,7 @@ s.waitForBoot({
 			\delayTime, 1+1.0.rand,
 			\amp, Pexprand(0.02, 0.05, inf),
 		);
-	).play(quant: 1.875);
+	).play(quant: 1.25);
 
 	~toneB2 = Pdef(
 		\sinetone4,
@@ -159,8 +159,8 @@ s.waitForBoot({
 	).play(quant: 1.875);
 
 
-	//~toneA1.stop;
-	//~toneA2.stop;
+	~toneA1.stop;
+	~toneA2.stop;
 	~toneB1.stop;
 	~toneB2.stop;
 	~toneC1.stop;

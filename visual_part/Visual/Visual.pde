@@ -6,7 +6,8 @@ int fps=60;        // Framerate per seconds
 // Modes and levels
 boolean level2=false, previouslevel2;
 boolean darkmode = false;
-int luminosityTrehold = 10;
+int luminosityTreshold = 10;
+int countdownLevelOne = 10 * 1000; // 10 seconds
 
 
 // Connexion
@@ -18,8 +19,8 @@ ArrayList<String> IPdevices;
 
 int minAcc = 6;
 float minPeriodBtwShaking = 400; //ms
-
 int numberOfUsers = 3;
+
 // Variables in arrays for all the users
 float[] pitchs = new float[numberOfUsers];
 float[] rolls = new float[numberOfUsers];
@@ -29,6 +30,7 @@ String[] exPositions = new String[numberOfUsers];
 String[] positions = new String[numberOfUsers];
 float[][] accelerationBuffers = new float[numberOfUsers][];
 float[] lastShakeTimes = new float[numberOfUsers];
+float lastShakeTimeTogether;
 float[] lastActivityTimes = new float[numberOfUsers];
 
 // Tree
@@ -40,6 +42,7 @@ Background bg;
 
 Character[] people;
 int populationSize;
+int stickmenYcoor = 680;
 
 
 void setup() {
@@ -56,7 +59,7 @@ void setup() {
   populationSize = 15;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(random(85, 105), random(1, 2), 680);
+    people[i] = new Character(random(85, 105), random(1, 2), stickmenYcoor);
   }
   // Stickmen
   for (Character charact : people) {
@@ -75,9 +78,11 @@ void setup() {
   m.add(1);
   oscP5.send(m, superColliderLocation);
   IPdevices = new ArrayList<String>();
+  lastShakeTimeTogether = 0;
   // Initialisation of the user OSC variables
   for (int i=0; i<numberOfUsers; i++) {
     orientationsUpdated[i] = false;
+    luminosities[i] = 2*luminosityTreshold;
     lastShakeTimes[i] = 0;
     lastActivityTimes[i] = 0;
     accelerationBuffers[i] = new float[12];  // Keeping the 12 last messages (4 timestams, 3 dimention), to be sure to get the highest intensity of a movement
@@ -165,10 +170,22 @@ void oscEvent(OscMessage theOscMessage) {
         println("IP"+ipIndex+" shaken");
         if (ipIndex==0) {
           redTree.shake(); // 1st USER SHAKING
+          for (int i=0; i<populationSize/3;i++) {
+            people[i].startWalking();
+            people[i].jump(2);
+          }
         } else if (ipIndex==1) {
           greenTree.shake(); // 2nd USER SHAKING
+          for (int i=populationSize/3; i<2*populationSize/3;i++) {
+            people[i].startWalking();
+            people[i].jump(2);
+          }
         } else if (ipIndex==2) {
           blueTree.shake(); // 3rd USER SHAKING
+          for (int i=2*populationSize/3; i<populationSize;i++) {
+            people[i].startWalking();
+            people[i].jump(2);
+          }
         }
 
         OscMessage m = new OscMessage("/IP"+ipIndex+"/shaken");
@@ -181,9 +198,28 @@ void oscEvent(OscMessage theOscMessage) {
       }
       if (min(maxAccPerUser)>minAcc) {  // Everyone shaking at the same time
         level2 = true;
+        lastShakeTimeTogether = 1000000*minute()+1000*second()+millis();
         OscMessage m = new OscMessage("/level2");
         m.add(true);
         oscP5.send(m, superColliderLocation);
+        println("LEVEL 2");
+        for (int i=0; i<populationSize;i++) {
+          people[i].setDancingAmplitude(45);
+          people[i].setWalkingAmplitude(45);
+          people[i].setWalkingSpeed(random(1.5, 3));
+        }
+      } else if (1000000*minute()+1000*second()+millis()-lastShakeTimeTogether>countdownLevelOne) {  // No together shaking for a certain amount of time
+        level2 = false;
+        lastShakeTimeTogether = 1000000*minute()+1000*second()+millis(); // Just to avoid getting in this block each frame
+        OscMessage m = new OscMessage("/level2");
+        m.add(false);
+        oscP5.send(m, superColliderLocation);
+        println("LEVEL 1");
+        for (int i=0; i<populationSize;i++) {
+          people[i].setDancingAmplitude(30);
+          people[i].setWalkingAmplitude(30);
+          people[i].setWalkingSpeed(random(1, 2));
+        }
       }
     }
 
@@ -198,15 +234,23 @@ void oscEvent(OscMessage theOscMessage) {
       orientationsUpdated[ipIndex] = true;
     } else if (theOscMessage.checkAddrPattern("/light")==true) {
       luminosities[ipIndex] = theOscMessage.get(0).floatValue();
-      if (min(luminosities)<luminosityTrehold) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
+      OscMessage m = new OscMessage("/IP"+ipIndex+"/luminosity");
+      m.add(luminosities[ipIndex]);
+      oscP5.send(m, superColliderLocation);
+      if (min(luminosities)<luminosityTreshold) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
         darkmode=true;
+        for (int i=0; i<populationSize;i++) {
+          people[i].setDancingAmplitude(15);
+          people[i].setWalkingAmplitude(15);
+          people[i].setWalkingSpeed(random(0.5, 1));
+        }
       } else {
         darkmode=false;
-      }
-      if (luminosities[ipIndex]<luminosityTrehold) {
-        OscMessage m = new OscMessage("/IP"+ipIndex+"/luminosity");
-        m.add(luminosities[ipIndex]);
-        oscP5.send(m, superColliderLocation);
+        for (int i=0; i<populationSize;i++) {
+          people[i].setDancingAmplitude(30);
+          people[i].setWalkingAmplitude(30);
+          people[i].setWalkingSpeed(random(1, 2));
+        }
       }
     }
     //TODO: last tmhing with distance btw phone ? (each phone needs to have exposure notifications on)
@@ -230,6 +274,9 @@ void oscEvent(OscMessage theOscMessage) {
       }
       if (positions[ipIndex] != exPositions[ipIndex]) {
         lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
+        for (int i=ipIndex*populationSize/numberOfUsers; i<(ipIndex+1)*populationSize/numberOfUsers;i++) {
+          people[i].startDancing();
+        }
       }
 
       println("IP"+ipIndex+" position: "+positions[ipIndex]);

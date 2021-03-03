@@ -107,7 +107,7 @@ class Character {
     legs.updatePart();
     head.updatePart();
     arms.updatePart();
-    if (centerX<-1000 || centerX > 2500) {
+    if (centerX<-500 || centerX > 2000) {
       walkingDirection*=-1;
     }
   }

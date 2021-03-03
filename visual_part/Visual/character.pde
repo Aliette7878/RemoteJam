@@ -74,6 +74,7 @@ class Character {
         centerY+=jumpingAmplitude;
       } else {
         jumping=false;
+        centerY = stickmenYcoor - size/2;
       }
     }
     if (jumping && !dancing) {
@@ -83,6 +84,7 @@ class Character {
         centerY+=jumpingAmplitude;
       } else {
         jumping=false;
+        centerY = stickmenYcoor - size/2;
       }
     }
 
@@ -107,7 +109,7 @@ class Character {
     legs.updatePart();
     head.updatePart();
     arms.updatePart();
-    if (centerX<-1000 || centerX > 2500) {
+    if (centerX<-500 || centerX > 2000) {
       walkingDirection*=-1;
     }
   }
@@ -134,7 +136,7 @@ class Character {
   public void setWalkingAmplitude(int ampl) {
     walkingAmplitude = ampl;
   }
-  public void setWalkingSpeed(int ampl) {
+  public void setWalkingSpeed(float ampl) {
     walkingSpeed = ampl;
   }
   public void startWalking() {

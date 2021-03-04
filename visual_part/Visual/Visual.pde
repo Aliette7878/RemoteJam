@@ -6,7 +6,7 @@ int fps=60;        // Framerate per seconds
 // Modes and levels
 boolean level2=false, previouslevel2;
 boolean darkmode = false;
-int luminosityTreshold = 10;
+int luminosityTreshold = 8;
 int countdownLevelOne = 10 * 1000; // 10 seconds
 
 
@@ -42,7 +42,7 @@ Background bg;
 
 Character[] people;
 int populationSize;
-int stickmenYcoor = 680;
+int stickmenYcoor = 720;
 
 
 void setup() {
@@ -52,14 +52,14 @@ void setup() {
   // VISUAL
   bg = new Background();
   Birds = new BirdArray(); 
-  redTree = new Warlitree(new PVector(0, 400), PI/12, "red"); 
+  redTree = new Warlitree(new PVector(0, 400), PI/6, "red"); 
   greenTree = new Warlitree(new PVector(width/2, 0), PI-PI/12, "green");
   blueTree = new Warlitree(new PVector(width, 400), -PI/6, "blue");
 
   populationSize = 15;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
-    people[i] = new Character(random(85, 105), random(1, 2), stickmenYcoor);
+    people[i] = new Character(random(95, 115), random(1, 2), stickmenYcoor);
   }
 
   // OSC
@@ -123,7 +123,7 @@ void updStickmanInterractions() {
 }
 
 
-// SHOULD BE MAPPED TO OSC MESSAGES
+//// SHOULD BE MAPPED TO OSC MESSAGES
 void mousePressed() {
   greenTree.shake(); // USER2 SHAKING - mapped, ok
 

@@ -46,8 +46,8 @@ class Warlitree{
     for(int i=this.branches.size()-1; i>=0; i--){
          b=this.branches.get(i);
          b.display();
-    }
-    endShape();;    
+    }   
+    endShape();
     popMatrix();
   }
  

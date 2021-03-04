@@ -8,11 +8,15 @@ class Body {
   private float RshoulderX, RshoulderY;
   private float LshoulderX, LshoulderY;
   private float hipsWidth;
+  private color chestColor, hipsColor;
+  private color[] colors = {color(0,143,160,150),color(217,10,29,150),color(242,139,27,150), color(154,90,117,150), color(0,132,72,150)};
 
   Body(Character character, float size_input) {
     size = size_input;
     c = character;
     chestInclination = 0;
+    chestColor =  colors[int(random(0,colors.length))];
+    hipsColor =  colors[int(random(0,colors.length))];
     updatePart();
   }
 
@@ -42,8 +46,9 @@ class Body {
     } else {
       hipsWidth = 0.8;
     }
+    fill(chestColor);
     triangle (c.centerX, c.centerY, RshoulderX, RshoulderY, LshoulderX, LshoulderY);
-    fill(255);
+    fill(hipsColor);
     beginShape(TRIANGLE_STRIP);
 
     vertex(c.centerX+(hipsWidth/2)*size/2, c.centerY+size/2);

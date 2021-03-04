@@ -17,7 +17,7 @@ NetAddress superColliderLocation;
 // List of the connected IPs
 ArrayList<String> IPdevices;
 
-int minAcc = 6;
+int minAcc = 4;
 float minPeriodBtwShaking = 400; //ms
 int numberOfUsers = 3;
 
@@ -56,7 +56,7 @@ void setup() {
   greenTree = new Warlitree(new PVector(width/2, -10), PI-PI/12, "green");
   blueTree = new Warlitree(new PVector(width, 400), -PI/6, "blue");
 
-  populationSize = 15;
+  populationSize = 18;
   people = new Character[populationSize];
   for (int i=0; i<populationSize; i++) {
     people[i] = new Character(random(95, 115), random(1, 2), stickmenYcoor);
@@ -159,10 +159,10 @@ void oscEvent(OscMessage theOscMessage) {
     // Checking if the phone has been shaken. Working with a buffer to attend to get the highest value in an accelleration movement.
     if (theOscMessage.checkAddrPattern("/linear_acceleration/x")==true || theOscMessage.checkAddrPattern("/linear_acceleration/y")==true || theOscMessage.checkAddrPattern("/linear_acceleration/z")==true) {
       accelerationBuffers[ipIndex] = pushInBuffer(accelerationBuffers[ipIndex], theOscMessage.get(0).floatValue());
-      if (abs(accelerationBuffers[ipIndex][5])>minAcc && abs(1000*second()+millis()-lastShakeTimes[ipIndex])>minPeriodBtwShaking) {
-        lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
+      if (abs(accelerationBuffers[ipIndex][5])>minAcc && abs(millis()-lastShakeTimes[ipIndex])>minPeriodBtwShaking) {
+        lastActivityTimes[ipIndex] = millis();
         float accMaxValue = max(accelerationBuffers[ipIndex]);
-        lastShakeTimes[ipIndex]=1000*second()+millis();
+        lastShakeTimes[ipIndex]=millis();
         println("IP"+ipIndex+" shaken");
         if (ipIndex==0) {
           redTree.shake(); // 1st USER SHAKING
@@ -194,7 +194,7 @@ void oscEvent(OscMessage theOscMessage) {
       }
       if (min(maxAccPerUser)>minAcc) {  // Everyone shaking at the same time
         level2 = true;
-        lastShakeTimeTogether = 1000000*minute()+1000*second()+millis();
+        lastShakeTimeTogether = millis();
         OscMessage m = new OscMessage("/level2");
         m.add(true);
         oscP5.send(m, superColliderLocation);
@@ -204,9 +204,9 @@ void oscEvent(OscMessage theOscMessage) {
           people[i].setWalkingAmplitude(45);
           people[i].setWalkingSpeed(random(1.5, 3));
         }
-      } else if (1000000*minute()+1000*second()+millis()-lastShakeTimeTogether>countdownLevelOne) {  // No together shaking for a certain amount of time
+      } else if (millis()-lastShakeTimeTogether>countdownLevelOne) {  // No together shaking for a certain amount of time
         level2 = false;
-        lastShakeTimeTogether = 1000000*minute()+1000*second()+millis(); // Just to avoid getting in this block each frame
+        lastShakeTimeTogether = millis(); // Just to avoid getting in this block each frame
         OscMessage m = new OscMessage("/level2");
         m.add(false);
         oscP5.send(m, superColliderLocation);
@@ -270,7 +270,7 @@ void oscEvent(OscMessage theOscMessage) {
       }
       if (positions[ipIndex] != exPositions[ipIndex]) {
         println("IP"+ipIndex+" position: "+positions[ipIndex]);
-        lastActivityTimes[ipIndex]=1000000*minute()+1000*second()+millis();
+        lastActivityTimes[ipIndex] = millis();
         for (int i=ipIndex*populationSize/numberOfUsers; i<(ipIndex+1)*populationSize/numberOfUsers; i++) {
           people[i].startDancing();
         }

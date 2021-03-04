@@ -1,36 +1,35 @@
 // Particle class inspired from cpac
 
-class Particle{
+class Particle {
   PVector location, velocity, acceleration;
   float radius_circle, lifespan;
-  
-  Particle(PVector location, float radius_circle, float lifespan){
+
+  Particle(PVector location, float radius_circle, float lifespan) {
     this.location= location.copy();
     this.velocity = new PVector();
     this.acceleration = new PVector();
     this.radius_circle=radius_circle;
     this.lifespan=lifespan;
   }
-  
-  void planning(){    
+
+  void planning() {    
     this.velocity.add(this.acceleration);
     this.location.add(this.velocity);
     this.acceleration.mult(0);
   }
-  
-  void applyForce(PVector force){    
+
+  void applyForce(PVector force) {    
     this.acceleration.add(force);
   }
-  
-  void action(){
+
+  void action() {
     this.planning();    
     fill(0, this.lifespan+50);
     noStroke();
-    ellipse(this.location.x, this.location.y, this.radius_circle, this.radius_circle);    
+    ellipse(this.location.x, this.location.y, this.radius_circle, this.radius_circle);
   }
-  
-  boolean isDead(){
+
+  boolean isDead() {
     return this.lifespan<=0;
   }
-  
 }

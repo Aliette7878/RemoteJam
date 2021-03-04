@@ -145,6 +145,9 @@ s.waitForBoot({
 	~high = Buffer.read(s, "drums/high-hit.wav", 0, s.sampleRate*1);
 	~mid = Buffer.read(s, "drums/mid-kenkeni.wav", 0, s.sampleRate*1);
 	~snap = Buffer.read(s, "drums/b-snap.wav", 0, s.sampleRate*1);
+	~tambourine = Buffer.read(s, "drums/tambourine.wav", 0, s.sampleRate*1);
+	~tambourine2 = Buffer.read(s, "drums/tambourine-hit.wav", 0, s.sampleRate*1);
+
 
 
 	//************* SEQUENCING: RHYTHM ********************
@@ -157,30 +160,29 @@ s.waitForBoot({
 		\buf, Pseq(
 			[
 				Pwrand([~low, ~tom], [0.6, 0.4], 1),
-				Pwrand([~mid, ~snap], [0.6, 0.4], 1),
-				~tom,
-				~high,
-				Pwrand([~mid, ~snap], [0.6, 0.4], 3),
+				Pwrand([~mid, ~snap], [0.6, 0.4], 2),
 				Pwrand([~low, ~tom], [0.6, 0.4], 1),
+				~high,
+				Pwrand([~mid, ~snap], [0.6, 0.4], 2),
+				Pwrand([~low, ~high], [0.6, 0.4], 1),
 			], inf
 		),
 		\rate, Pexprand(1, 1.05, inf),
-		\amp, Pseq([0.8, Pexprand(0.005,0.6,2), 0.4], inf),
+		\amp, Pseq([0.7, Pexprand(0.005,0.6,2), 0.5], inf),
 	).play(quant:1.875);
 
 	~drum_A.stop;
 
 	~drum_B = Pbind(
 		\instrument, \playbuf_drum,
-		\dur, Pseq([1/8], inf),
+		\dur, Pseq([1/16], inf),
 		\stretch, 60/120 * 4,
-		//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
 		\buf, Pseq(
 			[
 				~tom,
 				Pwrand([~low, ~mid, ~high], [0.25,0.6,0.15], 7),
 				~high,
-				Pwrand([~tom, ~mid, ~high], [0.25,0.25,0.5], 7),
+				Pwrand([~tom, ~mid, ~high], [0.15,0.35,0.5], 7),
 			], inf
 		),
 		\rate, Pexprand(1, 1.05, inf),
@@ -191,14 +193,28 @@ s.waitForBoot({
 
 	~drum_C = Pbind(
 		\instrument, \playbuf_drum,
-		\dur, Pseq([1/8], inf),
+		\dur, Pseq([1/8, 1/16, 1/16, 1/8, 1/4, 1/8, 1/8, 1/16, 1/16], inf),
 		\stretch, 60/120 * 4,
-		\buf, Pwrand([~low, ~mid],[0.6, 0.4], inf),
+		\buf, Pseq(
+			[
+				~low,
+				Prand([~tambourine,~tambourine2], 1),
+				~high,
+				Pwrand([~low, ~mid],[0.4, 0.6], 1),
+				 ~tom,
+				Pwrand([~low, ~tom],[0.6, 0.4], 1),
+				Prand([~tambourine,~tambourine2], 1),
+				~high,
+				~high,
+
+			], inf
+		),
 		\rate, Pexprand(0.7, 1.05, inf),
-		\amp, Pexprand(0.2,0.5, inf),
+		\amp, Pexprand(0.5,0.7, inf),
 	).play(quant:1.875);
 
 	~drum_C.stop;
+
 
 
 	//************* SEQUENCING: KALIMBA ********************
@@ -261,7 +277,7 @@ s.waitForBoot({
 		),
 	);
 
-	//************* SEQUENCING: 3RD USER ********************
+	//************* SEQUENCING: 3RD USER EVENTS ****************
 
 
 	~events_A = Pbind(
@@ -269,7 +285,7 @@ s.waitForBoot({
 		\dur, Pseq([1], inf),
 		\stretch, 60/120 * 4,
 		\buf, Prand([~lemur, ~owl, ~tawny_1, ~birds], inf),
-		\amp, Pwrand([0,0.7, 0.8], [0.7, 0.1, 0.2], inf),
+		\amp, Pwrand([0,0.7, 0.8], [0.6, 0.2, 0.2], inf),
 		\rate, Pexprand(0.8, 1.3, inf),
 	);
 
@@ -277,7 +293,7 @@ s.waitForBoot({
 		\instrument, \playbuf,
 		\dur, Pseq([1], inf),
 		\stretch, 60/120 * 4,
-		\buf, Prand([~flute_rnd, ~panpipe], inf),
+		\buf, Prand([~flute_rnd, ~panpipe, ~didgeridoo], inf),
 		\amp, Pwrand([0, 3, 5], [0.8, 0.1, 0.1], inf),
 		\rate, Pexprand(1, 1.1, inf),
 	);
@@ -291,6 +307,47 @@ s.waitForBoot({
 		\rate, Pexprand(0.9, 1.2, inf),
 	);
 
+	//************* SEQUENCING: 3RD USER BASS ****************
+
+	/*
+	~bass_A = Pbind(
+		\instrument, \bass,
+		\dur, Pseq([6/8, 1/8, 1/8], inf),
+		\stretch, 60/120 * 4,
+		\freq, Pseq([130, 98, 116], inf),
+		\amp, Pwrand([0,0.7, 0.8], [0.6, 0.2, 0.2], inf),
+	).play;
+
+	~bass_B = Pbind(
+		\instrument, \playbuf,
+		\dur, Pseq([1], inf),
+		\stretch, 60/120 * 4,
+		\buf, Prand([~flute_rnd, ~panpipe, ~didgeridoo], inf),
+		\amp, Pwrand([0, 3, 5], [0.8, 0.1, 0.1], inf),
+		\rate, Pexprand(1, 1.1, inf),
+	);
+
+	~bass_C = Pbind(
+		\instrument, \playbuf,
+		\dur, Pseq([1], inf),
+		\stretch, 60/120 * 4,
+		\buf, Prand([~elephant, ~elephant2], inf),
+		\amp, Pwrand([0, 0.2, 0.3], [0.8, 0.1, 0.1], inf),
+		\rate, Pexprand(0.9, 1.2, inf),
+	);
+	*/
+	//************* SEQUENCING: LEVEL 2 *******************
+
+	~didg_loop = Pbind(
+		\instrument, \playbuf,
+		\dur, Pseq([1], inf),
+		\stretch, 60/120 * 4,
+		\buf, Pseq([~didgeridoo], inf),
+		\amp, Pwrand([0, 0.8], [0.6, 0.4], inf),
+		\rate, Pexprand(0.9, 1.2, inf),
+	);
+
+
 	//******************* OSC ************************
 
 	n = NetAddr.new("127.0.0.1", 57120);
@@ -303,10 +360,10 @@ s.waitForBoot({
 			("Processing start:" + msg[1]).postln;
 			if(msg[1]==1,{
 				~wind = Synth.new(\wind);
-				~crick_birds_buf = Synth.new(\playbuf_loop, [\buf, ~bg_crickets_birds.bufnum, \loop, 1, \amp, 0.05]);
+				~crick_birds_buf = Synth.new(\playbuf_loop, [\buf, ~bg_crickets_birds.bufnum, \loop, 1, \amp, 0.1]);
 
-				~bass1 = Synth(\bass, [\freq, 174, \amp, 0.3]);
-				~bass2 = Synth(\bass, [\freq, 260, \amp, 0.3]);
+				~bass1 = Synth(\bass, [\freq, 174, \amp, 0.4]);
+				~bass2 = Synth(\bass, [\freq, 260, \amp, 0.4]);
 
 				~drum_A.play(quant: 1.875);
 				~kalimba_C.play(quant: 1.875);
@@ -321,28 +378,22 @@ s.waitForBoot({
 	// OSC EVENTS: DISCRETE EVENTS
 
 
-	~osc_stickmen = OSCdef("Stickmen",
-		{
-			arg msg, time, addr, port;
-			("Stickmen:" + msg[0]).postln;
-			if(msg[1]==1,{
-				~scream_buf = Synth.new(\playbuf, [\buf, ~scream.bufnum, \rate, 0.8, \rel, 3, \done_act, 2, \amp, 0.3]);
-			});
-
-		},
-		'/stickmen/jumped'
-	);
-
 	~osc_level2 = OSCdef("Level2",
 		{
 			arg msg, time, addr, port;
 			("Stickmen:" + msg[0]).postln;
-			if(msg[1]==1,{
+			if(msg[1]==true,{
 				~didg_buf = Synth.new(\playbuf, [\buf, ~didgeridoo.bufnum, \rate, 1.3, \rel, 3, \done_act, 2, \amp, 0.8]);
-				~lotar_buf = Synth.new(\playbuf_loop, [\buf, ~bg_lotar.bufnum, \loop, 1, \amp, 0.5]);
+				~didg_loop.play;
 				~wind.set(\amp, 0.01);
-				~bass1.set([\freq, 174, \amp, 0.5]);
-				~bass2.set([\freq, 130, \amp, 0.5]);
+				~bass1.set([\amp, 0.5]);
+				~bass2.set([\amp, 0.5]);
+			});
+			if(msg[1]==false,{
+				~didg_loop.stop;
+				~wind.set(\amp, 0.01);
+				~bass1.set([\amp, 0.3]);
+				~bass2.set([\amp, 0.3]);
 			});
 
 		},
@@ -355,20 +406,22 @@ s.waitForBoot({
 		{
 			arg msg, time, addr, port;
 			("IP1 luminosity:" + msg[1]).postln;
-			if(msg[1]<0.05, {
+			if(msg[1]<0.01, {
 				~drum_A.mute;
 				~drum_B.mute;
 				~drum_C.mute;
-				"The drums get muted".postln},
+				//"The drums get muted".postln
+			},
 
 			{
 				~drum_A.unmute;
 				~drum_B.unmute;
 				~drum_C.unmute;
-				"The drums get unmuted".postln},
+				//"The drums get unmuted".postln
+			},
 			);
 		},
-		'/IP1/luminosity'
+		'/IP0/luminosity'
 	);
 
 	~osc_luminosity2 = OSCdef("IP2 luminosity",
@@ -383,12 +436,12 @@ s.waitForBoot({
 
 			{
 				~kalimba_A.unmute;
-				~drum_B.unmute;
-				~drum_C.unmute;
+				~kalimba_B.unmute;
+				~kalimba_C.unmute;
 				"The kalimbas get unmuted".postln},
 			);
 		},
-		'/IP2/luminosity'
+		'/IP1/luminosity'
 	);
 
 	~osc_luminosity3 = OSCdef("IP3 luminosity",
@@ -399,16 +452,18 @@ s.waitForBoot({
 				~events_A.mute;
 				~events_B.mute;
 				~events_C.mute;
-				"The discrete events get muted".postln},
+				//"The discrete events get muted".postln
+			},
 
 			{
 				~events_A.unmute;
 				~events_B.unmute;
 				~events_C.unmute;
-				"The discrete events get unmuted".postln},
+				//"The discrete events get unmuted".postln
+			},
 			);
 		},
-		'/IP3/luminosity'
+		'/IP2/luminosity'
 	);
 
 
@@ -417,7 +472,7 @@ s.waitForBoot({
 	~osc_position_1 = OSCdef("Position 1",
 		{
 			arg msg, time, addr, port;
-			//("position 1:" + msg[1]).postln;
+			("position 1:" + msg[1]).postln;
 			if(msg[1]== 'Position A',{
 				~drum_A.play(quant: 1.875);
 				~drum_B.stop;
@@ -434,13 +489,13 @@ s.waitForBoot({
 				~drum_B.stop;
 			});
 		},
-		'/IP1/position'
+		'/IP0/position'
 	);
 
 	~osc_position_2 = OSCdef("Position 2",
 		{
 			arg msg, time, addr, port;
-			//("pattern 1:" + msg[1]).postln;
+			("pattern 1:" + msg[1]).postln;
 			if(msg[1]== 'Position A',{
 				~kalimba_A.play(quant: 1.875);
 				~kalimba_B.stop;
@@ -457,13 +512,13 @@ s.waitForBoot({
 				~kalimba_B.stop;
 			});
 		},
-		'/IP2/position'
+		'/IP1/position'
 	);
 
 	~osc_position_3 = OSCdef("Position 3",
 		{
 			arg msg, time, addr, port;
-			//("pattern 1:" + msg[1]).postln;
+			("pattern 1:" + msg[1]).postln;
 			if(msg[1]== 'Position A',{
 				~event_A.play(quant: 1.875);
 				~event_B.stop;
@@ -480,7 +535,7 @@ s.waitForBoot({
 				~event_B.stop;
 			});
 		},
-		'/IP3/position'
+		'/IP2/position'
 	);
 
 	// OSC EVENTS: SHAKERS
@@ -494,7 +549,7 @@ s.waitForBoot({
 			});
 
 		},
-		'/IP1/shaken'
+		'/IP0/shaken'
 	);
 
 
@@ -507,7 +562,7 @@ s.waitForBoot({
 			});
 
 		},
-		'/IP2/shaken'
+		'/IP1/shaken'
 	);
 
 	~osc_shaker3 = OSCdef("IP3 shaker",
@@ -519,9 +574,8 @@ s.waitForBoot({
 			});
 
 		},
-		'/IP3/shaken'
+		'/IP2/shaken'
 	);
-
 
 }))
 

@@ -264,9 +264,9 @@ void oscEvent(OscMessage theOscMessage) {
           positions[ipIndex] = "Position C";
         }
       } else if (pitchs[ipIndex]>45) {
-        positions[ipIndex] = "Position D";
+        positions[ipIndex] = "Position B";
       } else {
-        positions[ipIndex] = "Position E";
+        positions[ipIndex] = "Position C";
       }
       if (positions[ipIndex] != exPositions[ipIndex]) {
         println("IP"+ipIndex+" position: "+positions[ipIndex]);

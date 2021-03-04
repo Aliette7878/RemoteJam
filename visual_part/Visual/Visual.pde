@@ -6,6 +6,7 @@ int fps=60;        // Framerate per seconds
 // Modes and levels
 boolean level2=false, previouslevel2;
 boolean darkmode = false;
+boolean exDarkmode = false;
 int luminosityTreshold = 8;
 int countdownLevelOne = 10 * 1000; // 10 seconds
 
@@ -230,9 +231,6 @@ void oscEvent(OscMessage theOscMessage) {
       orientationsUpdated[ipIndex] = true;
     } else if (theOscMessage.checkAddrPattern("/light")==true) {
       luminosities[ipIndex] = theOscMessage.get(0).floatValue();
-      OscMessage m = new OscMessage("/IP"+ipIndex+"/luminosity");
-      m.add(luminosities[ipIndex]);
-      oscP5.send(m, superColliderLocation);
       if (min(luminosities)<luminosityTreshold) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
         darkmode=true;
         for (int i=0; i<populationSize; i++) {
@@ -247,6 +245,12 @@ void oscEvent(OscMessage theOscMessage) {
           people[i].setWalkingAmplitude(30);
           people[i].setWalkingSpeed(random(1, 2));
         }
+      }
+      if (darkmode != exDarkmode) {
+        exDarkmode = darkmode;
+        OscMessage m = new OscMessage("/IP"+ipIndex+"/luminosity");
+        m.add(luminosities[ipIndex]);
+        oscP5.send(m, superColliderLocation);
       }
     }
     //TODO: last tmhing with distance btw phone ? (each phone needs to have exposure notifications on)
@@ -274,12 +278,10 @@ void oscEvent(OscMessage theOscMessage) {
         for (int i=ipIndex*populationSize/numberOfUsers; i<(ipIndex+1)*populationSize/numberOfUsers; i++) {
           people[i].startDancing();
         }
+        OscMessage m = new OscMessage("/IP"+ipIndex+"/position");
+        m.add(positions[ipIndex]);
+        oscP5.send(m, superColliderLocation);
       }
-
-
-      OscMessage m = new OscMessage("/IP"+ipIndex+"/position");
-      m.add(positions[ipIndex]);
-      oscP5.send(m, superColliderLocation);
 
       // Updating the visual according to the pattern:
       //GrowingArray_yellow.opac = (drumPattern=="Pattern A") ? 200 : 60;

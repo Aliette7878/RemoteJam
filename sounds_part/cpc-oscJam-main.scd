@@ -122,6 +122,17 @@ s.waitForBoot({
 		Out.ar(out, sig);
 	}).add;
 
+	SynthDef.new(\sine, {
+		arg freq=440, atk = 0.005, rel=0.3, amp = 1, pan = 0;
+		var sig, env;
+		sig = SinOsc.ar(freq);
+		env = EnvGen.kr(Env.new([0,1,0], [atk, rel], [1,-1]), doneAction:2);
+		sig = Pan2.ar(sig, pan, amp);
+		sig = sig * env;
+		sig = FreeVerb.ar(sig, room: 0.6);
+		Out.ar(0, sig);
+	}).add;
+
 	//******************* SYNTHDEF: BASS *********************
 
 	SynthDef(\bass, {
@@ -309,33 +320,48 @@ s.waitForBoot({
 
 	//************* SEQUENCING: 3RD USER BASS ****************
 
-	/*
-	~bass_A = Pbind(
-		\instrument, \bass,
-		\dur, Pseq([6/8, 1/8, 1/8], inf),
-		\stretch, 60/120 * 4,
-		\freq, Pseq([130, 98, 116], inf),
-		\amp, Pwrand([0,0.7, 0.8], [0.6, 0.2, 0.2], inf),
-	).play;
+	~bassA = Pdef(
+		\sinetone2,
+		Pbind(
+			\instrument, \sine,
+			\dur, Pseq([0.375, 0.375, 0.25], inf),
+			//\freq, Prand([123, 110], inf).trace,
+			\freq, Prand([130, 146], inf),
+			\atk, Pwhite(0.0, 0.02, inf),
+			\rel, Pwhite(0.2, 0.4, inf),
+			\amp, Prand([0.1,0.2,0.3], inf),
+			);
+	).play(quant: 1.875);
 
-	~bass_B = Pbind(
-		\instrument, \playbuf,
-		\dur, Pseq([1], inf),
-		\stretch, 60/120 * 4,
-		\buf, Prand([~flute_rnd, ~panpipe, ~didgeridoo], inf),
-		\amp, Pwrand([0, 3, 5], [0.8, 0.1, 0.1], inf),
-		\rate, Pexprand(1, 1.1, inf),
-	);
+	~bassB = Pdef(
+		\sinetone4,
+		Pbind(
+			\instrument, \sine,
+			\dur, Pseq([0.25, 0.25, 0.25, 0.25], inf),
+			\freq, Prand([130, 174, 147, 196], inf),
+			\atk, Pwhite(0.0, 0.05, inf),
+			\rel, Pwhite(0.1, 0.4, inf),
+			\amp, Pexprand(0.2, 0.4, inf),
+			);
+	).play(quant: 1.875);
 
-	~bass_C = Pbind(
-		\instrument, \playbuf,
-		\dur, Pseq([1], inf),
-		\stretch, 60/120 * 4,
-		\buf, Prand([~elephant, ~elephant2], inf),
-		\amp, Pwrand([0, 0.2, 0.3], [0.8, 0.1, 0.1], inf),
-		\rate, Pexprand(0.9, 1.2, inf),
-	);
-	*/
+	~bassC = Pdef(
+		\sinetone6,
+		Pbind(
+			\instrument, \sine,
+			\dur, Pseq([3/4, 3/4, 1/4, 1/4], inf),
+			\freq, Pseq([130, 130, Prand([98, 116, 147], 2)], inf),
+			\atk, Pwhite(0.0, 0.05, inf),
+			\rel, Pwhite(0.1, 0.5, inf),
+			\amp, Pexprand(0.2, 0.5, inf),
+			);
+	).play(quant: 1.875);
+
+	~toneA2.stop;
+	~toneB2.stop;
+	~toneC2.stop;
+
+
 	//************* SEQUENCING: LEVEL 2 *******************
 
 	~didg_loop = Pbind(
@@ -386,8 +412,8 @@ s.waitForBoot({
 				~didg_buf = Synth.new(\playbuf, [\buf, ~didgeridoo.bufnum, \rate, 1.3, \rel, 3, \done_act, 2, \amp, 0.8]);
 				~didg_loop.play;
 				~wind.set(\amp, 0.01);
-				~bass1.set([\amp, 0.5]);
-				~bass2.set([\amp, 0.5]);
+				~bass1.set([\amp, 0.6]);
+				~bass2.set([\amp, 0.6]);
 			});
 			if(msg[1]==false,{
 				~didg_loop.stop;
@@ -432,12 +458,18 @@ s.waitForBoot({
 				~kalimba_A.mute;
 				~kalimba_B.mute;
 				~kalimba_C.mute;
+				~bassA.mute;
+				~bassB.mute;
+				~bassC.mute;
 				"The kalimbas get muted".postln},
 
 			{
 				~kalimba_A.unmute;
 				~kalimba_B.unmute;
 				~kalimba_C.unmute;
+				~bassA.unmute;
+				~bassB.unmute;
+				~bassC.unmute;
 				"The kalimbas get unmuted".postln},
 			);
 		},
@@ -500,16 +532,25 @@ s.waitForBoot({
 				~kalimba_A.play(quant: 1.875);
 				~kalimba_B.stop;
 				~kalimba_C.stop;
+				~bassA.play(quant: 1.875);
+				~bassB.stop;
+				~bassC.stop;
 			});
 			if(msg[1]=='Position B', {
 				~kalimba_B.play(quant: 1.875);
 				~kalimba_A.stop;
 				~kalimba_C.stop;
+				~bassB.play(quant: 1.875);
+				~bassA.stop;
+				~bassC.stop;
 			});
 			if(msg[1]=='Position C', {
 				~kalimba_C.play(quant: 1.875);
 				~kalimba_A.stop;
 				~kalimba_B.stop;
+				~bassC.play(quant: 1.875);
+				~bassA.stop;
+				~bassB.stop;
 			});
 		},
 		'/IP1/position'

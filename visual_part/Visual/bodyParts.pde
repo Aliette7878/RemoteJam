@@ -9,7 +9,7 @@ class Body {
   private float LshoulderX, LshoulderY;
   private float hipsWidth;
   private color chestColor, hipsColor;
-  private color[] colors = {color(0,143,160,150),color(217,10,29,150),color(242,139,27,150), color(154,90,117,150), color(0,132,72,150)};
+  private color[] colors = {color(70,110,160,200), color(210,20,20,230), color(232,139,7,200), color(144,80,137,200), color(20,132,52,200)};
 
   Body(Character character, float size_input) {
     size = size_input;

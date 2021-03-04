@@ -52,8 +52,8 @@ void setup() {
   // VISUAL
   bg = new Background();
   Birds = new BirdArray(); 
-  redTree = new Warlitree(new PVector(0, 400), PI/6, "red"); 
-  greenTree = new Warlitree(new PVector(width/2, 0), PI-PI/12, "green");
+  redTree = new Warlitree(new PVector(0, 350), PI/6, "red"); 
+  greenTree = new Warlitree(new PVector(width/2, -10), PI-PI/12, "green");
   blueTree = new Warlitree(new PVector(width, 400), -PI/6, "blue");
 
   populationSize = 15;

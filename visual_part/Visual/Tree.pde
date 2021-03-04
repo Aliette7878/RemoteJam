@@ -130,7 +130,7 @@ class Warlitree{
   void updateLevel(){
     if (level2){
       adult_age = max(adult_age*0.95,TimeBranch*fps);// update
-      colored=1;
+      colored=1; 
     }
     else {
       adult_age = min(adult_age*1.05,TimeBranch*fps);
@@ -146,7 +146,7 @@ class Warlitree{
         TimeLeaf=TimeLeaf1; 
         TimeBranch=TimeBranch1;
         sizeMax = sizeMax1;
-        colored = 0;
+        colored = 0; // we don't want level 1 to make leave black anymore
       }
     }
   }

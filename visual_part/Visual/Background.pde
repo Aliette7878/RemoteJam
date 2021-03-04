@@ -6,7 +6,7 @@ class Background {
   PImage bg, black;
   PShape blackline;
   float r, g, b;
-  float sunStep, sunDirection, sunAmplitude=15;
+  float sunStep, sunDirection, sunAmplitude=25;
   float darkTransparency;
 
 
@@ -60,7 +60,7 @@ class Background {
 
     // The black horizon
     fill(30, 15, 15);
-    shape(blackline, -40, 700);
+    shape(blackline, -40, 703);
     noStroke();
     //
 

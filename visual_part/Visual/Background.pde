@@ -1,7 +1,5 @@
 // Display the background 
 
-// VARIABLE
-
 class Background {
   PImage bg, black;
   PShape blackline;

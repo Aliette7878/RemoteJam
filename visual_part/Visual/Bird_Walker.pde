@@ -1,10 +1,15 @@
 // Provides the overall direction for the birds
 
+// AttractionPoint is a unique object attrating all random walkers. 
+// AttractionPoint is itself directed by its own random walker.
+
+// Each bird is directed by its own random walker.
+
 class AttractionPoint {
   PVector location;
   PVector velocity;
   PVector acceleration;
-  PVector noff ;
+  PVector noff ; // For Perlin noise
 
   AttractionPoint() {
     int x = int(random(100, width-100));

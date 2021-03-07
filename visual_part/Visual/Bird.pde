@@ -3,9 +3,9 @@
 // VARIABLES
 float PbirdLvl1 = 0.003;  // Probability of bird aparition in lvl 1
 float PbirdLvl2 = 0.009;   // Probability of bird aparition in lvl 2
-int shakingDuration = 2000; // acceleration time during a shaker
-float f1 = 0.02, f2 = 0.06; // frequency of wings movement
-int maxNumberOfBirds = 14;
+int shakingDuration = 2000; // Acceleration time during a shaker
+float f1 = 0.02, f2 = 0.06; // Frequency of wings movement
+int maxNumberOfBirds = 14; 
 
 // Do not modify
 float theta;

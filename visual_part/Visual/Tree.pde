@@ -9,16 +9,16 @@ int globalL = 180;        // Length of the 1rst branch
 // *** do not modify ***
 int TimeBranch = TimeBranch1;
 float sizeMax = sizeMax1;
-float adult_age = TimeBranch*fps; // nb frame before the branch is adult : has to be higher if 
+float adult_age = TimeBranch*fps; // nb frame before the branch is adult
 
 class Warlitree{
   
-  float bias;
+  float bias; // controls the inclination of the tree
   PVector position;
   ArrayList<branch> branches;
   int side = 1, age=0;
   String col;
-  int L, countershaker;
+  int L, countershaker; 
   
   
   Warlitree(PVector Position, float Bias, String colorName ){  

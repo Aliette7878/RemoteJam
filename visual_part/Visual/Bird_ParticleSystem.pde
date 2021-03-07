@@ -1,14 +1,14 @@
 // ParticleSystem class inspired from cpac
 // One particle system is one wing, and stick to one segment
 
-float c = 0.01; // controls the force applied to each particles 
+float c = 0.01; // controls the force applied to each particles (smallest level)
 
 class ParticleSystem {
   ArrayList<Particle> particles;
   PVector origin;
-  int N;
+  int N; 
   boolean accelerationmode;
-  float l1, l2;
+  float l1, l2; // Upper and lower limits for the lifespan of new-created particles
 
   ParticleSystem(PVector origin, int NParticles) {
     this.particles = new ArrayList<Particle>();
@@ -36,7 +36,7 @@ class ParticleSystem {
         l1=100; 
         l2=200;
       } else {
-        l1 = map(millis()-lastTimeShake, 0.7*shakingDuration, shakingDuration, 100, 20); // l1 = 100--> 0, l2 = 200-->250
+        l1 = map(millis()-lastTimeShake, 0.7*shakingDuration, shakingDuration, 100, 20); // l1 = 100--> 20, l2 = 200-->240
         l2 = map(millis()-lastTimeShake, 0.7*shakingDuration, shakingDuration, 200, 240);
       }
     }

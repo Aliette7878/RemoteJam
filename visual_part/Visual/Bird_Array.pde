@@ -25,15 +25,15 @@ class BirdArray {
       accelerationMode=false;
     }
 
-    theta = theta(frameCount, accelerationMode); // theta in [-0.5,0]; 
+    // Bird creation
+    theta = theta(frameCount, accelerationMode);  
     if (random(1)<Pbird && this.birds.size()<maxNumberOfBirds) {
       addBird();
     }
     if (accelerationMode && (random(1)<0.03)) {
       addBird();
     }
-    deleteBird();
-
+    deleteBird(); // delete birds out of scope
     Bird b;
     AttractionPoint.walk(accelerationMode);
 

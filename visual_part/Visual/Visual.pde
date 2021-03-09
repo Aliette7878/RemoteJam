@@ -126,10 +126,10 @@ void updStickmanInterractions() {
 
 //// SHOULD BE MAPPED TO OSC MESSAGES
 void mousePressed() {
-  greenTree.shake(); // USER2 SHAKING - mapped, ok
+  greenTree.shakeTree(); // USER2 SHAKING - mapped, ok
 
-  redTree.shake(); // USER 1 SHAKING - mapped, ok
-  blueTree.shake(); // USER3 SKAKING - not mapped yet (or is it? feel free to add some TODO: ;) bc easy to ctrl+F, and some IDE even automatically check for TODOs)
+  redTree.shakeTree(); // USER 1 SHAKING - mapped, ok
+  blueTree.shakeTree(); // USER3 SKAKING - not mapped yet (or is it? feel free to add some TODO: ;) bc easy to ctrl+F, and some IDE even automatically check for TODOs)
   Birds.accelerate(millis());
   level2 = true;
 
@@ -166,19 +166,19 @@ void oscEvent(OscMessage theOscMessage) {
         lastShakeTimes[ipIndex]=millis();
         println("IP"+ipIndex+" shaken");
         if (ipIndex==0) {
-          redTree.shake(); // 1st USER SHAKING
+          redTree.shakeTree(); // 1st USER SHAKING
           for (int i=0; i<populationSize/3; i++) {
             people[i].startWalking();
             people[i].jump(2);
           }
         } else if (ipIndex==1) {
-          greenTree.shake(); // 2nd USER SHAKING
+          greenTree.shakeTree(); // 2nd USER SHAKING
           for (int i=populationSize/3; i<2*populationSize/3; i++) {
             people[i].startWalking();
             people[i].jump(2);
           }
         } else if (ipIndex==2) {
-          blueTree.shake(); // 3rd USER SHAKING
+          blueTree.shakeTree(); // 3rd USER SHAKING
           for (int i=2*populationSize/3; i<populationSize; i++) {
             people[i].startWalking();
             people[i].jump(2);

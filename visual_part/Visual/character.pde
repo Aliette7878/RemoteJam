@@ -117,6 +117,7 @@ class Character {
   public void DrawCharacter() {
     ellipseMode (CENTER);
     rectMode (CENTER);
+    stroke(0,0,0,255);  // To be sure that we have no opacity left
     strokeWeight(3);
     fill(0);
 

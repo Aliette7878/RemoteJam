@@ -1,17 +1,17 @@
 // One branch of a tree welcomes 1 or 2 leaves
 
 class branch {
-  int Lx, Ly, fLx, fLy, age=0, opacity, shakeIteration, c;
+  int Lx, Ly, fLx, fLy, age=0, opacity, shakeIteration, treeShakeIt;
   PVector A, B, C, end;
   PVector pos;
   leaf leaf1, leaf2;
   float t;
   boolean falling=false, dying=false, shaking = false;
-  float bias;
+  float angleOfTree;
   float s=2;
 
 
-  branch(int Lengthx, int Lengthy, PVector position, String col, float biasoftree) {  
+  branch(int Lengthx, int Lengthy, PVector position, String col, float angleoftree) {  
     fLx = Lengthx;
     fLy = Lengthy;
     Lx=1; 
@@ -20,22 +20,22 @@ class branch {
     leaf1 = new leaf(col);
     leaf2 = new leaf(col);
     leaf2.svg.setVisible(false);
-    t = random(0.1, 0.75);
+    t = random(0.1, 0.75);  // Position of the first leaf on the branch.
     A = new PVector(pos.x, pos.y-Ly);
     B = new PVector(pos.x - Lx, pos.y-Ly);
     end = new PVector( pos.x-Lx, pos.y-Ly/2); // END
-    bias = biasoftree;
+    angleOfTree = angleoftree;
     opacity=255;
     shakeIteration=0;
   }
 
   // One branch shakes and can loose its leaves
-  void shakeBranch(int c) {
+  void shakeBranch() {
     s = s*0.99;
-    float x=s*cos(c*10*millis()/1000);  
-    end.add(c*x, c*x);
+    float x=s*cos(treeShakeIt*10*millis()/1000);  
+    end.add(treeShakeIt*x, treeShakeIt*x);
     if (leaf1.isfalling==false) {
-      leaf1.position = new PVector(pos.x*pow(1-t, 3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t, 3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
+      leaf1.position = computeLeaf1Position();
     }
     if (leaf2.isfalling==false) {
       leaf2.position = new PVector(end.x, end.y);
@@ -48,13 +48,17 @@ class branch {
     }
   }
 
+  PVector computeLeaf1Position() {
+    return new PVector(pos.x*pow(1-t, 3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t, 3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
+  }
+
   // Display leaf and branch
   void display() {
     A = new PVector(pos.x, pos.y-Ly);
     B = new PVector(pos.x - Lx, pos.y-Ly);
     end = new PVector( pos.x-Lx, pos.y-1.5*Ly/2); // END
     if (shaking) {
-      shakeBranch(c);
+      shakeBranch();
     }
     noFill();
     stroke(0, 0, 0, opacity);
@@ -63,10 +67,10 @@ class branch {
     vertex(pos.x, pos.y); // BEGINNING      
     bezier(pos.x, pos.y, A.x, A.y, B.x, B.y, end.x, end.y);
     if (leaf1.isfalling) {
-      leaf1.fall(bias);
+      leaf1.fall(angleOfTree);
     }
     if (leaf2.isfalling) {
-      leaf2.fall(bias);
+      leaf2.fall(angleOfTree);
     }
     leaf1.display();
     leaf2.display();
@@ -82,16 +86,16 @@ class branch {
     if (age<adult_age) {
       Lx=int(map(age, 1, adult_age, 0, fLx));
       Ly = int(map(age, 1, adult_age, 0, fLy));
-      leaf1.position = new PVector(pos.x*pow(1-t, 3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t, 3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
+      leaf1.position = computeLeaf1Position();
       leaf2.position = new PVector(end.x, end.y);
     }
 
     // We use the Bezier polynomial equation of the branch to place the leaf.
-    if (leaf1.position.y>height || leaf2.position.y<-height) {
+    if (leaf1.position.y>height || leaf1.position.y<-height){
       leaf1.reset();       
-      leaf1.position = new PVector(pos.x*pow(1-t, 3)+3*A.x*t*(1-t)*(1-t)+3*B.x*t*t*(1-t)+end.x*t*t*t, pos.y*pow(1-t, 3)+3*A.y*t*(1-t)*(1-t)+3*B.y*t*t*(1-t)+end.y*t*t*t);
+      leaf1.position = computeLeaf1Position();
     }
-    if (leaf2.position.y>height || leaf2.position.y<-height) {
+    if (leaf2.position.y>height || leaf2.position.y<-height){
       leaf2.reset();
       leaf2.position = new PVector(end.x, end.y);
     }

@@ -57,8 +57,11 @@ class Warlitree {
     updateLevel();
     spontaneousDeath();
     age++;
-    for (branch b : this.branches) {
-      if (b.age == int(adult_age) && this.branches.size()<sizeMax ) {
+    branch b;
+    for(int i=this.branches.size()-1; i>=0; i--){
+      b=this.branches.get(i);
+      b.grow();
+      if (b.age == int(adult_age) && this.branches.size()<sizeMax ){
         addBranch();
       }
       if (b.age == -1) {
@@ -73,7 +76,7 @@ class Warlitree {
   void shakeTree() {
     shakesCounter++;
     for (branch b : this.branches) {
-      b.c=shakesCounter;
+      b.treeShakeIt=shakesCounter;
       b.shaking = true;
     }
     if (shakesCounter==3) {

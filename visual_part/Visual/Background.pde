@@ -4,7 +4,7 @@ class Background {
   PImage bg, black;
   PShape blackline;
   float r, g, b;
-  float sunStep, sunDirection, sunAmplitude=25;
+  float sunStep, sunDirection, sunAmplitude=30;
   float darkTransparency;
 
 
@@ -36,9 +36,9 @@ class Background {
       b = min(b*1.02, 100);
     }
     if (darkmode) {
-      r *= 0.99; 
-      g *= 0.99; 
-      b *= 0.99;
+      r *= 0.95; 
+      g *= 0.95; 
+      b *= 0.95;
       darkTransparency+=0.5;
     } else {
       r = 220; 
@@ -63,7 +63,7 @@ class Background {
     //
 
     if (darkmode) {
-      fill(15, 15, 15, min(85, darkTransparency));
+      fill(15, 15, 15, min(65, darkTransparency));
       rect(0, 0, 3000, 3000);
     }
   }

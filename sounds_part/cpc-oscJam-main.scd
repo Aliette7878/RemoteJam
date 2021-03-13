@@ -10,6 +10,7 @@ s.waitForBoot({
 	//**************** INITIALIZATION *******************
 
 	s.plotTree;
+	~lum_threshold = 8;
 
 
 	//************** EXT FILES & BUFFERS ****************
@@ -245,7 +246,7 @@ s.waitForBoot({
 		\amp, Pseq([1.5, Pexprand(0.2,1,2), 1.5], inf),
 		\rate, Prand([1, 2/3, 3/2, 4/3, 5/4], inf);
 
-	);
+	).play(quant:1.875);
 
 	~kalimba_B = Pbind(
 		\instrument, \playbuf_kal,
@@ -267,7 +268,7 @@ s.waitForBoot({
 				1,
 			], inf
 		),
-	);
+	).play(quant:1.875);
 
 	~kalimba_C = Pbind(
 		\instrument, \playbuf_kal,
@@ -279,14 +280,18 @@ s.waitForBoot({
 				Pseq([~k_short_c], 2),
 			], inf
 		),
-		\amp, Pseq([1.5, Pexprand(0.2,1,2), 1.5], inf),
+		\amp, Pseq([1, Pexprand(0.2,0.7,2), 1], inf),
 		\rate, Pseq(
 			[
 				Prand([1, 8/7], 4),
 				Prand([1, 8/7], 2),
 			], inf
 		),
-	);
+	).play(quant:1.875);
+
+	~kalimba_A.stop;
+	~kalimba_B.stop;
+	~kalimba_C.stop;
 
 	//************* SEQUENCING: 3RD USER EVENTS ****************
 
@@ -298,16 +303,16 @@ s.waitForBoot({
 		\buf, Prand([~lemur, ~owl, ~tawny_1, ~birds], inf),
 		\amp, Pwrand([0,0.7, 0.8], [0.6, 0.2, 0.2], inf),
 		\rate, Pexprand(0.8, 1.3, inf),
-	);
+	).play(quant: 1.875);
 
 	~events_B = Pbind(
 		\instrument, \playbuf,
 		\dur, Pseq([1], inf),
 		\stretch, 60/120 * 4,
-		\buf, Prand([~flute_rnd, ~panpipe, ~didgeridoo], inf),
+		\buf, Prand([~flute_rnd, ~panpipe], inf),
 		\amp, Pwrand([0, 3, 5], [0.8, 0.1, 0.1], inf),
 		\rate, Pexprand(1, 1.1, inf),
-	);
+	).play(quant: 1.875);
 
 	~events_C = Pbind(
 		\instrument, \playbuf,
@@ -316,7 +321,11 @@ s.waitForBoot({
 		\buf, Prand([~elephant, ~elephant2], inf),
 		\amp, Pwrand([0, 0.2, 0.3], [0.8, 0.1, 0.1], inf),
 		\rate, Pexprand(0.9, 1.2, inf),
-	);
+	).play(quant: 1.875);
+
+	~events_A.stop;
+	~events_B.stop;
+	~events_C.stop;
 
 	//************* SEQUENCING: 3RD USER BASS ****************
 
@@ -329,7 +338,7 @@ s.waitForBoot({
 			\freq, Prand([130, 146], inf),
 			\atk, Pwhite(0.0, 0.02, inf),
 			\rel, Pwhite(0.2, 0.4, inf),
-			\amp, Prand([0.1,0.2,0.3], inf),
+			\amp, Prand([0.1,0.2], inf),
 			);
 	).play(quant: 1.875);
 
@@ -341,7 +350,7 @@ s.waitForBoot({
 			\freq, Prand([130, 174, 147, 196], inf),
 			\atk, Pwhite(0.0, 0.05, inf),
 			\rel, Pwhite(0.1, 0.4, inf),
-			\amp, Pexprand(0.2, 0.4, inf),
+			\amp, Pexprand(0.2, 0.3, inf),
 			);
 	).play(quant: 1.875);
 
@@ -353,13 +362,13 @@ s.waitForBoot({
 			\freq, Pseq([130, 130, Prand([98, 116, 147], 2)], inf),
 			\atk, Pwhite(0.0, 0.05, inf),
 			\rel, Pwhite(0.1, 0.5, inf),
-			\amp, Pexprand(0.2, 0.5, inf),
+			\amp, Pexprand(0.2, 0.3, inf),
 			);
 	).play(quant: 1.875);
 
-	~toneA2.stop;
-	~toneB2.stop;
-	~toneC2.stop;
+	~bassA.stop;
+	~bassB.stop;
+	~bassC.stop;
 
 
 	//************* SEQUENCING: LEVEL 2 *******************
@@ -428,11 +437,11 @@ s.waitForBoot({
 
 	// OSC LUMINOSITY
 
-	~osc_luminosity1 = OSCdef("IP1 luminosity",
+	~osc_luminosity1 = OSCdef("IP0 luminosity",
 		{
 			arg msg, time, addr, port;
-			("IP1 luminosity:" + msg[1]).postln;
-			if(msg[1]<0.01, {
+			("IP0 luminosity:" + msg[1]).postln;
+			if(msg[1]<~lum_threshold, {
 				~drum_A.mute;
 				~drum_B.mute;
 				~drum_C.mute;
@@ -450,11 +459,11 @@ s.waitForBoot({
 		'/IP0/luminosity'
 	);
 
-	~osc_luminosity2 = OSCdef("IP2 luminosity",
+	~osc_luminosity2 = OSCdef("IP1 luminosity",
 		{
 			arg msg, time, addr, port;
-			("IP2 luminosity:" + msg[1]).postln;
-			if(msg[1]<0.05, {
+			("IP1 luminosity:" + msg[1]).postln;
+			if(msg[1]<~lum_threshold, {
 				~kalimba_A.mute;
 				~kalimba_B.mute;
 				~kalimba_C.mute;
@@ -476,11 +485,11 @@ s.waitForBoot({
 		'/IP1/luminosity'
 	);
 
-	~osc_luminosity3 = OSCdef("IP3 luminosity",
+	~osc_luminosity3 = OSCdef("IP2 luminosity",
 		{
 			arg msg, time, addr, port;
 			("IP2 luminosity:" + msg[1]).postln;
-			if(msg[1]<0.05, {
+			if(msg[1]<~lum_threshold, {
 				~events_A.mute;
 				~events_B.mute;
 				~events_C.mute;
@@ -561,19 +570,19 @@ s.waitForBoot({
 			arg msg, time, addr, port;
 			("pattern 1:" + msg[1]).postln;
 			if(msg[1]== 'Position A',{
-				~event_A.play(quant: 1.875);
-				~event_B.stop;
-				~event_C.stop;
+				~events_A.play(quant: 1.875);
+				~events_B.stop;
+				~events_C.stop;
 			});
 			if(msg[1]=='Position B', {
-				~event_B.play(quant: 1.875);
-				~event_A.stop;
-				~event_C.stop;
+				~events_B.play(quant: 1.875);
+				~events_A.stop;
+				~events_C.stop;
 			});
 			if(msg[1]=='Position C', {
-				~event_C.play(quant: 1.875);
-				~event_A.stop;
-				~event_B.stop;
+				~events_C.play(quant: 1.875);
+				~events_A.stop;
+				~events_B.stop;
 			});
 		},
 		'/IP2/position'
@@ -584,7 +593,7 @@ s.waitForBoot({
 	~osc_shaker1 = OSCdef("IP1 shaker",
 		{
 			arg msg, time, addr, port;
-			("IP1 shaken:" + msg[0]).postln;
+			("IP0 shaken:" + msg[0]).postln;
 			if(msg[1]==1,{
 				~rain_buf = Synth.new(\playbuf, [\buf, ~rain.bufnum, \rate, 1.2, \rel, 2, \done_act, 2, \amp, 3]);
 			});
@@ -597,7 +606,7 @@ s.waitForBoot({
 	~osc_shaker2 = OSCdef("IP2 shaker",
 		{
 			arg msg, time, addr, port;
-			("IP2 shaken:" + msg[1]).postln;
+			("IP1 shaken:" + msg[1]).postln;
 			if(msg[1]==1,{
 				~rattle_buf = Synth.new(\playbuf, [\buf, ~rattle.bufnum, \rate, 1.5, \rel, 2, \done_act, 2]);
 			});
@@ -609,7 +618,7 @@ s.waitForBoot({
 	~osc_shaker3 = OSCdef("IP3 shaker",
 		{
 			arg msg, time, addr, port;
-			("IP3 shaken:" + msg[1]).postln;
+			("IP2 shaken:" + msg[1]).postln;
 			if(msg[1]==1,{
 				~nut_buf = Synth.new(\playbuf, [\buf, ~nut.bufnum, \rate, 1, \rel, 2, \done_act, 2]);
 			});

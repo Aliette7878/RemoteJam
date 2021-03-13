@@ -161,7 +161,7 @@ void updateTreeSwinging() {//TODO
       similarityMatrix[u][v] = computeSimilarity(u, v);
     }
   }
-  println("Similarity btw: user0 and user1:",similarityMatrix[0][1], "    user0 and user2:",similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
+  //println("Similarity btw: user0 and user1:",similarityMatrix[0][1], "    user0 and user2:",similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
   
   // mapping similarity to amplitude of the balancing movement of the tree
   redTree.oscAmp = max(similarityMatrix[0][1],similarityMatrix[0][2])/10;
@@ -240,7 +240,7 @@ void oscEvent(OscMessage theOscMessage) {
         }
         println("shaken");
         OscMessage m = new OscMessage("/IP"+ipIndex+"/shaken");
-        m.add(accMaxValue);
+        m.add(1);
         oscP5.send(m, superColliderLocation);
       }
       float[] maxAccPerUser = new float[numberOfUsers];
@@ -285,6 +285,7 @@ void oscEvent(OscMessage theOscMessage) {
       orientationsUpdated[ipIndex] = true;
     } else if (theOscMessage.checkAddrPattern("/light")==true) {
       luminosities[ipIndex] = theOscMessage.get(0).floatValue();
+      //println(luminosities[ipIndex]);
       if (min(luminosities)<luminosityTreshold) {  // TODO: figure out if we rather want the mean under a certain treshold, etc...
         darkmode=true;
         for (int i=0; i<populationSize; i++) {
@@ -304,6 +305,7 @@ void oscEvent(OscMessage theOscMessage) {
         exDarkmode = darkmode;
         OscMessage m = new OscMessage("/IP"+ipIndex+"/luminosity");
         m.add(luminosities[ipIndex]);
+        println(luminosities[ipIndex]);
         oscP5.send(m, superColliderLocation);
       }
     }

@@ -4,7 +4,7 @@
 int TimeBranch1 = 7, TimeBranch2 = 2; // Number of seconds before a branch is fully grown up
 int sizeMax1 = 5, sizeMax2 = 8;  // Number maximum of branches on 1 tree
 int globalL = 180;        // Length of the 1rst branch
-
+float oscAmp, oscFreq;
 
 // *** do not modify ***
 int TimeBranch = TimeBranch1;
@@ -28,6 +28,8 @@ class Warlitree {
     branches = new ArrayList<branch>();
     col=colorName;
     L = globalL +int(random(-10, 80));
+    oscAmp = 8;
+    oscFreq = 0.5;
     branches.add(new branch(int(random(-globalL, -globalL*0.7)), int(random(globalL*0.7, globalL)), new PVector(0, -L), col, angle));
   }
 
@@ -36,7 +38,7 @@ class Warlitree {
     grow();
     pushMatrix();
     translate(position.x, position.y);
-    rotate(angle);   
+    rotate(angle+oscAmp/300*cos(2*PI*oscFreq*millis()/1000));   
     noFill();
     stroke(0);
     strokeWeight(1);
@@ -45,11 +47,12 @@ class Warlitree {
     branch b;
     for (int i=this.branches.size()-1; i>=0; i--) {
       b=this.branches.get(i);
-      b.display();
+      b.display(oscAmp, oscFreq);
     }   
     endShape();
     popMatrix();
   }
+
 
 
   // All branches grow, levels parameters are updated, some branches can disappear
@@ -58,10 +61,10 @@ class Warlitree {
     spontaneousDeath();
     age++;
     branch b;
-    for(int i=this.branches.size()-1; i>=0; i--){
+    for (int i=this.branches.size()-1; i>=0; i--) {
       b=this.branches.get(i);
       b.grow();
-      if (b.age == int(adult_age) && this.branches.size()<sizeMax ){
+      if (b.age == int(adult_age) && this.branches.size()<sizeMax ) {
         addBranch();
       }
       if (b.age == -1) {

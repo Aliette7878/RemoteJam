@@ -53,13 +53,22 @@ class branch {
   }
 
   // Display leaf and branch
-  void display() {
+  void display(float oscAmp, float oscFreq) {
     A = new PVector(pos.x, pos.y-Ly);
     B = new PVector(pos.x - Lx, pos.y-Ly);
     end = new PVector( pos.x-Lx, pos.y-1.5*Ly/2); // END
     if (shaking) {
       shakeBranch();
     }
+    float osc=oscAmp*cos(2*PI*oscFreq*millis()/1000);  
+    end.add((2*PI-angleOfTree)/(2*PI)*osc, (angleOfTree)/(2*PI)*osc);
+    if (leaf1.isfalling==false) {
+      leaf1.position = computeLeaf1Position();
+    }
+    if (leaf2.isfalling==false) {
+      leaf2.position = new PVector(end.x, end.y);
+    }
+
     noFill();
     stroke(0, 0, 0, opacity);
     strokeWeight(1);
@@ -91,11 +100,11 @@ class branch {
     }
 
     // We use the Bezier polynomial equation of the branch to place the leaf.
-    if (leaf1.position.y>height || leaf1.position.y<-height){
+    if (leaf1.position.y>height || leaf1.position.y<-height) {
       leaf1.reset();       
       leaf1.position = computeLeaf1Position();
     }
-    if (leaf2.position.y>height || leaf2.position.y<-height){
+    if (leaf2.position.y>height || leaf2.position.y<-height) {
       leaf2.reset();
       leaf2.position = new PVector(end.x, end.y);
     }

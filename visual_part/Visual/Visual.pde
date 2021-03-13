@@ -1,5 +1,6 @@
 import netP5.*;
 import oscP5.*;
+import processing.sound.*;
 
 // Framerate
 int fps=60;        // Framerate per seconds
@@ -29,10 +30,14 @@ float[] luminosities = new float[numberOfUsers];
 boolean[] orientationsUpdated = new boolean[numberOfUsers];
 String[] exPositions = new String[numberOfUsers];
 String[] positions = new String[numberOfUsers];
+int accBufferLength = 40; // 40 timestamps
 float[][] accelerationBuffers = new float[numberOfUsers][];
+float[][] normalisedAccelerationBuffers = new float[numberOfUsers][];
 float[] lastShakeTimes = new float[numberOfUsers];
 float lastShakeTimeTogether;
 float[] lastActivityTimes = new float[numberOfUsers];
+int lastSwingingUpdateTime;
+float[][] similarityMatrix = new float[numberOfUsers][numberOfUsers];
 
 // Tree
 Warlitree redTree, greenTree, blueTree;
@@ -82,9 +87,18 @@ void setup() {
     luminosities[i] = 2*luminosityTreshold;
     lastShakeTimes[i] = 0;
     lastActivityTimes[i] = 0;
-    accelerationBuffers[i] = new float[12];  // Keeping the 12 last messages (4 timestams, 3 dimention), to be sure to get the highest intensity of a movement
+    accelerationBuffers[i] = new float[accBufferLength*3];  // (x timestams, 3 dimention), to be sure to get the highest intensity of a movement
+    for (int k=0; k<accBufferLength*3; k++) {  // Just to initiate values, to see if similarity measurement btw users movements works
+      if (i==0) {
+        accelerationBuffers[i][k] = random(1);
+      } else {
+        accelerationBuffers[i][k] = 0.5*accelerationBuffers[i-1][k]+ 0.5*random(1);
+      }
+    }
+    normalisedAccelerationBuffers[i] = new float[accBufferLength*3];
     exPositions[i] = "init";
   }
+  lastSwingingUpdateTime = 0;
 }
 
 
@@ -106,6 +120,12 @@ void draw() {
   updStickmanInterractions();
 
   previouslevel2 = level2;
+
+  // Every half a second, we form the normalised buffer of acceleration to measure its similarity and update the amplitude of the trees swinging
+  if ( millis() - lastSwingingUpdateTime >= 500) {
+    updateTreeSwinging();
+    lastSwingingUpdateTime = millis();
+  }
 }
 
 void updStickmanInterractions() {
@@ -121,6 +141,40 @@ void updStickmanInterractions() {
       }
     }
   }
+}
+
+void updateTreeSwinging() {//TODO
+  for (int u=0; u<numberOfUsers; u++) {
+    float sum = 0;
+    for (int i=0; i<accBufferLength*3; i++) {
+      sum += accelerationBuffers[u][i];
+    }
+    float normCoef = sum/accBufferLength*3;
+
+    for (int i=0; i<accBufferLength*3; i++) {
+      normalisedAccelerationBuffers[u][i] = accelerationBuffers[u][i]/normCoef;
+    }
+  }
+  // now measure the similarities
+  for (int u=0; u<numberOfUsers; u++) {
+    for (int v=u+1; v<numberOfUsers; v++) {
+      similarityMatrix[u][v] = computeSimilarity(u, v);
+    }
+  }
+  println("Similarity btw: user0 and user1:",similarityMatrix[0][1], "    user0 and user2:",similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
+  
+  // mapping similarity to amplitude of the balancing movement of the tree
+  redTree.oscAmp = max(similarityMatrix[0][1],similarityMatrix[0][2])/10;
+  greenTree.oscAmp = max(similarityMatrix[0][1],similarityMatrix[1][2])/10;
+  blueTree.oscAmp = max(similarityMatrix[0][2],similarityMatrix[1][2])/10;
+}
+
+float computeSimilarity(int u1, int u2) {
+  float dissimilarity = 0;
+  for (int i=0; i<accBufferLength*3; i++) {
+    dissimilarity += abs(normalisedAccelerationBuffers[u1][i]-normalisedAccelerationBuffers[u2][i]);
+  }
+  return accBufferLength*3/dissimilarity;
 }
 
 
@@ -253,7 +307,6 @@ void oscEvent(OscMessage theOscMessage) {
         oscP5.send(m, superColliderLocation);
       }
     }
-    //TODO: last tmhing with distance btw phone ? (each phone needs to have exposure notifications on)
 
     // Updating the "category" of the Position
     if (orientationsUpdated[ipIndex]) {

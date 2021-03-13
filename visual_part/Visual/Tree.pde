@@ -4,7 +4,6 @@
 int TimeBranch1 = 7, TimeBranch2 = 2; // Number of seconds before a branch is fully grown up
 int sizeMax1 = 5, sizeMax2 = 8;  // Number maximum of branches on 1 tree
 int globalL = 180;        // Length of the 1rst branch
-float oscAmp, oscFreq;
 
 // *** do not modify ***
 int TimeBranch = TimeBranch1;
@@ -19,6 +18,7 @@ class Warlitree {
   int side = 1, age=0;
   String col;
   int L, shakesCounter; 
+  float oscAmp, oscFreq;
 
 
   Warlitree(PVector treePosition, float ang, String colorName ) {  

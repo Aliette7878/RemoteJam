@@ -329,9 +329,7 @@ s.waitForBoot({
 
 	//************* SEQUENCING: 3RD USER BASS ****************
 
-	~bassA = Pdef(
-		\sinetone2,
-		Pbind(
+	~bassA = Pbind(
 			\instrument, \sine,
 			\dur, Pseq([0.375, 0.375, 0.25], inf),
 			//\freq, Prand([123, 110], inf).trace,
@@ -339,31 +337,24 @@ s.waitForBoot({
 			\atk, Pwhite(0.0, 0.02, inf),
 			\rel, Pwhite(0.2, 0.4, inf),
 			\amp, Prand([0.1,0.2], inf),
-			);
 	).play(quant: 1.875);
 
-	~bassB = Pdef(
-		\sinetone4,
-		Pbind(
+	~bassB = Pbind(
 			\instrument, \sine,
 			\dur, Pseq([0.25, 0.25, 0.25, 0.25], inf),
 			\freq, Prand([130, 174, 147, 196], inf),
 			\atk, Pwhite(0.0, 0.05, inf),
 			\rel, Pwhite(0.1, 0.4, inf),
 			\amp, Pexprand(0.2, 0.3, inf),
-			);
 	).play(quant: 1.875);
 
-	~bassC = Pdef(
-		\sinetone6,
-		Pbind(
+	~bassC = Pbind(
 			\instrument, \sine,
 			\dur, Pseq([3/4, 3/4, 1/4, 1/4], inf),
 			\freq, Pseq([130, 130, Prand([98, 116, 147], 2)], inf),
 			\atk, Pwhite(0.0, 0.05, inf),
 			\rel, Pwhite(0.1, 0.5, inf),
 			\amp, Pexprand(0.2, 0.3, inf),
-			);
 	).play(quant: 1.875);
 
 	~bassA.stop;

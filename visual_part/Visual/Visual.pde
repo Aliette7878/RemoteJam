@@ -31,7 +31,11 @@ boolean[] orientationsUpdated = new boolean[numberOfUsers];
 String[] exPositions = new String[numberOfUsers];
 String[] positions = new String[numberOfUsers];
 float[][] accelerationBuffers = new float[numberOfUsers][];
+float[] maxAccelerationInBuffer = new float[numberOfUsers];
+float[] lastMaxAccelerationInBuffer = new float[numberOfUsers];
+float[]  smoothedMaxAccelerationInBuffer = new float[numberOfUsers];
 int accBufferLength = 40; // 40 timestamps
+float smoothingFactor = 10;
 float[][] accXBuffers = new float[numberOfUsers][];
 float[][] accYBuffers = new float[numberOfUsers][];
 float[][] accZBuffers = new float[numberOfUsers][];
@@ -153,31 +157,47 @@ void updStickmanInterractions() {
   }
 }
 
+
 void updateTreeSwinging() {
   // L1 Normalisation //TODO: L2?
   for (int u=0; u<numberOfUsers; u++) {
-    float sum = 0;
+    
     for (int i=0; i<accBufferLength; i++) {
-      sum += accXBuffers[u][i]+accYBuffers[u][i]+accZBuffers[u][i];
+      normalisedAccelerationBuffers[u][i] = abs(accXBuffers[u][i]) + abs(accYBuffers[u][i]) + abs(accZBuffers[u][i]);
     }
-    float normCoef = sum/accBufferLength;
-
+    
+    maxAccelerationInBuffer[u] = 0;
     for (int i=0; i<accBufferLength; i++) {
-      normalisedAccelerationBuffers[u][i] = (accXBuffers[u][i]+accYBuffers[u][i]+accZBuffers[u][i])/normCoef;
+      if (normalisedAccelerationBuffers[u][i]>maxAccelerationInBuffer[u]) {
+        maxAccelerationInBuffer[u] = normalisedAccelerationBuffers[u][i];
+      }
     }
+    //if (u==0) println("max acceleration in a buffer:", maxAccelerationInBuffer[u]);
   }
+  
+ 
+  redTree.oscAmp = maxAccelerationInBuffer[0]*4;
+  greenTree.oscAmp = maxAccelerationInBuffer[1]*4;
+  blueTree.oscAmp = maxAccelerationInBuffer[2]*4;
+  
+  
+  
+  /*
   // now measure the similarities
   for (int u=0; u<numberOfUsers; u++) {
     for (int v=u+1; v<numberOfUsers; v++) {
       similarityMatrix[u][v] = computeSimilarity(u, v);
     }
   }
-  println("Similarity btw: user0 and user1:", similarityMatrix[0][1], "    user0 and user2:", similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
+  //println("Similarity btw: user0 and user1:", similarityMatrix[0][1], "    user0 and user2:", similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
 
+  
   // mapping similarity to amplitude of the balancing movement of the tree
   redTree.oscAmp = max(similarityMatrix[0][1], similarityMatrix[0][2])/5;
   greenTree.oscAmp = max(similarityMatrix[0][1], similarityMatrix[1][2])/5;
   blueTree.oscAmp = max(similarityMatrix[0][2], similarityMatrix[1][2])/5;
+  */
+  
 }
 
 

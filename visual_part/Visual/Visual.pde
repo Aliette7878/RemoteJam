@@ -30,8 +30,11 @@ float[] luminosities = new float[numberOfUsers];
 boolean[] orientationsUpdated = new boolean[numberOfUsers];
 String[] exPositions = new String[numberOfUsers];
 String[] positions = new String[numberOfUsers];
-int accBufferLength = 40; // 40 timestamps
 float[][] accelerationBuffers = new float[numberOfUsers][];
+int accBufferLength = 40; // 40 timestamps
+float[][] accXBuffers = new float[numberOfUsers][];
+float[][] accYBuffers = new float[numberOfUsers][];
+float[][] accZBuffers = new float[numberOfUsers][];
 float[][] normalisedAccelerationBuffers = new float[numberOfUsers][];
 float[] lastShakeTimes = new float[numberOfUsers];
 float lastShakeTimeTogether;
@@ -87,15 +90,22 @@ void setup() {
     luminosities[i] = 2*luminosityTreshold;
     lastShakeTimes[i] = 0;
     lastActivityTimes[i] = 0;
-    accelerationBuffers[i] = new float[accBufferLength*3];  // (x timestams, 3 dimention), to be sure to get the highest intensity of a movement
-    for (int k=0; k<accBufferLength*3; k++) {  // Just to initiate values, to see if similarity measurement btw users movements works
+    accelerationBuffers[i] = new float[12];  // (4 timestams, 3 dimention), to be sure to get the highest intensity of a movement
+    accXBuffers[i] = new float[accBufferLength]; 
+    accYBuffers[i] = new float[accBufferLength];   
+    accZBuffers[i] = new float[accBufferLength];  
+    for (int k=0; k<accBufferLength; k++) {  // Just to initiate values, to see if similarity measurement btw users movements works
       if (i==0) {
-        accelerationBuffers[i][k] = random(1);
+        accXBuffers[i][k] = random(1);
+        accYBuffers[i][k] = random(1);
+        accZBuffers[i][k] = random(1);
       } else {
-        accelerationBuffers[i][k] = 0.5*accelerationBuffers[i-1][k]+ 0.5*random(1);
+        accXBuffers[i][k] = 0.5*accXBuffers[i-1][k]+ 0.5*random(1);
+        accYBuffers[i][k] = 0.5*accYBuffers[i-1][k]+ 0.5*random(1);
+        accZBuffers[i][k] = 0.5*accZBuffers[i-1][k]+ 0.5*random(1);
       }
     }
-    normalisedAccelerationBuffers[i] = new float[accBufferLength*3];
+    normalisedAccelerationBuffers[i] = new float[accBufferLength];
     exPositions[i] = "init";
   }
   lastSwingingUpdateTime = 0;
@@ -143,16 +153,17 @@ void updStickmanInterractions() {
   }
 }
 
-void updateTreeSwinging() {//TODO
+void updateTreeSwinging() {
+  // L1 Normalisation //TODO: L2?
   for (int u=0; u<numberOfUsers; u++) {
     float sum = 0;
-    for (int i=0; i<accBufferLength*3; i++) {
-      sum += accelerationBuffers[u][i];
+    for (int i=0; i<accBufferLength; i++) {
+      sum += accXBuffers[u][i]+accYBuffers[u][i]+accZBuffers[u][i];
     }
-    float normCoef = sum/accBufferLength*3;
+    float normCoef = sum/accBufferLength;
 
-    for (int i=0; i<accBufferLength*3; i++) {
-      normalisedAccelerationBuffers[u][i] = accelerationBuffers[u][i]/normCoef;
+    for (int i=0; i<accBufferLength; i++) {
+      normalisedAccelerationBuffers[u][i] = (accXBuffers[u][i]+accYBuffers[u][i]+accZBuffers[u][i])/normCoef;
     }
   }
   // now measure the similarities
@@ -161,17 +172,18 @@ void updateTreeSwinging() {//TODO
       similarityMatrix[u][v] = computeSimilarity(u, v);
     }
   }
-  println("Similarity btw: user0 and user1:",similarityMatrix[0][1], "    user0 and user2:",similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
-  
+  println("Similarity btw: user0 and user1:", similarityMatrix[0][1], "    user0 and user2:", similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
+
   // mapping similarity to amplitude of the balancing movement of the tree
-  redTree.oscAmp = max(similarityMatrix[0][1],similarityMatrix[0][2])/10;
-  greenTree.oscAmp = max(similarityMatrix[0][1],similarityMatrix[1][2])/10;
-  blueTree.oscAmp = max(similarityMatrix[0][2],similarityMatrix[1][2])/10;
+  redTree.oscAmp = max(similarityMatrix[0][1], similarityMatrix[0][2])/5;
+  greenTree.oscAmp = max(similarityMatrix[0][1], similarityMatrix[1][2])/5;
+  blueTree.oscAmp = max(similarityMatrix[0][2], similarityMatrix[1][2])/5;
 }
+
 
 float computeSimilarity(int u1, int u2) {
   float dissimilarity = 0;
-  for (int i=0; i<accBufferLength*3; i++) {
+  for (int i=0; i<accBufferLength; i++) {
     dissimilarity += abs(normalisedAccelerationBuffers[u1][i]-normalisedAccelerationBuffers[u2][i]);
   }
   return accBufferLength*3/dissimilarity;
@@ -272,7 +284,19 @@ void oscEvent(OscMessage theOscMessage) {
           people[i].setWalkingSpeed(random(1, 2));
         }
       }
+
+
+      if (theOscMessage.checkAddrPattern("/linear_acceleration/x")==true) {
+        accXBuffers[ipIndex] = pushInBuffer(accXBuffers[ipIndex], theOscMessage.get(0).floatValue());
+      }
+      else if (theOscMessage.checkAddrPattern("/linear_acceleration/y")==true) {
+        accYBuffers[ipIndex] = pushInBuffer(accYBuffers[ipIndex], theOscMessage.get(0).floatValue());
+      }
+      else if (theOscMessage.checkAddrPattern("/linear_acceleration/z")==true) {
+        accZBuffers[ipIndex] = pushInBuffer(accZBuffers[ipIndex], theOscMessage.get(0).floatValue());
+      }
     }
+
 
     // Updating the orientation of the phone
     else if (theOscMessage.checkAddrPattern("/orientation/beta")==true) {

@@ -36,10 +36,10 @@ class Background {
       b = min(b*1.02, 100);
     }
     if (darkmode) {
-      r *= 0.95; 
-      g *= 0.95; 
-      b *= 0.95;
-      darkTransparency+=0.5;
+      r *= 0.9; 
+      g *= 0.9; 
+      b *= 0.9;
+      darkTransparency+=5;
     } else {
       r = 220; 
       g = 40; 
@@ -63,7 +63,7 @@ class Background {
     //
 
     if (darkmode) {
-      fill(15, 15, 15, min(65, darkTransparency));
+      fill(10, 10, 10, min(55, darkTransparency));
       rect(0, 0, 3000, 3000);
     }
   }

@@ -244,13 +244,13 @@ s.waitForBoot({
 			], inf
 		),
 		\amp, Pseq([1.5, Pexprand(0.2,1,2), 1.5], inf),
-		\rate, Prand([1, 2/3, 3/2, 4/3, 5/4], inf);
+		\rate, Prand([1, 2/3, 3/4, 4/6, 5/8], inf);
 
 	).play(quant:1.875);
 
 	~kalimba_B = Pbind(
 		\instrument, \playbuf_kal,
-		\dur, Pseq([0.125*3/2, 0.125*3/2, 0.625], inf),
+		\dur, Pseq([0.25, 0.25, 0.125, 0.125, 0.125, 0.125], inf),
 		\stretch, 60/120 * 2,
 		//\buf, Pwrand([~low, ~high, ~mid],[0.25, 0.6, 0.15], inf),
 		\buf, Pseq(
@@ -263,9 +263,9 @@ s.waitForBoot({
 		\amp, Pseq([1.5, Pexprand(0.2,1,2), 1.5], inf),
 		\rate, Pseq(
 			[
-				Prand([1, 2/3], inf),
-				Prand([1, 4/3], inf),
-				1,
+				Prand([2, 2/3, 5/4], inf),
+				Prand([2, 4/3], inf),
+				2,
 			], inf
 		),
 	).play(quant:1.875);
@@ -353,7 +353,7 @@ s.waitForBoot({
 			\dur, Pseq([3/4, 3/4, 1/4, 1/4], inf),
 			\freq, Pseq([130, 130, Prand([98, 116, 147], 2)], inf),
 			\atk, Pwhite(0.0, 0.05, inf),
-			\rel, Pwhite(0.1, 0.5, inf),
+			\rel, Pwhite(0.2, 0.5, inf),
 			\amp, Pexprand(0.2, 0.3, inf),
 	).play(quant: 1.875);
 
@@ -371,7 +371,9 @@ s.waitForBoot({
 		\buf, Pseq([~didgeridoo], inf),
 		\amp, Pwrand([0, 0.8], [0.6, 0.4], inf),
 		\rate, Pexprand(0.9, 1.2, inf),
-	);
+	).play(quant: 1.875);
+
+	~didg_loop.stop;
 
 
 	//******************* OSC ************************
@@ -409,15 +411,17 @@ s.waitForBoot({
 			arg msg, time, addr, port;
 			("Stickmen:" + msg[0]).postln;
 			if(msg[1]==true,{
-				~didg_buf = Synth.new(\playbuf, [\buf, ~didgeridoo.bufnum, \rate, 1.3, \rel, 3, \done_act, 2, \amp, 0.8]);
+				~didg_buf = Synth.new(\playbuf, [\buf, ~didgeridoo.bufnum, \rate, 1.3, \rel, 3, \done_act, 2, \amp, 0.6]);
 				~didg_loop.play;
 				~wind.set(\amp, 0.01);
-				~bass1.set([\amp, 0.6]);
-				~bass2.set([\amp, 0.6]);
+				~bass1.set([\amp, 0.8]);
+				~bass2.set([\amp, 0.8]);
+				~bassC.play(quant: 1.875);
 			});
 			if(msg[1]==false,{
 				~didg_loop.stop;
-				~wind.set(\amp, 0.01);
+				~bassC.stop;
+				~wind.set(\amp, 0.002);
 				~bass1.set([\amp, 0.3]);
 				~bass2.set([\amp, 0.3]);
 			});
@@ -458,18 +462,18 @@ s.waitForBoot({
 				~kalimba_A.mute;
 				~kalimba_B.mute;
 				~kalimba_C.mute;
-				~bassA.mute;
-				~bassB.mute;
-				~bassC.mute;
+				//~bassA.mute;
+				//~bassB.mute;
+				//~bassC.mute;
 				"The kalimbas get muted".postln},
 
 			{
 				~kalimba_A.unmute;
 				~kalimba_B.unmute;
 				~kalimba_C.unmute;
-				~bassA.unmute;
-				~bassB.unmute;
-				~bassC.unmute;
+				//~bassA.unmute;
+				//~bassB.unmute;
+				//~bassC.unmute;
 				"The kalimbas get unmuted".postln},
 			);
 		},
@@ -532,25 +536,25 @@ s.waitForBoot({
 				~kalimba_A.play(quant: 1.875);
 				~kalimba_B.stop;
 				~kalimba_C.stop;
-				~bassA.play(quant: 1.875);
-				~bassB.stop;
-				~bassC.stop;
+				//~bassA.play(quant: 1.875);
+				//~bassB.stop;
+				//~bassC.stop;
 			});
 			if(msg[1]=='Position B', {
 				~kalimba_B.play(quant: 1.875);
 				~kalimba_A.stop;
 				~kalimba_C.stop;
-				~bassB.play(quant: 1.875);
-				~bassA.stop;
-				~bassC.stop;
+				//~bassB.play(quant: 1.875);
+				//~bassA.stop;
+				//~bassC.stop;
 			});
 			if(msg[1]=='Position C', {
 				~kalimba_C.play(quant: 1.875);
 				~kalimba_A.stop;
 				~kalimba_B.stop;
-				~bassC.play(quant: 1.875);
-				~bassA.stop;
-				~bassB.stop;
+				//~bassC.play(quant: 1.875);
+				//~bassA.stop;
+				//~bassB.stop;
 			});
 		},
 		'/IP1/position'

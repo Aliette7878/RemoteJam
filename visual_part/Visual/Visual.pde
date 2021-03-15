@@ -175,10 +175,11 @@ void updateTreeSwinging() {
     //if (u==0) println("max acceleration in a buffer:", maxAccelerationInBuffer[u]);
   }
   
- 
-  redTree.oscAmp = maxAccelerationInBuffer[0]*4;
-  greenTree.oscAmp = maxAccelerationInBuffer[1]*4;
-  blueTree.oscAmp = maxAccelerationInBuffer[2]*4;
+  // updating the oscilation amplitude with first order low-pass filtering of parameter alfa
+  float alfa = 0.3;
+  redTree.oscAmp = (1-alfa)*redTree.oscAmp + alfa*maxAccelerationInBuffer[0]*4;
+  greenTree.oscAmp = (1-alfa)*greenTree.oscAmp + alfa*maxAccelerationInBuffer[1]*4;
+  blueTree.oscAmp = (1-alfa)*blueTree.oscAmp + alfa*maxAccelerationInBuffer[2]*4;
   
   
   

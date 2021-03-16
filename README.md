@@ -69,11 +69,11 @@ The music composition algorithm is based on building partially stochastic patter
 ## Demo
 
 ## Authors
-Clément Jameau
-Aliette Ravillion
-Andriana Takić
+Clément Jameau  
+Aliette Ravillion  
+Andriana Takić  
 
 <b> Other projects of ours:</b>
 
-https://github.com/finedominos/openChordVoicing
+https://github.com/finedominos/openChordVoicing  
 https://github.com/Aliette7878/TonalComp

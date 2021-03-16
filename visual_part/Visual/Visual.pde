@@ -31,10 +31,8 @@ boolean[] orientationsUpdated = new boolean[numberOfUsers];
 String[] exPositions = new String[numberOfUsers];
 String[] positions = new String[numberOfUsers];
 float[][] accelerationBuffers = new float[numberOfUsers][];
-float[] maxAccelerationInBuffer = new float[numberOfUsers];
-float[] lastMaxAccelerationInBuffer = new float[numberOfUsers];
 float[]  smoothedMaxAccelerationInBuffer = new float[numberOfUsers];
-int accBufferLength = 40; // 40 timestamps
+int accBufferLength = 25; // 25 timestamps
 float smoothingFactor = 10;
 float[][] accXBuffers = new float[numberOfUsers][];
 float[][] accYBuffers = new float[numberOfUsers][];
@@ -99,15 +97,15 @@ void setup() {
     accYBuffers[i] = new float[accBufferLength];   
     accZBuffers[i] = new float[accBufferLength];  
     for (int k=0; k<accBufferLength; k++) {  // Just to initiate values, to see if similarity measurement btw users movements works
-      if (i==0) {
-        accXBuffers[i][k] = random(1);
-        accYBuffers[i][k] = random(1);
-        accZBuffers[i][k] = random(1);
-      } else {
-        accXBuffers[i][k] = 0.5*accXBuffers[i-1][k]+ 0.5*random(1);
-        accYBuffers[i][k] = 0.5*accYBuffers[i-1][k]+ 0.5*random(1);
-        accZBuffers[i][k] = 0.5*accZBuffers[i-1][k]+ 0.5*random(1);
-      }
+      //if (i==0) {
+      accXBuffers[i][k] = random(1);
+      accYBuffers[i][k] = random(1);
+      accZBuffers[i][k] = random(1);
+      //} else {
+      //  accXBuffers[i][k] = 0.3*accXBuffers[i-1][k]+ 0.8*random(1);
+      //  accYBuffers[i][k] = 0.3*accYBuffers[i-1][k]+ 0.8*random(1);
+      //  accZBuffers[i][k] = 0.3*accZBuffers[i-1][k]+ 0.8*random(1);
+      //}
     }
     normalisedAccelerationBuffers[i] = new float[accBufferLength];
     exPositions[i] = "init";
@@ -161,29 +159,21 @@ void updStickmanInterractions() {
 void updateTreeSwinging() {
   // L1 Normalisation //TODO: L2?
   for (int u=0; u<numberOfUsers; u++) {
-    
+
     for (int i=0; i<accBufferLength; i++) {
       normalisedAccelerationBuffers[u][i] = abs(accXBuffers[u][i]) + abs(accYBuffers[u][i]) + abs(accZBuffers[u][i]);
     }
-    
-    maxAccelerationInBuffer[u] = 0;
-    for (int i=0; i<accBufferLength; i++) {
-      if (normalisedAccelerationBuffers[u][i]>maxAccelerationInBuffer[u]) {
-        maxAccelerationInBuffer[u] = normalisedAccelerationBuffers[u][i];
-      }
-    }
+
     //if (u==0) println("max acceleration in a buffer:", maxAccelerationInBuffer[u]);
   }
-  
+
   // updating the oscilation amplitude with first order low-pass filtering of parameter alfa
   float alfa = 0.3;
-  redTree.oscAmp = (1-alfa)*redTree.oscAmp + alfa*maxAccelerationInBuffer[0]*4;
-  greenTree.oscAmp = (1-alfa)*greenTree.oscAmp + alfa*maxAccelerationInBuffer[1]*4;
-  blueTree.oscAmp = (1-alfa)*blueTree.oscAmp + alfa*maxAccelerationInBuffer[2]*4;
-  
-  
-  
-  /*
+  redTree.oscAmp = (1-alfa)*redTree.oscAmp + alfa*max(normalisedAccelerationBuffers[0])*4;
+  greenTree.oscAmp = (1-alfa)*greenTree.oscAmp + alfa*max(normalisedAccelerationBuffers[1])*4;
+  blueTree.oscAmp = (1-alfa)*blueTree.oscAmp + alfa*max(normalisedAccelerationBuffers[2])*4;
+
+
   // now measure the similarities
   for (int u=0; u<numberOfUsers; u++) {
     for (int v=u+1; v<numberOfUsers; v++) {
@@ -192,22 +182,34 @@ void updateTreeSwinging() {
   }
   //println("Similarity btw: user0 and user1:", similarityMatrix[0][1], "    user0 and user2:", similarityMatrix[0][2], "    user1 and user2:", similarityMatrix[1][2]);
 
-  
+
   // mapping similarity to amplitude of the balancing movement of the tree
-  redTree.oscAmp = max(similarityMatrix[0][1], similarityMatrix[0][2])/5;
-  greenTree.oscAmp = max(similarityMatrix[0][1], similarityMatrix[1][2])/5;
-  blueTree.oscAmp = max(similarityMatrix[0][2], similarityMatrix[1][2])/5;
-  */
-  
+  redTree.oscAmp *= max(similarityMatrix[0][1], similarityMatrix[0][2], 1);
+  greenTree.oscAmp *= max(similarityMatrix[0][1], similarityMatrix[1][2], 1);
+  blueTree.oscAmp *= max(similarityMatrix[0][2], similarityMatrix[1][2], 1);
 }
 
 
 float computeSimilarity(int u1, int u2) {
-  float dissimilarity = 0;
+  // argmax function in Processing implemented by hands...
+  int argmaxU1 = -0; 
+  int argmaxU2 = -3;
+  float maxU1 = max(normalisedAccelerationBuffers[u1]);
+  float maxU2 = max(normalisedAccelerationBuffers[u2]);
   for (int i=0; i<accBufferLength; i++) {
-    dissimilarity += abs(normalisedAccelerationBuffers[u1][i]-normalisedAccelerationBuffers[u2][i]);
+    if (normalisedAccelerationBuffers[u1][i]==maxU1) {
+      argmaxU1 = i;
+    }
+    if (normalisedAccelerationBuffers[u2][i]==maxU2) {
+      argmaxU2 = i;
+    }
   }
-  return accBufferLength*3/dissimilarity;
+  float dissimilarity = abs(argmaxU1-argmaxU2);
+  return 1+log10(max(3.5-dissimilarity, 1));  // >1 only for dissimilarity < 3, max 1.49
+}
+// Calculates the base-10 logarithm of a number
+float log10 (float x) {
+  return (log(x) / log(10));
 }
 
 
@@ -249,7 +251,6 @@ void oscEvent(OscMessage theOscMessage) {
       accelerationBuffers[ipIndex] = pushInBuffer(accelerationBuffers[ipIndex], theOscMessage.get(0).floatValue());
       if (abs(accelerationBuffers[ipIndex][5])>minAcc && abs(millis()-lastShakeTimes[ipIndex])>minPeriodBtwShaking) {
         lastActivityTimes[ipIndex] = millis();
-        float accMaxValue = max(accelerationBuffers[ipIndex]);
         lastShakeTimes[ipIndex]=millis();
         println("IP"+ipIndex+" shaken");
         if (ipIndex==0) {
@@ -309,11 +310,9 @@ void oscEvent(OscMessage theOscMessage) {
 
       if (theOscMessage.checkAddrPattern("/linear_acceleration/x")==true) {
         accXBuffers[ipIndex] = pushInBuffer(accXBuffers[ipIndex], theOscMessage.get(0).floatValue());
-      }
-      else if (theOscMessage.checkAddrPattern("/linear_acceleration/y")==true) {
+      } else if (theOscMessage.checkAddrPattern("/linear_acceleration/y")==true) {
         accYBuffers[ipIndex] = pushInBuffer(accYBuffers[ipIndex], theOscMessage.get(0).floatValue());
-      }
-      else if (theOscMessage.checkAddrPattern("/linear_acceleration/z")==true) {
+      } else if (theOscMessage.checkAddrPattern("/linear_acceleration/z")==true) {
         accZBuffers[ipIndex] = pushInBuffer(accZBuffers[ipIndex], theOscMessage.get(0).floatValue());
       }
     }

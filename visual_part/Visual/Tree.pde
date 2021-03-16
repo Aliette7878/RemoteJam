@@ -9,6 +9,7 @@ int globalL = 180;        // Length of the 1rst branch
 int TimeBranch = TimeBranch1;
 float sizeMax = sizeMax1;
 float adult_age = TimeBranch*fps; // nb frame before the branch is adult
+int maxOscAmp=60;
 
 class Warlitree {
 
@@ -35,6 +36,7 @@ class Warlitree {
 
 
   void display() {
+    oscAmp=min(oscAmp, maxOscAmp);
     grow();
     pushMatrix();
     translate(position.x, position.y);

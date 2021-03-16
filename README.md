@@ -19,7 +19,7 @@ The following scheme represents the main elements and mapping of the application
 The full installation requires a PC and up to 3 Android phones, for the best experience. Each phone should have the app OSCHook installed and running to transmit the values of the phone’s sensors to the PC. On the PC, Processing and SuperCollider need to be installed and to run the following scripts: 
 
 <i>Visual.pde (RemoteJam/visual_part/Visual/Visual.pde)</i> and 
-<i>cpc-oscJam-main.scd (RemoteJam/sounds_part/cpc-oscJam-main.scd).</i>
+<i>cpc-oscJam-main.scd (RemoteJam/sounds_part/JungleJam-main-sound.scd).</i>
 
 
 Each tool can be downloaded and installed on the links below: 
@@ -67,6 +67,8 @@ The main musical instruments used are drums, kalimba, and bass, each controlled 
 The music composition algorithm is based on building partially stochastic patterns, using the Pbind function. The patterns are built choosing among the predefined sets and ranges of values for the sound frequency, duration, amplitude, and more, using weighted probability functions such as Pwrand, Pexprand etc.
 
 ## Demo
+
+https://youtu.be/_H7dTlIsQGw
 
 ## Authors
 Clément Jameau  

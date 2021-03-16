@@ -18,8 +18,8 @@ The following scheme represents the main elements and mapping of the application
 
 The full installation requires a PC and up to 3 Android phones, for the best experience. Each phone should have the app OSCHook installed and running to transmit the values of the phone’s sensors to the PC. On the PC, Processing and SuperCollider need to be installed and to run the following scripts: 
 
-<i>Visual.pde (RemoteJam/visual_part/Visual/Visual.pde)<i> and 
-<i>cpc-oscJam-main.scd (RemoteJam/sounds_part/cpc-oscJam-main.scd).<i>
+<i>Visual.pde (RemoteJam/visual_part/Visual/Visual.pde)</i> and 
+<i>cpc-oscJam-main.scd (RemoteJam/sounds_part/cpc-oscJam-main.scd).</i>
 
 
 Each tool can be downloaded and installed on the links below: 
